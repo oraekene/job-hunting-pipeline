@@ -1,0 +1,90 @@
+# shared/question_bank.yaml — curated bank of real application questions.
+# Sourced from currently-open job postings via question_bank_crawler.py.
+# This skill reads it (07-context-architect Phase 1.5) — never writes to it.
+# Seeded here with a minimal set covering common PM/AI engineering behavioral questions.
+# The full quarterly crawl pipeline (cron job #6) refreshes this over time.
+
+generated_at: "2026-08-06T00:00:00Z"
+source: "seeded from onboarding — minimal baseline, expanded by quarterly crawl"
+
+questions:
+
+  - id: qb_001
+    question: "Tell me about a time you had to influence a stakeholder who didn't report to you."
+    category: "stakeholder_management"
+    variants:
+      - variant: "enterprise"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: Managing Expectations During Savecoins Product Pivot."
+      - variant: "startup"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: Managing Expectations During Savecoins Product Pivot."
+
+  - id: qb_002
+    question: "Describe a time when you had to make a product decision with incomplete information."
+    category: "decision_making"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: Redesigning Credit Assessment at Bank of Agriculture."
+
+  - id: qb_003
+    question: "How do you prioritize features when you can't build them all?"
+    category: "prioritization"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: MVP Delivery at Savecoins — Peer-to-Peer Product."
+
+  - id: qb_004
+    question: "Give me an example of a time you shipped a product under a tight deadline."
+    category: "execution"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: MVP Delivery at Savecoins — Peer-to-Peer Product."
+
+  - id: qb_005
+    question: "Tell me about a time you received critical feedback and how you acted on it."
+    category: "feedback"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview."
+
+  - id: qb_006
+    question: "Describe a situation where you had to work with a team that was resistant to change."
+    category: "team_leadership"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: Managing Expectations During Savecoins Product Pivot."
+
+  - id: qb_007
+    question: "What's the most difficult tradeoff you've had to make in product management?"
+    category: "tradeoffs"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview."
+
+  - id: qb_008
+    question: "How do you measure the success of a product feature?"
+    category: "metrics"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — connected to quantified outcomes in STAR bank stories."
+
+  - id: qb_009
+    question: "Tell me about a product you built that failed. What did you learn?"
+    category: "failure_recovery"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview."
+
+  - id: qb_010
+    question: "How do you approach understanding user needs when entering a new domain?"
+    category: "user_research"
+    variants:
+      - variant: "default"
+        answer: "PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview from STAR bank story: Optimizing PrepClass Pricing."
+
+metrics:
+  total_questions: 10
+  categories_covered: ["stakeholder_management", "decision_making", "prioritization", "execution", "feedback", "team_leadership", "tradeoffs", "metrics", "failure_recovery", "user_research"]
+  sources_covered:
+    - "STAR story bank (stories with quantified outcomes)"
+    - "Domain knowledge"
+  coverage_notes: "Minimal seed set. Expanded by quarterly question-bank crawl (cron job #6). Phase 1.5 in context-architect cross-references these questions against ingested evidence to find gaps requiring interview."

@@ -1,0 +1,41 @@
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.pytest-cache/
+.ruff_cache/
+.mypy_cache/
+.ty_cache/
+
+# Local merge tracking
+.merge-history/
+
+# Runtime data / secrets shaped files unless intentionally tracked
+*.db
+*.sqlite
+*.sqlite3
+*.env
+.env*
+*.pem
+*.key
+
+# Runtime state and generated application data (regenerable, personal)
+shared/build_artifacts/
+shared/.outbox/
+shared/company_research_cache/
+shared/.scripts/
+shared/.discovery_gate_state.json
+shared/applications.db*
+
+# Session logs and chat exports
+hermes agent log file*.txt
+run-full-job*.json
+request_dump_*.json
+
+# Stray debugging SQL left in the bundle root
+query_*.sql
+schema_query.sql
+
+# Stray root-level debug folders
+.outbox/

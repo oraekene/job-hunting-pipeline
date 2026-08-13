@@ -1,0 +1,82 @@
+# shared/sources.yaml — loaded by 01-job-discovery at the start of every run.
+# Grows as sources are onboarded. See "Onboarding a new source" at the bottom.
+
+exclude_domains: []
+
+sources:
+
+  # --- LinkedIn global search (poll_only + open_web both use this) ---
+  - id: linkedin-global
+    type: linkedin_search_url
+    url: "https://www.linkedin.com/jobs/search/?keywords=REPLACE&f_TPR=r86400&f_WT=1%2C2%2C3&sortBy=DD"
+    # keywords filled from title_variants; f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
+    posted_at:
+      method: relative_text_on_page
+      notes: "LinkedIn shows a relative string ('2 hours ago') on each card — resolve against fetch time, keep posted_at_raw for audit."
+
+  # --- Indeed global search ---
+  - id: indeed-global
+    type: indeed_search_url
+    url: "https://www.indeed.com/worldwide/implement?q=REPLACE&sort=date"
+    # REPLACE filled from title_variants joined with OR
+    posted_at:
+      method: relative_text_on_page
+      notes: "Indeed shows relative timestamps like 'Today', 'Just now', '2 days ago'. Resolve against fetch time."
+
+  # --- Remote OK (remote-focused board) ---
+  - id: remote-ok
+    type: scrape_and_filter
+    url: "https://remoteok.com/remote-product-manager-jobs"
+    posted_at:
+      method: fallback_chain
+      notes: "Try schema.org JobPosting JSON-LD datePosted, then relative text on page, then discovered_at."
+
+  # --- AngelList (startup jobs) ---
+  - id: wellfound
+    type: scrape_and_filter
+    url: "https://wellfound.com/jobs"
+    posted_at:
+      method: fallback_chain
+      notes: "Wellfound/AngelList — try JSON-LD datePosted, then relative text, then discovered_at."
+
+  # --- Adzuna (structured aggregator — free tier covers many countries) ---
+  # Prefer over open_web_search for any country Adzuna actually covers.
+  # Requires ADZUNA_APP_ID / ADZUNA_APP_KEY (free signup: developer.adzuna.com).
+  # Uncomment and fill credentials after setup.
+  # - id: adzuna-aggregator
+  #   type: aggregator_api
+  #   provider: adzuna
+  #   app_id: "YOUR_APP_ID_HERE"
+  #   app_key: "YOUR_APP_KEY_HERE"
+  #   countries: ["us", "gb", "ca", "au", "ie", "nz", "sg", "hk", "de", "fr", "nl", "sg", "za"]
+  #   posted_at:
+  #     method: aggregator_field
+  #     notes: "Structured and reliable — Adzuna returns a created field."
+
+  # --- Open-web sweep (runs daily when discovery_mode is open_web or open_web_excluding) ---
+  # Auto-generates platform-dork queries per ATS (Greenhouse, Lever, Ashby, Workday,
+  # SmartRecruiters, iCICS) plus a generic query, all from target-profile.yaml's title_variants.
+  # Does NOT replace the declared sources above — runs IN ADDITION to them.
+  - id: open-web-sweep
+    type: open_web_search
+    cadence: daily
+    platform_dorks: true
+    posted_at:
+      method: fallback_chain
+      notes: "Try schema.org JobPosting JSON-LD datePosted, then platform-specific field, then relative text, then discovered_at. Always keep posted_at_raw."
+
+# posted_at.method values:
+#   relative_text_on_page | rss_pubdate | json_ld_dateposted
+#   | email_receipt_time | aggregator_field | fallback_chain | none_available
+
+## Onboarding a new source
+# 1. Add an entry above with `type` + `url`/`handle`.
+# 2. If the source needs a query built from the target profile
+#    (linkedin_search_url, indeed_search_url, google_dork), only the
+#    TEMPLATE shape needs to be written here — 01-job-discovery fills it
+#    from shared/target-profile.yaml at run time.
+# 3. If the source's structure is unfamiliar, run discovery once
+#    interactively first so it can inspect the page/feed, propose the entry,
+#    and get confirmation before it's saved. One time per source.
+# 4. open_web_search and aggregator_api sources don't need step 3 — there's
+#    no single page/feed shape to inspect, since they query broadly at run time.

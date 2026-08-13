@@ -1,0 +1,94 @@
+# shared/target-profile.yaml — structured, machine-readable target profile.
+# Owned by 07-context-architect. Written together with USER.md from the
+# same confirmed interview. Do not hand-edit; re-run context-architect to update.
+
+seniority_band: "mid"
+# Targeting mid-level openings but open to junior and entry-level as well.
+# Calibration auto-relax widens the net if the search runs long.
+
+locations:
+  remote_ok: true
+  hybrid_ok: true
+  onsite_ok: true
+  countries: ["Worldwide"]
+  cities: []
+
+salary_floor:
+  amount: 36000
+  currency: "USD"
+  period: "year"
+  # $3,000/month minimum; user accepts $1,000–$10,000/month range,
+  # this floor keeps sub-$36k roles from being staged automatically.
+
+visa_sponsorship_required: true
+
+industries_exclude: []
+companies_exclude: []
+
+# STRICT mode: every claim in a resume/cover letter/answer must be backed
+# by a real line from your resume, portfolio, or STAR story bank. Anything
+# unverifiable is stripped or softened — nothing unverifiable reaches an employer.
+fidelity_mode: "strict"
+
+# open_web: poll declared sources + broader open-web sweep on its own daily cadence.
+discovery_mode: "open_web"
+
+# Title variants — confirmed from resume + adjacent expansion.
+# source: held = you actually held this title.
+# source: taxonomy_suggested = inferred from your skills/story bank via title-taxonomy.
+title_variants:
+  - title: "Product Manager"
+    source: "held"
+    confidence: null
+    rationale: ""
+  - title: "AI Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.85
+    rationale: "Your experience building AI product features (LLM inference, AI agent automation, memecoin strategy builder) plus your PM title at Savecoins and Product Management diploma combine to surface AI PM as a high-confidence adjacent title."
+  - title: "AI Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.78
+    rationale: "Projects include LLM inference with InternVL3, YOLO v8 model training, and automating AI agent development — evidence of hands-on AI engineering work alongside your PM and automation experience."
+  - title: "Automation Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.72
+    rationale: "Telegram bot for trading signals, web crawler MVP for dataset creation, AI agent that turns RSS feeds into LinkedIn articles — automation-focused project portfolio."
+  - title: "Associate Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.8
+    rationale: "Mid-level target with openness to junior/associate roles per your stated preference; PM experience at Savecoins fintech qualifies."
+  - title: "Junior Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.75
+    rationale: "Open to junior-level roles; your Altschool Product Management diploma + PM role at Savecoins provide relevant foundation."
+  - title: "Workflow Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.7
+    rationale: "Your AI agent project (RSS → LinkedIn automation) and web crawler MVP demonstrate workflow automation and engineering skills."
+  - title: "Product Owner"
+    source: "taxonomy_suggested"
+    confidence: 0.65
+    rationale: "Adjacent to Product Manager with emphasis on backlog management and stakeholder coordination — matches your stakeholder management experience at PrepClass and credit officer client interaction."
+  - title: "Technical Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.75
+    rationale: "Your hands-on AI/automation project portfolio (coding, model training, agent development) plus PM experience qualifies you for TPM roles."
+  - title: "Growth Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.68
+    rationale: "Your peer-to-peer product work at Savecoins and stakeholder growth experience at PrepClass align with growth PM responsibilities."
+  - title: "AI/ML Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.82
+    rationale: "Combined AI engineering projects + product management experience; specifically your LLM inference, evals, and agent automation work."
+
+# 19-career-path-planner config — relevant when career path planning is used.
+stepping_stone:
+  max_hops: 2
+  gap_density_threshold: 8
+  min_liquidity_postings: 5
+  liquidity_probe: true
+  community_intel: true
+  allow_comp_regression: "ask"
+
+last_confirmed_at: "2026-08-06T00:00:00Z"

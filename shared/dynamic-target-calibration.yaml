@@ -1,0 +1,68 @@
+# shared/dynamic-target-calibration.yaml — governs how strict/loose the
+# pipeline is about what counts as "worth staging," and how that
+# strictness is allowed to move over time.
+# Copy of template, seeded with confirmed values for Kenechukwu Oraelosi.
+
+calibration_mode: "hybrid"
+#   manual - only Kenechukwu's confirmed edits move anything. Nothing here changes on its own.
+#   auto   - system recalculates thresholds on schedule and applies directly, logged for audit.
+#   hybrid - (recommended) system recalculates on schedule, but every proposed
+#            change is staged into skill_self_edits — same pattern as
+#            11-analytics-and-learning's skill-edit proposals — and only takes
+#            effect once Kenechukwu approves. Auto's math, manual's control.
+
+match_score:
+  minimum: 65          # lowered from 70 because profile_stage is returning_after_gap
+                        # and Kenechukwu is targeting mid-level with openness to junior/entry.
+  stretch:
+    enabled: true
+    floor: 50           # 50-65 = stretch band, flagged [STRETCH] for review
+
+overqualification_tolerance: "balanced"
+  #   strict   - flag/avoid roles significantly below current level
+  #   balanced - allow with flag (current setting)
+  #   relaxed  - allow more freely, widened over time if search is long
+
+employment_status: "between_roles"
+  # unemployed | between_roles | returning_after_gap | freelance_between_contracts
+  # | employed | unspecified
+  # Written by 16-career-pulse's periodic check-in, confirmed by Kenechukwu.
+  # Set to returning_after_gap per onboarding.
+
+status_changed_at: "2026-08-06T00:00:00Z"
+
+auto_relax_schedule:
+  # Only consulted when calibration_mode is auto or hybrid, AND employment_status
+  # is unemployed or between_roles or returning_after_gap (a gap case).
+  # Each step is additive from baseline, not compounding on previous steps.
+  - after_weeks: 8
+    match_score_minimum_delta: -5
+    stretch_floor_delta: -5
+    overqualification_tolerance: "balanced"
+  - after_weeks: 16
+    match_score_minimum_delta: -10
+    stretch_floor_delta: -10
+    overqualification_tolerance: "relaxed"
+  - after_weeks: 26
+    match_score_minimum_delta: -15
+    stretch_floor_delta: -15
+    overqualification_tolerance: "relaxed"
+    also_widen_title_taxonomy_similarity_threshold: true
+  - after_weeks: 52    # ~12 months — longer gap case
+    match_score_minimum_delta: -15   # no further numeric delta past 26-week step
+    stretch_floor_delta: -15         # on purpose — see note below
+    overqualification_tolerance: "relaxed"
+    also_widen_title_taxonomy_similarity_threshold: true
+    note: "A year+ gap doesn't mean widen numeric gates further — it means
+      prompt Kenechukwu to re-examine profile currency (recent skills/projects,
+      updated STAR bank). The profile, not the thresholds, is what ages."
+
+recalibration_log:
+  - at: "2026-08-06T00:00:00Z"
+    reason: "Initial calibration from onboarding (profile_stage: returning_after_gap)"
+    match_score_minimum: 65
+    stretch_floor: 50
+    overqualification_tolerance: "balanced"
+
+last_recalibrated_at: "2026-08-06T00:00:00Z"
+last_confirmed_at: "2026-08-06T00:00:00Z"
