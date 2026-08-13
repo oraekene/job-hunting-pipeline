@@ -614,7 +614,6 @@ def ingest_outbox(con):
         if os.path.isfile(f)
     )
     if not files:
-        print("  Outbox: empty.")
         return 0
 
     def app_key(fn):
@@ -687,16 +686,24 @@ def ingest_outbox(con):
 def reconcile(con):
     """Phase 1: ingest outbox, resolve stale 'building' rows, retry eligible.
 
+    SILENT-BY-DESIGN when idle: a no-op reconcile prints NOTHING. The
+    reconcile-only cron job (no-agent, telegram delivery) treats empty
+    stdout as silent; the old "Outbox: empty." header made every 30-minute
+    tick produce a Telegram message. Action lines still print — a
+    non-empty output here means something actually changed.
+
     Order matters (parallel-pipeline-sweep.md Phase 1):
       1. Ingest the outbox FIRST — a file there may explain a 'building'
          row the DB thinks is stale.
-      2. Rows at 'building' past STALE_BUILDING_HOURS: set 'failed' with
-         outcome 'vanished' (no report at all), move partial artifacts to
-         .failed-{n}/.
-      3. Rows at 'failed' with build_attempts < 3: return to 'discovered'
+      2. Rows at 'building' past STALE_BUILDING_HOURS with a COMPLETE
+         build: reset to 'discovered' as 'build complete, commit pending'
+         — artifacts kept, attempt never burned.
+      3. Rows at 'building' past STALE_BUILDING_HOURS with a partial
+         build: set 'failed' with outcome 'vanished' (no report at all),
+         move partial artifacts to .failed-{n}/.
+      4. Rows at 'failed' with build_attempts < 3: return to 'discovered'
          for a later tick. >= 3 stays terminal.
     """
-    print("  Reconcile: ingest outbox...")
     ingest_outbox(con)
 
     c = con.cursor()

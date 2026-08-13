@@ -452,6 +452,23 @@ def c_outbox_bad(sb):
     return ok, f"rejected={len(rejected)} reason_files={len(sidecars)}"
 
 
+@case("reconcile_silent_when_idle")
+def c_reconcile_silent(sb):
+    # Nothing to do: no outbox files, no stale building rows, no retryable
+    # failed rows. The reconcile-only cron script relies on EMPTY stdout to
+    # stay silent in Telegram — a no-op reconcile must print nothing.
+    con = sqlite3.connect(sb.db)
+    try:
+        con.execute("UPDATE applications SET status='discovered', "
+                    "building_started_at=NULL")
+        con.commit()
+    finally:
+        con.close()
+    r = sb.run("--reconcile")
+    ok = r.returncode == 0 and r.stdout.strip() == ""
+    return ok, f"exit={r.returncode} stdout={r.stdout!r}"
+
+
 @case("outbox_valid_ingests")
 def c_outbox_good(sb):
     good = os.path.join(sb.outbox, "2_ok.json")

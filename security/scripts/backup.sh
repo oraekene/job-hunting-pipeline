@@ -73,11 +73,13 @@ else
 fi
 
 # BK5 — retention: 7 daily, 13 weekly, 12 monthly. Prune so backups don't
-# become the thing that fills the disk.
-ls -1dt "$DEST"/daily/* 2>/dev/null | tail -n +8 | xargs -r rm -rf
+# become the thing that fills the disk. Each prune line tolerates an empty
+# dir: an unmatched glob makes `ls` exit 2, which under pipefail killed the
+# whole script AFTER a successful snapshot (false nightly alarm).
+ls -1dt "$DEST"/daily/* 2>/dev/null | tail -n +8 | xargs -r rm -rf || true
 [ "$(date +%u)" = "7" ] && cp -a "$SNAP" "$DEST/weekly/" 2>/dev/null || true
-ls -1dt "$DEST"/weekly/* 2>/dev/null | tail -n +14 | xargs -r rm -rf
+ls -1dt "$DEST"/weekly/* 2>/dev/null | tail -n +14 | xargs -r rm -rf || true
 [ "$(date +%d)" = "01" ] && cp -a "$SNAP" "$DEST/monthly/" 2>/dev/null || true
-ls -1dt "$DEST"/monthly/* 2>/dev/null | tail -n +13 | xargs -r rm -rf
+ls -1dt "$DEST"/monthly/* 2>/dev/null | tail -n +13 | xargs -r rm -rf || true
 
 echo "[SILENT] backup ok: $SNAP"
