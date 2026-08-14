@@ -39,3 +39,6 @@ schema_query.sql
 
 # Stray root-level debug folders
 .outbox/
+
+# Stray generated resume at repo root (regenerable, personal)
+tailored_resume.docx
