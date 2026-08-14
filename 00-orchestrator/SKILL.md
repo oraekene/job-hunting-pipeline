@@ -167,7 +167,7 @@ Runs the pipeline's invariants against a fixture posting in a throwaway
 database. No network, and it never touches `shared/applications.db`.
 Twenty-seven checks in two phases.
 
-**Static — package integrity.** Frontmatter parses on all 26 skills; no
+**Static — package integrity.** Frontmatter parses on all 27 skills; no
 description exceeds 60 characters (the skill index truncates at 57, and
 over that the trigger class is invisible *silently* — the skill simply
 stops being selected); no description wastes the budget on boilerplate;

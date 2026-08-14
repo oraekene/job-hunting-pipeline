@@ -236,7 +236,7 @@ ever entering the curator's candidate list, and therefore without
 exposure to the 90-day archival clock or to consolidation.
 
 Adoption buys autonomous, unattended rewriting. It costs archival and
-consolidation exposure. For a 26-skill package all sharing one name
+consolidation exposure. For a 27-skill package all sharing one name
 prefix, that trade is not worth taking — see `README.md`'s curator
 section for the full reasoning.
 

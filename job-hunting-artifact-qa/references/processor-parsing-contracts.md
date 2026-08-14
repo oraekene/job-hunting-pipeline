@@ -1,6 +1,7 @@
 # pipeline_processor.py — parsing contracts (verified Aug 2026, app_18 build)
 
-Source: `job-hunting/00-orchestrator/scripts/pipeline_processor.py`.
+Source: `../../00-orchestrator/scripts/pipeline_processor.py` (from
+`job-hunting-artifact-qa/references/`).
 All behaviors below were confirmed by reading the source and by simulating the
 parsers against app_15/app_16/app_18 artifacts. The processor NEVER computes
 Gate 1 — it records what the artifacts say; the artifacts are the contract.

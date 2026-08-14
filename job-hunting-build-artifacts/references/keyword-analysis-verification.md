@@ -44,7 +44,7 @@ Per-keyword sanity: `category` in {Hard Skill, Domain Concept, Soft Skill},
   `resume_change_log.md`, `risk_tactics_change_log.md`, `application_qa.md`. Grep
   the whole `app_N/` dir for the OLD numbers before declaring done (app_17 left
   zero stale `63`/`47` references after the fix).
-- Ready-made runner: `scripts/verify_app_artifacts.py <app_dir>` — recomputes the
+- Ready-made runner: `../scripts/verify_app_artifacts.py <app_dir>` — recomputes the
   math, cross-checks the resume_match.md header, runs the generator, greps the
   docx, and flags stale references. The tempfile-based ad-hoc script pattern
   (hermes-verify-* prefix, delete after run) also works when a full script isn't

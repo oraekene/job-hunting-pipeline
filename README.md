@@ -1,6 +1,6 @@
 # Job-Hunting Skill Package for Hermes Agent
 
-A 26-skill pipeline that turns Kenechukwu's original 6-7 prompts + the
+A 27-skill pipeline that turns Kenechukwu's original 6-7 prompts + the
 Splendor thread's tactics into a Hermes-native system: discovers
 postings, tailors every application, stops for a one-tap Telegram
 approval before anything is ever sent, gets measurably better over time
@@ -800,7 +800,7 @@ curator's candidate list does not include them until you adopt them.
 ### The recommended posture
 
 **Do not bulk-adopt this package.** Three consequences follow from
-leaving the 26 skills unadopted, and all three are what you want:
+leaving the 27 skills unadopted, and all three are what you want:
 
 | Behaviour | Unadopted | Adopted |
 |---|---|---|
