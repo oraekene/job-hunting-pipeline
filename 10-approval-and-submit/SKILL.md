@@ -97,7 +97,13 @@ step a genuine human decision, not a formality.
    regardless (documents don't go through the lossy image path).
 4. Send Kenechukwu a Telegram message: company, role, the screenshot (as a
    document, per step 3), the risk-tactics change-log, and one clear
-   question - approve, edit, or skip. If `12-company-research`'s cache
+   question - approve, edit, or skip. **The ping is a Telegram message
+   send, full stop.** A digest printed in the running session's own chat
+   (desktop, web, or a cron-job report) is NOT a delivery channel for
+   this gate and earns nothing - the 2026-08-13 run recorded
+   `approval_sent_at` for seven rows on the strength of a desktop-chat
+   digest and Kenechukwu was never actually asked. Only a send that
+   reports as delivered (not merely queued) counts. If `12-company-research`'s cache
    for this company has a flagged Domain signal (see that skill's step
    2.5 - only present when `research/domain-intel` is installed and
    found something worth a second look), lead with that note, before the
@@ -109,7 +115,8 @@ step a genuine human decision, not a formality.
    the ready-to-paste `/moa <question>` prompt right below that line in
    the message, not just the tag by itself - the whole point is Kenechukwu can
    act on it in one copy-paste if he wants a second opinion, not have to
-   go compose the question himself. Once the message has actually sent,
+   go compose the question himself. Once the Telegram message has
+   actually been sent and confirmed delivered,
    write `status='awaiting_approval'` for this application - this is
    what distinguishes "built" (`status='staged'`, set by
    `09-risk-tactics-gate`) from "Kenechukwu has actually been asked." In
@@ -118,8 +125,8 @@ step a genuine human decision, not a formality.
    `approval_sent_at` with a `WHERE approval_sent_at IS NULL` guard, so
    two concurrent sweeps cannot double-ping the same row - if the command
    reports SKIP, another sweep already pinged it, move on. If Telegram is
-   unreachable, do NOT call it: `approval_sent_at` stays NULL and the row
-   stays in `--approval-queue` for the next tick.
+   unreachable or the send fails, do NOT call it: `approval_sent_at`
+   stays NULL and the row stays in `--approval-queue` for the next tick.
 5. Only on an explicit "approve" reply tied to this specific message
    (not a generic "yes" earlier in the conversation) does this skill
    write `approval_decision = 'approve'` to this application's row in the

@@ -42,6 +42,25 @@ memory profile (from `07-context-architect`):
 would, not the way a motivational coach would. A gap correctly flagged
 here is a gap `09-risk-tactics-gate` doesn't have to catch later.
 
+**The overall must be reproducible from this file's own table.** After
+step 5, recompute: `overall_match_score` (0–100) must not exceed
+`round(mean of the per-requirement scores × 10)` — a small stated margin
+may be claimed only when the score is explicitly justified in the file.
+If the overall sits above what the table's own arithmetic reproduces,
+it is inflated: lower it until it matches. The 2026-08-13 sweep shipped
+overalls of 77/68/75 against table means of 65/61/60 — a reader with the
+table in front of them cannot reproduce the headline number, and an
+unreproducible score is a Rule 2 hazard.
+
+**Hard-gate rule.** When the posting states a mandatory requirement the
+candidate objectively does not meet (a year-gate like "5+ years PM",
+required licensure, required domain tenure), the overall is capped below
+`match_score.minimum` regardless of every other credit — the file must
+state the failing requirement and the cap explicitly. A mandatory
+requirement is one the posting marks as required, not preferred; if the
+posting does not state a year-gate, none is imposed (the Camunda
+"mid-level, no year-gate" case is not capped by this rule).
+
 ## Calibration gates — run after the score exists, before staging
 
 `shared/dynamic-target-calibration.yaml` described what should consume

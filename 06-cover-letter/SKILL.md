@@ -60,6 +60,11 @@ carried over from the thread:
   never a `?` placeholder — a replacement character in a real cover
   letter is worse than no number. The same rule applies to every other
   stage artifact (change-logs, keyword JSON, resume).
+- Any conversion into USD must cite the rate and its date inline on the
+  same line, e.g. `≈ $55.7K (17.06 MXN/USD, 2026-08-13)`. A bare "≈ $…"
+  number is forbidden — the pipeline shipped `MX$950K ≈ $46K` once when
+  the real value was ≈ $55.7K, and nothing caught it. When in doubt
+  about the current rate, look it up (web search) rather than guess.
 - Sound like a person, not a form letter - contractions are fine, "I am
   writing to express my interest in..." is banned, it's the single most
   forgettable opening line in the genre.

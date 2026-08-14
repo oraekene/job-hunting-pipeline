@@ -242,6 +242,19 @@ RISK TACTICS APPLIED  (fidelity_mode: strict)
   (logged to open_gaps, <date>)
 ```
 
+**FAIL-entry format is a contract, not a style choice.** The pipeline
+processor parses the change-log into `open_gaps` rows, and it accepts
+exactly two shapes:
+
+1. One line — `[FAIL] <claim> — <missing evidence>` (em-dash separates).
+2. Multi-line — `### [FAIL] <claim>` followed within a few lines by
+   `- Missing evidence: <…>` (or `- evidence: <…>`).
+
+Anything else (bare `[FAIL] Title` with no evidence line, or a summary
+`[FAIL]: N` counter) is invisible to the parser and the gap is silently
+lost — app_11 committed with 5 counted FAILs and zero logged gaps exactly
+this way. Write every FAIL entry in one of the two shapes above.
+
 ```
 RISK TACTICS APPLIED  (fidelity_mode: balanced)
 - [PASS] Exact phrase: "<phrase>" — evidence: <resume/story bank line>

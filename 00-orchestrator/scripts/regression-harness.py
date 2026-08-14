@@ -131,6 +131,24 @@ RISK_LOG = """# RISK TACTICS GATE - CHANGE-LOG (Stage 9)
 - [FAIL] Cost claim "NGN 2.3M" — evidence: STAR Savecoins. Blocked.
 """
 
+RISK_LOG_MULTILINE = """# RISK TACTICS GATE - CHANGE-LOG (Stage 9)
+# Application: app_fixture | FixtureCorp | Product Manager, Acquisition
+
+### [PASS] User Acquisition / consumer growth launch
+- Evidence: STAR "MVP Delivery at Savecoins". VERIFIED.
+
+### [FAIL] Generative Search / SEO growth ownership
+- Missing evidence: no professional search or generative-search optimization experience anywhere in memory. NOT applied. - genuine gap, flagged for human; do not paper over.
+
+### [FAIL] Logged-out / sign-up funnel ownership
+- Missing evidence: no logged-out experience, trial-to-signup, or funnel conversion work in memory. NOT applied. - genuine gap, flagged for human.
+
+## Final counts
+- [PASS]: 1
+- [FAIL]: 2
+- [BORDERLINE PASS]: 0
+"""
+
 RISK_LOG_NAIRA = """# RISK TACTICS GATE - CHANGE-LOG (Stage 9)
 # Application: app_fixture | FixtureCorp | Principal Product Manager
 
@@ -183,8 +201,9 @@ def make_docx(path):
         z.writestr("word/document.xml", document)
 
 
-def write_fixture_artifacts(artifacts_dir, naira=False):
+def write_fixture_artifacts(artifacts_dir, naira=False, multiline_risk=False):
     os.makedirs(artifacts_dir, exist_ok=True)
+    risk_log = RISK_LOG_MULTILINE if multiline_risk else (RISK_LOG_NAIRA if naira else RISK_LOG)
     files = {
         "jd_analysis.md": JD_ANALYSIS,
         "keyword_analysis.json": json.dumps(KEYWORD_JSON, ensure_ascii=False),
@@ -192,7 +211,7 @@ def write_fixture_artifacts(artifacts_dir, naira=False):
         "resume_change_log.md": RESUME_CHANGE_LOG,
         "cover_letter.txt": COVER_LETTER,
         "application_qa.md": APPLICATION_QA,
-        "risk_tactics_change_log.md": RISK_LOG_NAIRA if naira else RISK_LOG,
+        "risk_tactics_change_log.md": risk_log,
     }
     for name, body in files.items():
         with open(os.path.join(artifacts_dir, name), "w", encoding="utf-8") as f:
@@ -438,6 +457,22 @@ def c_restore_incomplete(sb):
     st = staged(sb, 11)
     ok = r.returncode != 0 and st == "failed"
     return ok, f"exit={r.returncode} status={st} (want refuse, row untouched)"
+
+
+@case("open_gaps_multiline_fail")
+def c_gaps_multiline(sb):
+    # app_11-style risk log: "### [FAIL] Title" + "- Missing evidence: ..."
+    # on the next line. The parser must extract these as open_gaps rows
+    # and must NOT treat the "- [FAIL]: N" summary line as a gap.
+    sb.seed_row(2, status="discovered")
+    write_fixture_artifacts(sb.artifacts_of(2), multiline_risk=True)
+    sb.run("--claim", "2")
+    sb.run("--app-id", "2")
+    gaps = sb.q("SELECT claim_text FROM open_gaps WHERE application_id=2")
+    ok = (len(gaps) == 2
+          and "Generative Search" in gaps[0][0]
+          and "Logged-out" in gaps[1][0])
+    return ok, f"gaps={[g[0][:40] for g in gaps]}"
 
 
 @case("outbox_rejection_reasoned")

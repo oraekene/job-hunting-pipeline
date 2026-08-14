@@ -21,7 +21,7 @@ Verifies:
 
 Usage:  python 00-orchestrator/scripts/dry-run.py --skill-dir .
 """
-import argparse, os, re, sqlite3, sys, tempfile
+import argparse, json, os, re, sqlite3, sys, tempfile
 from pathlib import Path
 
 # Derived from shared/, not hand-listed. The hand-listed form went stale
@@ -305,7 +305,7 @@ def static_checks(root: Path):
     # should happen (cover letters go to real employers).
     mojibake = []
     for fp in glob.glob(str(root / "shared" / "build_artifacts" / "**" / "*"), recursive=True):
-        if not os.path.isfile(fp) or fp.endswith((".docx", ".py")):
+        if not os.path.isfile(fp) or fp.endswith((".docx", ".py", ".pyc")):
             continue
         try:
             body = Path(fp).read_text(encoding="utf-8", errors="replace")
@@ -315,6 +315,71 @@ def static_checks(root: Path):
             mojibake.append(os.path.relpath(fp, str(root)))
     check("no replacement characters (mojibake) in stage artifacts",
           not mojibake, "; ".join(sorted(mojibake)[:5]))
+
+    # Currency honesty: a USD conversion ("≈ $…") without a rate citation
+    # in the same line is an unevidenced number — wrong math shipped once
+    # (MX$950K ≈ "$46K" against a real ≈ $55.7K) and it took a human to
+    # catch it. Fire only when another currency code appears on the same
+    # line (a same-currency unit rewrite like "$36k/yr ≈ $3k/month" is
+    # arithmetic, not a conversion) and require an explicit
+    # `N/currency` or `currency/N` rate in the line.
+    bare_conversions = []
+    for fp in glob.glob(str(root / "shared" / "build_artifacts" / "**" / "*"), recursive=True):
+        if not os.path.isfile(fp) or fp.endswith((".docx", ".py", ".pyc")):
+            continue
+        try:
+            lines = Path(fp).read_text(encoding="utf-8", errors="replace").splitlines()
+        except Exception:
+            continue
+        for i, line in enumerate(lines):
+            if (re.search(r"≈\s*\$", line)
+                    and re.search(r"\b(?:PLN|NGN|MXN|EUR|GBP|CAD|SGD|JPY|CNY|INR|AUD)\b", line)
+                    and not re.search(r"\d+(?:\.\d+)?\s*[A-Z]{3}/[A-Z]{3}", line)):
+                bare_conversions.append(f"{os.path.relpath(fp, str(root))}:{i+1}")
+    check("no unevidenced cross-currency conversions in stage artifacts",
+          not bare_conversions, "; ".join(sorted(bare_conversions)[:5]))
+
+    # Scoring honesty: the seniority penalty is mandatory. A keyword JSON
+    # for a Senior/Lead/Manager/Principal/Staff-titled JD must record both
+    # raw and final scores and apply −25% on industry mismatch — a silent
+    # raw=final there is the 2026-08-13 inflation bug (77=77, 68=68, 75=75).
+    # The applications DB's role_title is the source of truth for the JD's
+    # title; the artifact path's app_N maps to the row id.
+    SENIORITY_RE = re.compile(r"\b(?:Senior|Lead|Manager|Principal|Staff)\b", re.IGNORECASE)
+    penalty_issues = []
+    try:
+        import sqlite3 as _sqlite3
+        _con = _sqlite3.connect(str(root / "shared" / "applications.db"))
+        _titles = {r[0]: r[1] for r in _con.execute("SELECT id, role_title FROM applications")}
+    except Exception:
+        _titles = {}
+    for fp in glob.glob(str(root / "shared" / "build_artifacts" / "app_*" / "keyword_analysis.json"), recursive=False):
+        m = re.search(r"app_(\d+)", fp)
+        jd = _titles.get(int(m.group(1)), "") if m else ""
+        try:
+            data = json.loads(Path(fp).read_text(encoding="utf-8"))
+        except Exception as e:
+            penalty_issues.append(f"{os.path.relpath(fp, str(root))}: unparseable ({e})")
+            continue
+        ana = data.get("analysis", {})
+        raw = ana.get("raw_match_score_percentage")
+        final = ana.get("match_score_percentage")
+        applied = ana.get("seniority_penalty_applied")
+        # Legacy files (pre-raw schema) are not flagged — the check guards
+        # the new schema's contract, it doesn't demand a mass re-score.
+        if not raw:
+            continue
+        if not final:
+            penalty_issues.append(f"{os.path.relpath(fp, str(root))}: raw={raw} but no final")
+            continue
+        if applied:
+            expected = round(raw * 0.75)
+            if final != expected:
+                penalty_issues.append(f"{os.path.relpath(fp, str(root))}: penalty claimed but {final} != round({raw}*0.75)={expected}")
+        elif jd and SENIORITY_RE.search(jd):
+            penalty_issues.append(f"{os.path.relpath(fp, str(root))}: seniority-titled JD ({jd!r}) with raw=final, no penalty recorded")
+    check("seniority penalty applied where the title demands it",
+          not penalty_issues, "; ".join(sorted(penalty_issues)[:5]))
 
     # The ~/.hermes path bug class. Every script that resolves the skill
     # root or applications.db must consult $HERMES_HOME: a hardcoded

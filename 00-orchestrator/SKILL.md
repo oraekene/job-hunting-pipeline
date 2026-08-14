@@ -13,7 +13,7 @@ metadata:
     blueprint:
       schedule: "30 7,10,13,16,19,22 * * 1-6"   # ~30min after each discovery-scan tick — see cron/cron-jobs.md job #3
       deliver: telegram
-      prompt: "Run the pipeline sweep: FIRST reconcile (python 00-orchestrator/scripts/pipeline_processor.py --reconcile) — ingest shared/.outbox/ in application_id order, preserve complete builds (reset to 'discovered' with 'build complete, commit pending'), resolve genuinely partial 'building' rows past a sweep cycle to 'failed' (vanished), return 'failed' rows with build_attempts<3 to 'discovered'. THEN for at most 3 applications at 'discovered' status, one at a time: author the 8 stage artifacts to shared/build_artifacts/app_<id>/ FIRST (stages JD parsing → risk-tactics gate in order — the processor refuses to claim rows without artifacts), then claim (pipeline_processor.py --claim <id> → 'building') and commit via pipeline_processor.py --app-id <id> (all-or-nothing to 'staged'). On any stage failure, log the failing stage and reason in the row and continue to the next app — never half-process a row. Stop at 3 even if more are queued. THEN the approval handoff: list rows awaiting a first ping (pipeline_processor.py --approval-queue) and hand each to job-hunting-approval-submit for the Telegram ping; only when the ping actually fires, record it atomically with pipeline_processor.py --mark-approval-pinged <id>. If Telegram is unreachable, leave approval_sent_at NULL and report it in the digest — never drop the handoff silently. Never call the submit action from this job — see shared/pipeline-rules.md Rule 1."
+      prompt: "Run the pipeline sweep: FIRST reconcile (python 00-orchestrator/scripts/pipeline_processor.py --reconcile) — ingest shared/.outbox/ in application_id order, preserve complete builds (reset to 'discovered' with 'build complete, commit pending'), resolve genuinely partial 'building' rows past a sweep cycle to 'failed' (vanished), return 'failed' rows with build_attempts<3 to 'discovered'. THEN for at most 3 applications at 'discovered' status, one at a time: author the 8 stage artifacts to shared/build_artifacts/app_<id>/ FIRST (stages JD parsing → risk-tactics gate in order — the processor refuses to claim rows without artifacts), then claim (pipeline_processor.py --claim <id> → 'building') and commit via pipeline_processor.py --app-id <id> (all-or-nothing to 'staged'). On any stage failure, log the failing stage and reason in the row and continue to the next app — never half-process a row. Stop at 3 even if more are queued. THEN the approval handoff: list rows awaiting a first ping (pipeline_processor.py --approval-queue) and hand each to job-hunting-approval-submit for the Telegram ping; only after the Telegram message is actually SENT AND CONFIRMED DELIVERED (never for a digest printed in this job's own report), record it atomically with pipeline_processor.py --mark-approval-pinged <id>. If Telegram is unreachable or the send fails, leave approval_sent_at NULL and report it in the digest — never drop the handoff silently, and never mark a ping that did not reach Kenechukwu's Telegram. Never call the submit action from this job — see shared/pipeline-rules.md Rule 1."
       no_agent: false
 ---
 
@@ -93,12 +93,16 @@ skill or any skill it calls. Those rules are not optional.
 5. After the commit to `staged`, the tick runs the **approval handoff**:
    `pipeline_processor.py --approval-queue` lists every row at
    `status='staged' AND approval_sent_at IS NULL`; hand each to
-   `10-approval-and-submit` for the Telegram ping. The ping itself is
-   recorded atomically only when it actually fires
+   `10-approval-and-submit` for the Telegram ping. The ping is a real
+   Telegram message send, not a digest in this job's own report — the
+   2026-08-13 run marked seven rows pinged without ever messaging
+   Kenechukwu. It is recorded atomically only after the Telegram send is
+   confirmed delivered
    (`pipeline_processor.py --mark-approval-pinged <id>` — the timestamp
    and the NULL-guard live in one UPDATE, so two sweeps can't double-ping).
-   If Telegram is unreachable, `approval_sent_at` stays NULL and the
-   digest says so; the handoff is never silently dropped. After stage 9,
+   If Telegram is unreachable or the send fails, `approval_sent_at` stays
+   NULL and the digest says so; the handoff is never silently dropped and
+   a failed ping is never marked as sent. After stage 9,
    whatever Kenechukwu decides (approve / reject / edit-then-approve)
    gets logged by `11-analytics-and-learning` immediately, not batched
    for later.

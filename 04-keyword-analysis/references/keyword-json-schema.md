@@ -45,10 +45,29 @@ Intelligence" or "LLM" — record the mapping in `context_note`).
 Case- and pluralization-insensitive. Scan Experience, Skills, and
 Projects sections.
 
-**Seniority logic.** If the job title contains "Senior," "Lead," or
-"Manager," do not accept transferable-skill credit for domain keywords —
-require a strict industry match. If Kenechukwu lacks the specific industry
-experience, penalize the final score by 25%.
+**Seniority logic (mandatory, not advisory).** If the job title contains
+"Senior," "Lead," "Manager," "Principal," or "Staff," do not accept
+transferable-skill credit for domain keywords — require a strict industry
+match. If Kenechukwu lacks the specific industry experience, the final
+score is penalized by 25%: `match_score_percentage` MUST equal
+`round(raw_match_score_percentage * 0.75)`. Record BOTH numbers in
+`analysis`:
+
+```json
+"analysis": {
+  "raw_match_score_percentage": 0,
+  "match_score_percentage": 0,
+  "seniority_penalty_applied": true
+}
+```
+
+`raw_match_score_percentage` is the Phase-3 arithmetic before the
+penalty; `match_score_percentage` is what downstream stages (resume
+match, staging gate) actually consume. A silent raw=final on a
+Manager-titled JD is a Rule 2 violation — the 2026-08-13 sweep shipped
+77=77/68=68/75=75 exactly this way. If the title has no seniority
+qualifier and no industry mismatch, `seniority_penalty_applied` is
+`false` and the two numbers are equal.
 
 ## Phase 3: Scoring
 
@@ -68,7 +87,9 @@ Rating: `Excellent` (>80%), `Good` (60–79%), `Needs Work` (<60%).
     "total_keywords_found": 0,
     "total_possible_points": 0,
     "earned_points": 0,
+    "raw_match_score_percentage": 0,
     "match_score_percentage": 0,
+    "seniority_penalty_applied": false,
     "match_rating": "Excellent | Good | Needs Work"
   },
   "keywords": [

@@ -296,13 +296,35 @@ def count_risk_gate(gate_log_path):
 
 
 def extract_gaps_from_risk_log(gate_log_path, app_id, company, role_title):
-    """Extract FAIL entries from risk-tactics-change-log as open_gaps rows."""
+    """Extract FAIL entries from risk-tactics-change-log as open_gaps rows.
+
+    Accepts both formats stage runs have produced:
+      1. One line:  [FAIL] <claim> — <missing evidence>
+      2. Multi-line (app_11):  ### [FAIL] <claim>
+                              - Missing evidence: <...>
+                              - evidence: <...>
+    Summary lines like "[FAIL]: N" are never extracted as gaps.
+    """
     with open(gate_log_path, encoding="utf-8") as f:
         text = f.read()
     gaps = []
-    # Pattern: [FAIL] <description> — <missing evidence>
-    for m in re.finditer(r"\[FAIL\]\s*(.+?)\s*—\s*(.+?)(?=\n|$)", text):
+    # Form 1: [FAIL] <claim> — <evidence> on one line (em-dash).
+    for m in re.finditer(r"\[FAIL\]\s*(?!:)(.+?)\s*—\s*(.+?)(?=\n|$)", text):
         gaps.append((m.group(1).strip(), m.group(2).strip()))
+    # Form 2: "### [FAIL] <claim>" (or "- [FAIL] <claim>") followed by
+    # a "Missing evidence:" / "evidence:" line within the next 3 lines.
+    for m in re.finditer(
+            r"^#+\s*\[FAIL\]\s*(?!:)(.+)$", text, re.M):
+        claim = m.group(1).strip()
+        tail_start = m.end()
+        tail = text[tail_start:tail_start + 600]
+        ev = re.search(
+            r"^\s*[-*]\s*(?:Missing evidence|evidence)\s*:\s*(.+?)$",
+            tail, re.M | re.I)
+        if ev:
+            evidence = ev.group(1).strip()
+            if not any(c == claim for c, _ in gaps):
+                gaps.append((claim, evidence))
     return gaps
 
 
