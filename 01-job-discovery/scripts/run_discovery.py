@@ -355,8 +355,8 @@ for posting in postings:
             INSERT INTO applications
                 (company, role_title, posting_url, source_board, status,
                  discovered_at, posted_at, posted_at_raw, posting_fingerprint,
-                 priority, salary_info)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 salary_range)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             posting["company"],
             posting["role_title"],
@@ -367,7 +367,6 @@ for posting in postings:
             posting.get("posted_at"),
             posting.get("posted_at_raw"),
             fp,
-            posting.get("priority", "normal"),
             posting.get("salary", ""),
         ))
         existing_fingerprints.add(fp)

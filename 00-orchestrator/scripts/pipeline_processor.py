@@ -17,8 +17,11 @@ db-concurrency.md:
                caller claimed (status='building').
    3. reject  — mark an unavailable posting rejected_by_kene with a reason.
    4. reconcile — run FIRST on every sweep tick: ingest any shared/.outbox/
-                files (one transaction per file, rejections recorded with a
-                reason), preserve complete builds (reset to 'discovered' as
+                *.json files (the ONLY ingest outbox — root-level .outbox
+                folders are debug litter and never read; one transaction
+                per file, malformed files moved to rejected/ with a
+                recorded reason), preserve complete builds (reset to
+                'discovered' as
                 'build complete, commit pending'), resolve rows stuck at
                 'building' past the staleness threshold with PARTIAL builds
                 to 'failed' with outcome 'vanished', and return rows with

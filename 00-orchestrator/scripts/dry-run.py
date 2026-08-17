@@ -60,6 +60,29 @@ def check(name, ok, detail=""):
 def fingerprint(c, t, l):
     return f"{c.strip().lower()}|{t.strip().lower()}|{l.strip().lower()}"
 
+def _sql_schema_errors(conn, sql):
+    """Validate one standalone SQL statement against the live schema.
+
+    Uses SQLite's own planner (EXPLAIN prepares without executing), so a
+    wrong column or table reference surfaces as an error list. Fragments
+    (syntax errors) return [] - skipped by design, this is a drift gate,
+    not a SQL parser. Parameters (`?`) are replaced with NULL so
+    parameterized statements prepare without bindings.
+    """
+    import sqlite3 as _sq3
+    probe = re.sub(r"\?", "NULL", sql)
+    try:
+        conn.execute("EXPLAIN " + probe)
+        return []
+    except _sq3.OperationalError as exc:
+        msg = str(exc).lower()
+        if ("no such column" in msg or "no such table" in msg
+                or "has no column named" in msg or "ambiguous column" in msg):
+            return [str(exc)]
+        return []
+    except Exception:
+        return []
+
 def summarise():
     failed = [r for r in results if not r[1]]
     print(f"\n{len(results)-len(failed)}/{len(results)} checks passed")
@@ -267,7 +290,7 @@ def static_checks(root: Path):
     # Found social_outreach.outcome this way: the table names that concept
     # reply_type, and the doc telling the query-tuning loop what to read
     # named a column that has never existed.
-    import sqlite3 as _sq, tempfile as _tf
+    import sqlite3 as _sq, tempfile as _tf, ast as _ast
     _c = _sq.connect(":memory:")
     try:
         for _m in migration_chain(root):
@@ -286,6 +309,38 @@ def static_checks(root: Path):
                     badcol.add(f"{tb}.{cl} (in {os.path.relpath(fp, str(root))})")
         check("every table.column reference resolves", not badcol,
               "; ".join(sorted(badcol)[:4]))
+
+        # Schema-drift gate on script SQL (ticket pipeline-execution-fixes/02):
+        # every standalone SQL statement in .py string literals must prepare
+        # against the real schema. EXPLAIN validates column/table references
+        # without executing, so this is a read-only mutation check. Fragments
+        # (syntax errors) are skipped - best-effort, not a SQL parser.
+        badsql = set()
+        for py in glob.glob(str(root / "**" / "*.py"), recursive=True):
+            if ".merge-history" in py or "__pycache__" in py: continue
+            if os.path.basename(py) == "dry-run.py": continue  # exercised for real below
+            # title_taxonomy_builder.py targets its own title_taxonomy.sqlite
+            # (profiles/profile_vectors), not applications.db - out of scope.
+            if os.path.basename(py) == "title_taxonomy_builder.py": continue
+            try:
+                body = Path(py).read_text(encoding="utf-8", errors="replace")
+                tree = _ast.parse(body)
+            except Exception:
+                continue
+            for node in _ast.walk(tree):
+                if not isinstance(node, _ast.Constant) or not isinstance(node.value, str):
+                    continue
+                if not re.search(r"\b(SELECT|INSERT|UPDATE|DELETE)\b", node.value, re.I):
+                    continue
+                for chunk in node.value.split(";"):
+                    chunk = re.sub(r"(?m)^\s*--.*$", "", chunk).strip()
+                    if not re.match(r"(?is)^(SELECT|INSERT|UPDATE|DELETE|WITH|PRAGMA)\b", chunk):
+                        continue
+                    errs = _sql_schema_errors(_c, chunk)
+                    for e in errs:
+                        badsql.add(f"{os.path.relpath(py, str(root))}:{node.lineno}: {e}")
+        check("every SQL statement in scripts resolves against the schema", not badsql,
+              "; ".join(sorted(badsql)[:5]))
     finally:
         _c.close()
 
@@ -482,6 +537,18 @@ def main():
         check("soft-deleted journal entries leave the live set", live == 1 and total == 2, f"{live} live of {total}")
     else:
         check("career_journal has an identifiable body/timestamp column", False, f"cols: {jc}")
+
+    # Schema-drift gate mutation cases (ticket pipeline-execution-fixes/02):
+    # a wrong-column statement must be flagged, a correct one must pass.
+    # EXPLAIN only - nothing here executes against the fixture.
+    bad = _sql_schema_errors(conn, "SELECT no_such_column_xyz FROM applications")
+    check("schema-drift gate flags a wrong-column SQL",
+          any("no such column" in e for e in bad), "; ".join(bad))
+    bad = _sql_schema_errors(conn, "SELECT source FROM posting_sources")
+    check("schema-drift gate flags the observed source-vs-source_name drift",
+          any("no such column" in e for e in bad), "; ".join(bad))
+    good = _sql_schema_errors(conn, "SELECT id, status, posting_url FROM applications")
+    check("schema-drift gate passes a correct SQL", not good, "; ".join(good))
 
     conn.close()
     return summarise()

@@ -81,7 +81,7 @@ REQUIRED_SHARED = [
 # The previous range(2, 15) stopped four short of README step 4.
 SCHEMA_FILES = ["shared/applications_db_schema_addendum.sql"] + [
     f"shared/applications_db_schema_addendum_{i}.sql"
-    for i in range(2, 21)
+    for i in range(2, 22)
     if i != 3
 ]
 
@@ -101,6 +101,13 @@ SENTINEL_TABLES = {
     "portfolio_artifacts": "applications_db_schema_addendum_18.sql",
     "x_follow_engagement_attempts": "applications_db_schema_addendum_19.sql",
     "cron_executions": "applications_db_schema_addendum_20.sql",
+}
+
+# _21 adds a column, not a table - check it explicitly the same way.
+SENTINEL_COLUMNS = {
+    "skill_self_edits": {
+        "rotation_week": "applications_db_schema_addendum_21.sql",
+    },
 }
 
 HOOK_REL = "security/hooks/verify-submit-approval.py"
@@ -253,15 +260,23 @@ def check_submit_hook():
     else:
         record(OK, "ownership-hook", "Registered.")
 
-    if "hooks_auto_accept" not in config_text and not os.environ.get(
-        "HERMES_ACCEPT_HOOKS"
+    cli_config_text = ""
+    try:
+        cli_config_text = (HERMES_HOME / "cli-config.yaml").read_text(errors="replace")
+    except Exception:
+        pass
+    if (
+        "hooks_auto_accept" not in config_text
+        and "hooks_auto_accept" not in cli_config_text
+        and not os.environ.get("HERMES_ACCEPT_HOOKS")
     ):
         record(
             WARNING,
             "hooks-auto-accept",
-            "Neither hooks_auto_accept nor HERMES_ACCEPT_HOOKS is set. The "
-            "hook is registered, but on unattended cron runs it may not fire "
-            "— which is exactly when nobody is watching.",
+            "Neither hooks_auto_accept (config.yaml or cli-config.yaml) nor "
+            "HERMES_ACCEPT_HOOKS is set. The hook is registered, but on "
+            "unattended cron runs it may not fire — which is exactly when "
+            "nobody is watching.",
             "See security/security-setup.md's hooks_auto_accept note.",
         )
 
@@ -425,6 +440,29 @@ def check_database():
     else:
         record(OK, "schema-chain", "All sentinel tables present.")
 
+    missing_columns = {}
+    for table, cols in SENTINEL_COLUMNS.items():
+        if table not in present:
+            continue
+        try:
+            have = {
+                r[1]
+                for r in con.execute(f"PRAGMA table_info({table})")
+            }
+        except Exception:
+            have = set()
+        for col, src in cols.items():
+            if col not in have:
+                missing_columns[f"{table}.{col}"] = src
+    if missing_columns:
+        record(
+            CRITICAL,
+            "schema-chain",
+            "Missing columns, so the addendum chain is incomplete: "
+            + "; ".join(f"{c} (from {src})" for c, src in missing_columns.items()),
+            "Apply the remaining addenda IN ORDER — see README install step 4.",
+        )
+
     # WAL. See shared/db-concurrency.md — the parallel sweep has multiple
     # subagents writing to this file, and SQLite's default on a held lock
     # is to fail the write rather than wait for it.
@@ -478,6 +516,57 @@ def check_seeded_config():
             record(level, f"config:{Path(rel).name}", f"{rel} missing entirely.", None)
 
 
+# ---------------------------------------------------------------------
+# Check 5 — cron registration. The 23 non-blueprint jobs used to depend
+# on hand-typed `hermes cron create` commands, and the 2026-08-15
+# diagnosis found most of them never got created. register-jobs.py makes
+# it an idempotent process; this check is READ-ONLY (it never creates)
+# and merely reports how many manifest jobs are missing from the live
+# scheduler.
+# ---------------------------------------------------------------------
+def check_cron_registration():
+    import subprocess as _sp
+
+    reg = SKILL_ROOT / "cron" / "register-jobs.py"
+    if not reg.exists():
+        record(
+            WARNING,
+            "cron-registration",
+            "cron/register-jobs.py is missing from the package.",
+            "Reinstall the package.",
+        )
+        return
+    try:
+        proc = _sp.run(
+            [sys.executable, str(reg), "--check"],
+            capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=180,
+        )
+    except Exception as exc:
+        record(
+            WARNING,
+            "cron-registration",
+            f"Could not run register-jobs.py --check: {exc}",
+            "Run `python cron/register-jobs.py --check` by hand.",
+        )
+        return
+    missing = [
+        line for line in proc.stdout.splitlines()
+        if line.startswith("MISSING")
+    ]
+    if proc.returncode != 0 and missing:
+        record(
+            WARNING,
+            "cron-registration",
+            f"{len(missing)} documented cron job(s) are not registered with "
+            "the scheduler.",
+            "Run `python cron/register-jobs.py` once (idempotent), or accept "
+            "the four blueprints plus the subset already registered.",
+        )
+    else:
+        record(OK, "cron-registration", "All documented cron jobs registered.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true")
@@ -490,6 +579,7 @@ def main():
         check_database,
         check_seeded_config,
         check_sync_hazard,
+        check_cron_registration,
     ):
         try:
             check()

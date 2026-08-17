@@ -342,6 +342,7 @@ sqlite3 applications.db < applications_db_schema_addendum_17.sql  # fact influen
 sqlite3 applications.db < applications_db_schema_addendum_18.sql  # portfolio artifacts + link health
 sqlite3 applications.db < applications_db_schema_addendum_19.sql  # outreach send path (renumbered from ADDENDUM-27's _6 on merge)
 sqlite3 applications.db < applications_db_schema_addendum_20.sql  # cron execution ledger
+sqlite3 applications.db < applications_db_schema_addendum_21.sql  # rotation_week staggered proposal release
 
 # Concurrency. NOT optional if you ever enable the parallel sweep — see
 # shared/db-concurrency.md. journal_mode is a property of the FILE, so
@@ -393,8 +394,11 @@ hermes cron edit <interview-prep-job-id> --script interview-prep-wake-gate.py
 # Every other job (open-web sweep, ghost-check, the monthly refreshes, the
 # backup trio, social listening, career-pulse, prospecting, career-path
 # re-evaluation, the outreach send-path jobs 19-21, and the rest) isn't
-# blueprinted — see cron/cron-jobs.md for each exact command. Do not count
-# them from here; cron-jobs.md is the register and this line is not.
+# blueprinted — register them all with the idempotent registration process
+# (safe to re-run; skips anything already registered):
+python cron/register-jobs.py          # creates every missing non-blueprint job
+python cron/register-jobs.py --check  # read-only: reports missing jobs
+# See cron/cron-jobs.md for each job's exact command and rationale.
 
 # 7. Seed the config files that ship as templates. Every one of these is
 #    seeded through a conversation, never hand-filled — the elicitation is

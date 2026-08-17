@@ -129,6 +129,12 @@ and report counts by status: `discovered`, `building`, `staged`,
 query the DB. Approval backlog: `python 00-orchestrator/scripts/
 pipeline_processor.py --approval-queue`.
 
+Exact state commands (no flag-guessing — `pipeline_processor.py` has no
+`--status`):
+
+- State counts + recent row: `python 00-orchestrator/scripts/_inspect_state.py`
+- Discovered/building queue: `python 00-orchestrator/scripts/_query_discovered.py`
+
 ## Regression harness — the processor's red/green loop
 
 ```
@@ -165,7 +171,7 @@ python 00-orchestrator/scripts/dry-run.py --skill-dir .
 
 Runs the pipeline's invariants against a fixture posting in a throwaway
 database. No network, and it never touches `shared/applications.db`.
-Twenty-seven checks in two phases.
+Thirty-three checks in two phases.
 
 **Static — package integrity.** Frontmatter parses on all 27 skills; no
 description exceeds 60 characters (the skill index truncates at 57, and

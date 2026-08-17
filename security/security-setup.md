@@ -80,6 +80,14 @@ process for a matching tool call in the first place, so every other tool
 call (reading a file, calling a research skill, anything non-browser)
 never pays for it.
 
+**Windows note (2026-08-17):** the `~` in the command above is never
+expanded on a Windows install — Hermes resolves it relative to its own
+tree and the hook exits 2 with "No such file or directory". On Windows,
+use the absolute path instead:
+`python C:\Users\<you>\.hermes\agent-hooks\job-hunting-verify-submit-approval.py`
+(same for the section 3b hook). Test each standalone before trusting it:
+pipe a JSON call into it and expect exit 0 + valid JSON.
+
 **Three things that will bite you if you skip them:**
 
 - **A crashed or timed-out hook is not the same as a hook that blocked.**

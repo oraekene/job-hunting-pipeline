@@ -1,6 +1,6 @@
 # 01 - Document the status-query commands in the orchestrator skill
 
-**Status:** ready-for-agent
+**Status:** done (implemented 2026-08-17 by ticket single-base-remediation/02)
 
 **Blocked by:** None
 
