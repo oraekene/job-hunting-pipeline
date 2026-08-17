@@ -265,7 +265,7 @@ def main():
 
     # Check pending proposals
     c.execute("SELECT * FROM skill_self_edits WHERE approved_by_kene = 0 ORDER BY proposed_at")
-    pending = c.fetchall()
+    pending = [dict(row) for row in c.fetchall()]  # dict() so .get() works; sqlite3.Row has no .get()
     print(f"\nPending proposals: {len(pending)}")
 
     # Check email_insights
