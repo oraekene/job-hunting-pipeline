@@ -42,3 +42,6 @@ schema_query.sql
 
 # Stray generated resume at repo root (regenerable, personal)
 tailored_resume.docx
+
+# Cron-registration audit trail (machine-local, regenerated)
+cron/registered-jobs.json

@@ -4,8 +4,8 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** done (2026-08-17)
 
-- [ ] A checklist file exists (under `diagnostics/` or `docs/`) listing: Telegram DNS failures, unclean gateway exit, desktop boot timeouts, `execute_code` blocked in cron, browser URL shell-interpretation, unknown `shell` tool, cron PATH ("Python was not found")
-- [ ] Each item has a monitoring/verification step and an owner note (Hermes platform vs environment)
-- [ ] The checklist states explicitly: no repo code changes for these items
+- [x] A checklist file exists (under `diagnostics/` or `docs/`) listing: Telegram DNS failures, unclean gateway exit, desktop boot timeouts, `execute_code` blocked in cron, browser URL shell-interpretation, unknown `shell` tool, cron PATH ("Python was not found")
+- [x] Each item has a monitoring/verification step and an owner note (Hermes platform vs environment)
+- [x] The checklist states explicitly: no repo code changes for these items

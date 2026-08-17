@@ -554,12 +554,18 @@ def check_cron_registration():
         line for line in proc.stdout.splitlines()
         if line.startswith("MISSING")
     ]
-    if proc.returncode != 0 and missing:
+    if proc.returncode != 0:
+        detail = (
+            f"{len(missing)} documented cron job(s) are not registered with "
+            "the scheduler."
+            if missing
+            else f"register-jobs.py --check exited {proc.returncode}: "
+                 f"{proc.stderr.strip()[:200] or proc.stdout.strip()[:200]}"
+        )
         record(
             WARNING,
             "cron-registration",
-            f"{len(missing)} documented cron job(s) are not registered with "
-            "the scheduler.",
+            detail,
             "Run `python cron/register-jobs.py` once (idempotent), or accept "
             "the four blueprints plus the subset already registered.",
         )

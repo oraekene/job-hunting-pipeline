@@ -4,10 +4,10 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** done (2026-08-17)
 
-- [ ] The orchestrator skill's status-queries section names `_inspect_state.py` (counts + recent row) and `_query_discovered.py` (discovered/building queue)
-- [ ] The stray root-level `.outbox/_inspect_db.py` debug file is removed
-- [ ] The processor's docs state the real ingest outbox is `shared/.outbox` (JSON only, `consumed/`/`rejected/` semantics)
-- [ ] `python 00-orchestrator/scripts/dry-run.py --skill-dir .` stays 29/29
-- [ ] `.scratch/orchestrator-status-query/issues/01-document-state-query-commands.md` is marked `done` (it is satisfied by this ticket)
+- [x] The orchestrator skill's status-queries section names `_inspect_state.py` (counts + recent row) and `_query_discovered.py` (discovered/building queue)
+- [x] The stray root-level `.outbox/_inspect_db.py` debug file is removed
+- [x] The processor's docs state the real ingest outbox is `shared/.outbox` (JSON only, `consumed/`/`rejected/` semantics)
+- [x] `python 00-orchestrator/scripts/dry-run.py --skill-dir .` stays 29/29
+- [x] `.scratch/orchestrator-status-query/issues/01-document-state-query-commands.md` is marked `done` (it is satisfied by this ticket)

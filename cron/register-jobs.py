@@ -40,6 +40,7 @@ SKILL_ROOT = Path(
     os.environ.get("JOB_HUNTING_ROOT", HERMES_HOME / "skills" / "job-hunting")
 )
 SECURITY_SCRIPTS = SKILL_ROOT / "security" / "scripts"
+BUNDLE_SCRIPTS = SKILL_ROOT / "cron" / "scripts"
 REGISTRY = SKILL_ROOT / "cron" / "registered-jobs.json"
 
 ID_RE = re.compile(r"^\s*([0-9a-f]{12})\s+\[")
@@ -312,6 +313,7 @@ MANIFEST = [
     dict(num="24", name="Verify cron config",
          schedule="0 5 * * *", script="verify-cron-config.py",
          no_agent=True, deliver="telegram",
+         sidecars=["cron-desired-state.yaml"],
          prompt=("Verify the job-hunting cron configuration: execute python3 "
                  "verify-cron-config.py with no arguments and deliver its "
                  "stdout (it compares live jobs against "
@@ -341,16 +343,24 @@ def live_identities(jobs):
 def ensure_script(entry):
     if not entry.get("script"):
         return None
-    src = SECURITY_SCRIPTS / entry["script"]
-    dst = SCRIPTS_DIR / entry["script"]
-    if not src.exists():
-        return None
-    SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
-    if not dst.exists():
-        import shutil
-        shutil.copy2(src, dst)
-        print(f"  copied script -> {dst}")
-    return dst
+    name = entry["script"]
+    for src_dir in (SECURITY_SCRIPTS, BUNDLE_SCRIPTS):
+        src = src_dir / name
+        if src.exists():
+            SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
+            dst = SCRIPTS_DIR / name
+            if not dst.exists():
+                import shutil
+                shutil.copy2(src, dst)
+                print(f"  copied script -> {dst}")
+            for sidecar in entry.get("sidecars", []):
+                ssrc = src_dir / sidecar
+                sdst = SCRIPTS_DIR / sidecar
+                if ssrc.exists() and not sdst.exists():
+                    shutil.copy2(ssrc, sdst)
+                    print(f"  copied sidecar -> {sdst}")
+            return dst
+    return None
 
 
 def build_create_args(entry):
@@ -382,10 +392,11 @@ def create_job(entry):
         return False
     created_id = None
     for line in (proc.stdout + "\n" + proc.stderr).splitlines():
-        m = re.search(r"([0-9a-f]{12})", line)
-        if m and "id" in line.lower():
-            created_id = m.group(1)
-            break
+        if re.search(r"creat", line, re.I):
+            m = re.search(r"([0-9a-f]{12})", line)
+            if m:
+                created_id = m.group(1)
+                break
     registry = []
     if REGISTRY.exists():
         try:

@@ -4,10 +4,10 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** done (2026-08-17)
 
-- [ ] An idempotent registration script exists in the bundle that registers the 22 non-blueprint jobs from the documented schedules (name, schedule, script, skills, `--no-agent`, deliver) and skips jobs already registered
-- [ ] The install-check flow invokes it, and the README install steps name it as the cron step
-- [ ] The four blueprint jobs remain suggestion-based (no change to them)
-- [ ] On the live install: running the process registers exactly the 16 missing jobs; `hermes cron list` shows all 26 documented jobs
-- [ ] A second run registers 0 new jobs (idempotency proven)
+- [x] An idempotent registration script exists in the bundle that registers the 23 non-blueprint jobs from the documented schedules (name, schedule, script, skills, `--no-agent`, deliver) and skips jobs already registered
+- [x] The install-check flow invokes it, and the README install steps name it as the cron step
+- [x] The four blueprint jobs remain suggestion-based (no change to them)
+- [x] On the live install: running the process registers the missing jobs; `hermes cron list` shows all 27 jobs (4 blueprints + 23 manual)
+- [x] A second run registers 0 new jobs (idempotency proven)

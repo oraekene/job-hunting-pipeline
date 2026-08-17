@@ -4,8 +4,8 @@
 
 **Blocked by:** None — can start immediately.
 
-**Status:** ready-for-agent
+**Status:** done (2026-08-17)
 
-- [ ] `CONTEXT.md` exists at the repo root and follows the domain-docs single-context convention
-- [ ] `docs/adr/0001-single-base-repository.md` records the decision (both repos named, their roles declared, date stamped)
-- [ ] `python 00-orchestrator/scripts/dry-run.py --skill-dir .` stays 29/29 after the edits
+- [x] `CONTEXT.md` exists at the repo root and follows the domain-docs single-context convention
+- [x] `docs/adr/0001-single-base-repository.md` records the decision (both repos named, their roles declared, date stamped)
+- [x] `python 00-orchestrator/scripts/dry-run.py --skill-dir .` stays 29/29 after the edits

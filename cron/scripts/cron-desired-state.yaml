@@ -1,0 +1,112 @@
+# Desired state for the job-hunting cron config — verified daily by
+# verify-cron-config.py (no-agent cron job, telegram delivery on drift).
+#
+# Match is by name prefix: hermes job ids are unstable across re-creates,
+# names are not. {{hermes_home}} and {{skill_dir}} are resolved at check time.
+#
+# Model/provider pins (layer-1): mechanical pipeline jobs run on the fast
+# poolside/laguna-xs-2.1:free model via nous — pipeline work needs no deep
+# reasoning. The weekly self-improvement review keeps the main model
+# (laguna-s-2.1:free) because it drafts skill-edit proposals.
+jobs:
+  # Job 1 — discovery scan (blueprint: job-hunting-discovery)
+  - id: discovery-scan
+    match_name: "Scan configured sources in shared/sources.yaml for"
+    schedule: "0 7,10,13,16,19,22 * * 1-6"
+    workdir: "{{skill_dir}}"
+    script: discovery-wake-gate.py
+    skills: [job-hunting-discovery]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 3 — pipeline sweep (reconcile + claim at most 3)
+  - id: pipeline-sweep
+    match_name: "Pipeline sweep (reconcile + claim at most 3)"
+    schedule: "30 7,10,13,16,19,22 * * 1-6"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-orchestrator]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 5 — weekly self-improvement review (keeps the main model)
+  - id: weekly-review
+    match_name: "Run job-hunting-analytics's weekly self-improvemen"
+    schedule: "0 8 * * 1"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-analytics]
+    model: "poolside/laguna-s-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 9 — interview-prep sweep
+  - id: interview-prep
+    match_name: "For every application where interview_request_at i"
+    schedule: "0 9,15 * * 1-6"
+    workdir: "{{skill_dir}}"
+    script: interview-prep-wake-gate.py
+    skills: [job-hunting-interview-prep]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 2 — open-web discovery sweep
+  - id: open-web-sweep
+    match_name: "Check shared/target-profile.yaml's discovery_mode"
+    schedule: "0 9 * * 1-6"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-discovery]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 8 — nightly tier-1 backup (no-agent)
+  - id: nightly-backup
+    match_name: "backup.sh"
+    schedule: "0 3 * * *"
+    script: backup.sh
+    no_agent: true
+    deliver: telegram
+
+  # Job 16 — bi-monthly config drift check
+  - id: config-drift-check
+    match_name: "Bi-monthly configuration drift check. Re-read care"
+    schedule: "0 9 1 */2 *"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-interests-profile]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 17 — nightly retrieval-index refresh (no-agent)
+  - id: refresh-index
+    match_name: "refresh-index.sh"
+    schedule: "0 4 * * *"
+    script: refresh-index.sh
+    no_agent: true
+    deliver: telegram
+
+  # NEW — reconcile-only safety net (no-agent). Catches rows stuck at
+  # 'building' after a sweep job dies, without spending a model turn.
+  - id: reconcile-only
+    match_name: "Reconcile-only"
+    schedule: "0,30 * * * 1-6"
+    script: reconcile-only.py
+    no_agent: true
+    deliver: telegram
+
+  # NEW — daily cron-config verification (no-agent). Silent when the
+  # config matches; loud telegram alert on drift.
+  - id: verify-cron-config
+    match_name: "Verify cron config"
+    schedule: "0 5 * * *"
+    script: verify-cron-config.py
+    no_agent: true
+    deliver: telegram
