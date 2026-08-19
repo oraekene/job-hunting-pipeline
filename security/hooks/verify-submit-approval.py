@@ -153,13 +153,15 @@ def main() -> None:
 
     marker_path = ACTIVE_APP_DIR / f"{session_id}.json"
     if not marker_path.exists():
-        _block(
-            "job-hunting submit-gate: this looks like a submit click but no "
-            f"active-application marker exists at {marker_path} — "
-            "10-approval-and-submit must write that file before opening a "
-            "form (see that skill's step 2). Refusing to guess which "
-            "application this belongs to."
-        )
+        # No active-application marker => the job-hunting pipeline is NOT
+        # running in this session (markers are written by 10-approval-and-
+        # submit BEFORE it opens a form, and removed at sweep end). This is
+        # then an ordinary session clicking a control whose label merely
+        # contains a submit keyword (search buttons, form previews, plain
+        # browsing). Blocking here would corrupt unrelated Hermes browser
+        # work, so allow rather than fail closed — the gate only claims
+        # authority over sessions the pipeline has explicitly flagged.
+        _allow()
         return
 
     try:
