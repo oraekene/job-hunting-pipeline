@@ -13,7 +13,7 @@ metadata:
     blueprint:
       schedule: "0 7,10,13,16,19,22 * * 1-6"   # business hours, Mon–Sat, WAT — see cron/cron-jobs.md job #1
       deliver: telegram
-      prompt: "Scan configured sources in shared/sources.yaml for new postings, dedupe against the applications DB, cheap-filter against Kenechukwu's target profile in shared/target-profile.yaml, and queue anything that survives — respecting today's remaining daily cap (shared/pipeline-rules.md Rule 3). Deliver a short digest. Use [SILENT] if nothing new was found."
+      prompt: "Scan configured sources in shared/sources.yaml for new postings, dedupe against the applications DB, cheap-filter against Kenechukwu's target profile in shared/target-profile.yaml, and queue anything that survives — respecting today's remaining daily cap (shared/pipeline-rules.md Rule 3). Deliver a short digest. Use [SILENT] if nothing new was found. Limit the run: process each source at most once. If a source is blocked, unreachable, or requires a login/sign-in, note it in one line, mark it as blocked for the run, and move on to the next source — do NOT retry it, do NOT attempt workarounds, and do NOT re-visit already-visited sources. If every source is blocked/unreachable, report that in one line and stop."
       no_agent: false
 ---
 
@@ -239,6 +239,18 @@ No JD parsing beyond the cheap filter, no resume tailoring, no contact
 with the employer. If a posting looks great, it still just sits in the
 `discovered` queue until `00-orchestrator` walks it through the rest of
 the pipeline — this skill's job ends at "found and queued."
+
+## Run discipline (blocked/unreachable sources)
+
+This is a high-frequency cron job (6x/day); every run has a hard budget.
+A source that is blocked, unreachable, or behind a login/sign-in wall is
+a one-line note, NOT a retry loop. Concretely: process each source at
+most once; on a block note it and continue; never attempt workarounds
+(proxy tricks, headless bypasses, captcha hacks); never re-visit a
+source twice in one run; and if every source is unavailable, report that
+in one line and stop. The `blueprint.prompt` above already instructs
+this each run — keep that wording when editing the blueprint. Do not
+rely on the agent to invent this discipline; it lives here in the skill.
 
 ## Cron wiring
 
