@@ -46,9 +46,18 @@ Per-keyword sanity: `category` in {Hard Skill, Domain Concept, Soft Skill},
   zero stale `63`/`47` references after the fix).
 - Ready-made runner: `../scripts/verify_app_artifacts.py <app_dir>` — recomputes the
   math, cross-checks the resume_match.md header, runs the generator, greps the
-  docx, and flags stale references. The tempfile-based ad-hoc script pattern
-  (hermes-verify-* prefix, delete after run) also works when a full script isn't
-  available.
+  docx, and flags stale references. **⚠ FIXED 2026-08-17: `check()` was defined
+  with 3 args while every call site passes 2 — crashed on its first check for
+  every app dir. The fix: `def check(cond, msg, fails=None)` with the append
+  guarded by `fails is not None`. The script now exits 0 with ALL CHECKS PASSED
+  (verified on app_20/21/22). The sibling copy at
+  `job-hunting-artifact-qa/scripts/verify_app_artifacts.py` still carries the
+  old 3-arg bug — apply the same one-line fix there before relying on it.** A
+  tempfile-based ad-hoc replica (`hermes-verify-*` prefix in the OS temp dir,
+  delete after run) remains a valid second opinion. When generating that ad-hoc
+  script FROM a template, do NOT use `%`-formatting — the embedded regex
+  `(\d+)%` / `"25%"` / `8\+?\s*years` breaks it ("not enough arguments for format
+  string"); embed the script literally or use `.replace()`/`.format()`.
 
 ## 2. Forbidden-claim grep: word boundaries, never substrings
 
@@ -96,7 +105,42 @@ it carried the full JD text including the terse Product Manager description
 and culture sections. The canonical `jd_analysis.md` remains authoritative;
 use the careers page to confirm, not to overwrite.
 
-## 5. When a score changes after the fact
+### 4b. Dead stored URL ≠ gone posting (app_22 Guidewire)
+
+A stored posting URL can be dead or a placeholder while the role is still live
+elsewhere, so a 404/redirect on the DB's `posting_url` is NOT by itself a
+"gone" signal. app_22's stored URL was `https://www.indeed.com/viewjob?jk=guidewire1`
+— not a real Indeed job key — and 404'd, yet a web search for the exact role
+title + company found the live posting on Guidewire's own careers page
+(`guidewire.com/about/careers/jobs/outbound-product-manager--ai-and-workflow-automation-jr_14798`).
+Before rejecting as `gone`: web_search the exact role title (quoted) + company,
+fetch the company's careers site, and build against the REAL posting URL. Note
+the URL correction in the ping message so the human approval gate knows the JD
+was sourced from the company site, not the dead stored link.
+
+## 5. Live JD drift from the DB row — score the LIVE posting (app_21 Arize)
+
+DB rows go stale between discovery and build. app_21's row said
+`AI Product Manager / seniority mid / $150k–220k / Remote / title_matched`,
+but the LIVE Wellfound page showed **Senior** AI Product Manager, Observability,
+$200k–250k, **Remote (United States) only**, with an explicit 3–5+ years PM/AI-ML
+gate and an engineering/tech-lead requirement. The whole seniority/penalty
+decision hinges on which one you score.
+
+- **Always re-extract the live posting at build time and score that**, not the
+  discovery-captured row. If the row's title/salary/remote scope disagrees with
+  the live page, the live page wins — record the drift explicitly in
+  `resume_match.md`'s Gate 1 verdict ("the DB row recorded a stale title X; the
+  live page shows Y") so the human approval gate understands the score.
+- A stale "AI Product Manager / mid" row would have skipped the seniority penalty
+  entirely and granted transferable domain credit it must not get. Scoring the
+  live Senior title changed app_21 from a plausible ~mid-70s pass to a 59% raw /
+  44% penalized Gate 1 FAILED — the difference between staging and not staging.
+- Same discipline for remote scope and salary: "Remote (US only)" vs "Remote"
+  changes the visa/location eligibility note; the live salary band replaces the
+  row's band in the Gate-2 comp analysis.
+
+## 6. When a score changes after the fact
 
 A corrected score must be propagated to every artifact that cites it:
 `resume_match.md` (Overall % + Gate 1 verdict wording — "exactly at threshold"

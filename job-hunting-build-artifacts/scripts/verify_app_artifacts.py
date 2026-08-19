@@ -29,9 +29,9 @@ import re
 import subprocess
 import sys
 
-def check(cond, msg, fails):
+def check(cond, msg, fails=None):
     print(("PASS: " if cond else "FAIL: ") + msg)
-    if not cond:
+    if not cond and fails is not None:
         fails.append(msg)
 
 def main():
