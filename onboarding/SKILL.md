@@ -13,6 +13,16 @@ metadata:
 
 # Onboarding
 
+## Prerequisite (first session, before the paced rollout)
+
+Run `bash security/setup-enable-guardrails.sh --yes` — it enables Hermes
+tool-loop guardrails + browser timeouts (with a config backup) and verifies
+the marker-gated submit-approval hook is installed. A fresh install ships
+guardrails OFF; this pipeline's heavy autonomous runs (discovery 6x/day,
+form filling) are the exact workloads that burn millions of tokens when a
+blocked source turns into a retry loop, so this is a precondition of the
+rollout, not an optional tweak. Idempotent and re-runnable.
+
 ## When this skill applies
 
 Use this skill on a fresh install (no target-profile.yaml, no STAR bank, or both look empty/thin) or when Kenechukwu explicitly asks to set up or reconfigure the pipeline from scratch. Sequences every setting in references/settings-catalog.md into a paced rollout — a minimum runnable subset first, everything else spread adaptively over the following sessions. Reuses 07-context-architect's Phase 0-4 as the core of the first session rather than duplicating it; this skill's own job is everything Phase 0-4 doesn't already cover (tier, sources, calibration, career-pulse, voice, and anything else in the catalog) plus the pacing/style layer around all of it. Distinct from sources.yaml's own narrower 'onboarding a new source' micro-flow, which is about adding one source, not setting up the person.
