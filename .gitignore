@@ -45,3 +45,7 @@ tailored_resume.docx
 
 # Cron-registration audit trail (machine-local, regenerated)
 cron/registered-jobs.json
+
+# Runtime discovery/submit-gate state (regenerable, per-run)
+shared/.active_application/
+shared/.discovery_results.json

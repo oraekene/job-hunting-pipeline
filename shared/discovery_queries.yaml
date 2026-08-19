@@ -1,0 +1,68 @@
+# shared/discovery_queries.yaml — social_listening query tracking
+# Schema per 14-social-discovery-outreach/references/discovery-query-design.md
+# Copy of template: shared/discovery_queries.yaml.template
+
+- id: "reddit-pm-hiring-dm"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com \"hiring\" \"product manager\" OR \"AI product manager\" OR \"AI engineer\" OR \"automation engineer\" \"DM me\" OR \"message me\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 8
+    classified_relevant: 3
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "reddit-forhire-techjobs-hiring"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com r/forhire r/jobbit r/techjobs r/remotework \"we're hiring\" OR \"looking for\" \"product manager\" OR \"AI engineer\" OR \"automation\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 5
+    classified_relevant: 1
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "n8n-community-hiring"
+  source: "hermes_generated"
+  platform: "n8n_community"
+  query_text: "site:community.n8n.io \"hiring\" \"AI automation\" OR \"n8n\" OR \"AI agent\" remote"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 4
+    classified_relevant: 3
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "x-twitter-hiring-pm-ai"
+  source: "hermes_generated"
+  platform: "x"
+  query_text: "site:x.com OR site:twitter.com \"hiring\" \"product manager\" OR \"AI product manager\" OR \"AI engineer\" OR \"automation engineer\" \"DM\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 3
+    classified_relevant: 0
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "reddit-aiproductmanagers-hiring"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com r/AIProductManagers r/AIJobs \"hiring\" \"product manager\" OR \"AI product manager\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 2
+    classified_relevant: 1
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
