@@ -221,6 +221,12 @@ def write_fixture_artifacts(artifacts_dir, naira=False, multiline_risk=False):
 
 # ---- sandbox ------------------------------------------------------------
 
+# Every case below UPDATEs one of these rows by id and asserts on it, so the
+# sandbox guarantees they exist regardless of what the live DB contains —
+# including a freshly reset / empty applications.db.
+FIXTURE_IDS = (2, 5, 11, 12)
+
+
 class Sandbox:
     def __init__(self, live_db):
         self.root = tempfile.mkdtemp(prefix="jh-regress-")
@@ -242,6 +248,30 @@ class Sandbox:
             src.backup(dst)
         dst.close()
         src.close()
+        self._seed_fixture_rows()
+
+    def _seed_fixture_rows(self):
+        """Guarantee the fixture rows every case UPDATEs actually exist.
+
+        The live DB may be empty (fresh install / post-reset); the harness
+        must not depend on leftover production rows to function.
+        """
+        con = sqlite3.connect(self.db)
+        try:
+            for app_id in FIXTURE_IDS:
+                exists = con.execute(
+                    "SELECT 1 FROM applications WHERE id=?", (app_id,)
+                ).fetchone()
+                if exists:
+                    continue
+                con.execute(
+                    "INSERT INTO applications (id, company, role_title, status) "
+                    "VALUES (?,?,?, 'discovered')",
+                    (app_id, f"Fixture Co {app_id}", f"Fixture Role {app_id}"),
+                )
+            con.commit()
+        finally:
+            con.close()
 
     def run(self, *args):
         return subprocess.run([sys.executable, self.processor, *args],
