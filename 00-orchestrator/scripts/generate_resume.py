@@ -61,7 +61,7 @@ def build_resume_docx(app_id, title_displayed, values_aligned, company_name, rol
     run = p.add_run("Kenechukwu Oraelosi")
     run.bold = True
     run.font.size = Pt(16)
-    p.add_run(f"\n{title_displayed} | AI Engineer | Automation Builder\nAsaba, Nigeria | kenechukwu.oraelosi@email.com | +234 803 000 0000").font.size = Pt(9)
+    p.add_run(f"\n{title_displayed} | AI Engineer | Automation Builder\nAsaba, Nigeria | oraelosikenny@gmail.com | +234 814 938 6184").font.size = Pt(9)
 
     # ---- Professional Summary ----
     doc.add_heading("PROFESSIONAL SUMMARY", level=0).runs[0].font.size = Pt(8)
