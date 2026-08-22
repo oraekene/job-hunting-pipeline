@@ -29,10 +29,12 @@ import re
 import subprocess
 import sys
 
-def check(cond, msg, fails=None):
+FAILS = []
+
+def check(cond, msg):
     print(("PASS: " if cond else "FAIL: ") + msg)
-    if not cond and fails is not None:
-        fails.append(msg)
+    if not cond:
+        FAILS.append(msg)
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -43,7 +45,6 @@ def main():
     args = ap.parse_args()
 
     base = args.app_dir
-    fails = []
 
     # ---- 1. keyword_analysis.json ----
     with open(os.path.join(base, "keyword_analysis.json"), encoding="utf-8") as f:
@@ -131,8 +132,8 @@ def main():
                         stale_hits.append((fn, term))
         check(not stale_hits, f"no stale references to {args.stale} (got {stale_hits})")
 
-    print("\n" + ("ALL CHECKS PASSED" if not fails else f"{len(fails)} CHECK(S) FAILED"))
-    sys.exit(1 if fails else 0)
+    print("\n" + ("ALL CHECKS PASSED" if not FAILS else f"{len(FAILS)} CHECK(S) FAILED"))
+    sys.exit(1 if FAILS else 0)
 
 if __name__ == "__main__":
     main()
