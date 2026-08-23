@@ -77,6 +77,11 @@ SKILL_ROOT = resolve_skill_root()
 WATCHED_TOOLS = {
     # Browser toolset
     "browser_click", "browser_press", "browser_tap",
+    # browser_exec (Browser Use CLI on this install): clicks land via
+    # js("document.querySelector(...).click()") or click_at_xy, so the tool
+    # name alone doesn't reveal a submit click — the keyword scan below does,
+    # against the full JSON of the call's arguments.
+    "browser_exec", "browser_use", "browser",
     # computer-use toolset. shared/site-access-model.md's model 3 — the
     # model this pipeline actually submits under — drives Kenechukwu's own
     # authenticated session via computer-use, NOT the browser toolset.
@@ -187,7 +192,13 @@ def main() -> None:
         return
 
     decision = ((row[0] if row else None) or "").strip().lower()
-    if decision != "approve":
+    # 'approve' is the documented canonical value (10-approval-and-submit
+    # step 6), but every approval this pipeline has ever recorded used the
+    # spelling 'approved' — meaning the exact-match check below would have
+    # blocked even genuinely approved submits forever. Accept both spellings
+    # of an explicit human approval; anything else (None, unset, 'reject',
+    # typos) still blocks exactly as before.
+    if decision not in ("approve", "approved"):
         _block(
             f"job-hunting submit-gate: application id={application_id} has "
             f"approval_decision={decision or '(unset)'!r}, not 'approve' — "

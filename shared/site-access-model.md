@@ -61,6 +61,17 @@ Why this is the right answer rather than just "yes, use his login":
   Kenechukwu's actually at his machine rather than as a background cron job
   hitting his session while he's away.
 
+**On this install (verified 2026-08-23), concretely:** model 3 is
+implemented via the typed-browser path (`cua_browser_*`) bound to a
+persistent named profile (`isolated_named`) — never `isolated_new`, which
+launches a throwaway browser carrying none of Kenechukwu's sessions and
+strands form-fills mid-flow at ATS login pages. The Aug 22 sweep used an
+isolated-new browser against forms that required login and stalled; that
+was a mechanism mismatch with this document, not evidence the model is
+wrong. Where even the persistent profile lacks a needed credential, stop
+on that application, flag it for manual completion in the handoff digest,
+and move on.
+
 **This model is described above for reads.** It also now covers one
 narrow, explicitly bounded *send* case — see model 4's update below for
 why that's a deliberate carve-out, not a quiet expansion of what
