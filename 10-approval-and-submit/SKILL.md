@@ -70,28 +70,12 @@ step a genuine human decision, not a formality.
 
    The form-fill below operates under `shared/site-access-model.md`'s
    **model 3** — Kenechukwu's own authenticated session and browser state,
-   driven rather than independently established by Hermes. On this
-   install that means concretely:
-
-   - Drive forms through the typed-browser path (`cua_browser_*`) bound
-     to a **persistent named profile** (`isolated_named`), never
-     `isolated_new`. A fresh throwaway browser has none of
-     Kenechukwu's sessions, which is what strands a run mid-form at an
-     ATS login page it can never pass.
-   - If an ATS demands a credential even the persistent profile doesn't
-     hold: **stop on that application** — mark it blocked-on-login in
-     the handoff digest for Kenechukwu to complete manually — and move
-     to the next one. Do not retry, loop, or attempt to establish
-     credentials yourself.
-   - Bot walls (Cloudflare/DataDoors) and CAPTCHAs get the same
-     treatment: one observation, flag for manual completion, move on.
-
-   This access model was always implicitly true, since submitting a real
-   application as Kenechukwu requires being inside whatever account
-   context the submission expects (an ATS login, an email-linked flow).
-   Stating it changes nothing about Rule 1; several skills in this
-   package were quietly assuming an access model without any of them
-   saying so, and this is that correction.
+   driven rather than independently established by Hermes. The concrete
+   mechanism on this install lives in that document's "On this install"
+   note; the short version: persistent named browser profile, never a
+   throwaway one, and login walls / bot walls / CAPTCHAs mean flag that
+   application for manual completion in the handoff digest and move on —
+   never loop.
 2. Before opening the posting's form, write
    `shared/.active_application/<session_id>.json` —
    `{"application_id": <id>, "company": "...", "role_title": "...",
@@ -151,7 +135,9 @@ step a genuine human decision, not a formality.
 5. Only on an explicit "approve" reply tied to this specific message
    (not a generic "yes" earlier in the conversation) does this skill
    write `approval_decision = 'approve'` to this application's row in the
-   applications DB, **then** press submit. Any other reply — silence,
+   applications DB (the submit gate accepts `'approved'` as a synonym —
+   that spelling is what earlier sweeps actually wrote), **then**
+   press submit. Any other reply — silence,
    "edit," "skip," anything ambiguous — leaves the application in
    `awaiting_approval`, leaves `approval_decision` unset or non-approve,
    and does nothing further. The DB write has to land before the submit
@@ -177,8 +163,9 @@ two:
    `security/security-setup.md`'s "Technical enforcement of Rule 1" —
    this is new, added specifically because layer 2 is a generic
    pattern-matched list, not something written for this pipeline's submit
-   action in particular). The hook checks the applications DB for
-   `approval_decision = 'approve'` on this exact application row before
+   action in particular). The hook checks the applications DB for an
+   explicit human approval (`approval_decision = 'approve'` or
+   `'approved'`) on this exact application row before
    letting the browser's submit/click tool call proceed at all, and
    vetoes it outright if that row isn't set — independent of whatever
    this skill's own logic thinks it already confirmed. This is why step 5

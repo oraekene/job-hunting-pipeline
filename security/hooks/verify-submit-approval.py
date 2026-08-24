@@ -5,7 +5,9 @@ job-hunting submit-gate — a Hermes `pre_tool_call` shell hook.
 Purpose (see 10-approval-and-submit/SKILL.md "Why this is a technical
 boundary" and security/security-setup.md "Technical enforcement of
 Rule 1"): veto a job-application submit click unless the applications DB
-shows `approval_decision = 'approve'` for the exact application
+shows an explicit approval (`approval_decision = 'approve'` or
+`'approved'` — both spellings are human approvals and have both appeared
+in real rows) for the exact application
 10-approval-and-submit is currently working on. This is layer 3 of three
 independent layers — it exists specifically because layer 2 (Hermes's
 built-in dangerous-command approval) is a generic pattern-matched list,
@@ -85,9 +87,14 @@ WATCHED_TOOLS = {
     # computer-use toolset. shared/site-access-model.md's model 3 — the
     # model this pipeline actually submits under — drives Kenechukwu's own
     # authenticated session via computer-use, NOT the browser toolset.
-    # Watching only browser_* left the real submit path invisible to this
-    # hook, which fails OPEN for unlisted tools. That is the one failure
-    # mode here that costs an unreviewed application.
+    # Verified on this install (2026-08-23): the typed-browser actions
+    # (cua_browser_click, cua_browser_type, ...) arrive here under the
+    # single tool name "computer_use" with the action in tool_input, so
+    # watching "computer_use" covers that whole path; the keyword scan
+    # below sees the action's arguments. Watching only browser_* left the
+    # real submit path invisible to this hook, which fails OPEN for
+    # unlisted tools. That is the one failure mode here that costs an
+    # unreviewed application.
     "computer", "computer_use", "computer-use",
 }
 
@@ -201,11 +208,11 @@ def main() -> None:
     if decision not in ("approve", "approved"):
         _block(
             f"job-hunting submit-gate: application id={application_id} has "
-            f"approval_decision={decision or '(unset)'!r}, not 'approve' — "
-            "submit blocked. 'Looked approved in the conversation' and 'is "
-            "actually approve in the DB' are two different things, "
-            "especially during an unattended run — this gate only trusts "
-            "the second one."
+            f"approval_decision={decision or '(unset)'!r}, not an explicit "
+            "human approval ('approve'/'approved') — submit blocked. "
+            "'Looked approved in the conversation' and 'is actually "
+            "approved in the DB' are two different things, especially "
+            "during an unattended run — this gate only trusts the second one."
         )
         return
 
