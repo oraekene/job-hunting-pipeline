@@ -1,180 +1,246 @@
-#!/usr/bin/env python
-"""Job discovery script to find and queue new postings."""
-import sqlite3
-import re
-from datetime import datetime
-import json
+#!/usr/bin/env python3
+"""
+Comprehensive discovery using accessible APIs and sources.
+Primary: HN Firebase API (reliable), HN Algolia search, Bing RSS with locale.
+"""
+import urllib.request, json, re, html as html_mod, sqlite3
+from urllib.parse import quote
+from datetime import datetime, timezone
 
-# Define title variants from target-profile.yaml
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept': 'application/json, text/plain, */*',
+}
+
+# ── Load DB state ──
+DB_PATH = r'C:\Users\rotim\AppData\Local\hermes\skills\job-hunting\shared\applications.db'
+conn = sqlite3.connect(DB_PATH)
+c = conn.cursor()
+c.execute("SELECT DISTINCT posting_url FROM applications WHERE posting_url IS NOT NULL")
+existing_urls = set(r[0].lower() for r in c.fetchall())
+c.execute("SELECT DISTINCT posting_url FROM posting_sources WHERE posting_url IS NOT NULL")
+for r in c.fetchall():
+    existing_urls.add(r[0].lower())
+c.execute("SELECT COUNT(*) FROM applications WHERE date(discovered_at) = date('now') AND status IN ('discovered','building','staged','awaiting_approval')")
+today_count = c.fetchone()[0]
+conn.close()
+
+daily_cap = 15
+remaining = daily_cap - today_count
+print(f"DB: {len(existing_urls)} known URLs | Today: {today_count} | Cap: {daily_cap} | Remaining: {remaining}")
+
 TITLE_VARIANTS = [
-    'Product Manager', 'AI Product Manager', 'AI Engineer',
-    'Automation Engineer', 'Associate Product Manager',
-    'Junior Product Manager', 'Workflow Engineer', 'Product Owner',
-    'Technical Product Manager', 'Growth Product Manager',
-    'AI/ML Product Manager',
+    "product manager", "ai product manager", "ai engineer",
+    "automation engineer", "associate product manager", "junior product manager",
+    "workflow engineer", "product owner", "technical product manager",
+    "growth product manager", "ai/ml product manager",
 ]
 
-LEVEL_PREFIXES = ['senior', 'staff', 'principal', 'lead', 'jr', 'junior',
-                  'associate', 'head of', 'director', 'vp']
+def title_matches(title):
+    tl = title.lower().strip()
+    return any(v in tl for v in TITLE_VARIANTS)
 
 def normalize_title(title):
     t = title.lower().strip()
-    t = re.sub(r'[^\w\s,]', ' ', t)
-    for prefix in LEVEL_PREFIXES:
-        t = re.sub(rf'^{prefix}\s+', '', t)
-    t = re.sub(r'\s+(ii|iii|iv|jr|senior|staff|principal|lead)$', '', t)
-    t = t.strip()
+    for pat in [r'\s*\(.*?\)', r'\s*-\s*contract\s*$', r'\s*-\s*req\s*#?\d+\s*$',
+                r'\s*\[\d+\]\s*$', r'^senior\s+', r'^lead\s+', r'^staff\s+',
+                r'^principal\s+', r'\s+(ii|iii|iv|v|vi)\s*$', r'[^\w\s]']:
+        import re as remod
+        t = remod.sub(pat, '', t, flags=remod.I)
+    t = re.sub(r'\s+', ' ', t).strip()
     return t
 
 def compute_fingerprint(company, title, location):
-    norm_title = normalize_title(title)
-    return f'{company.lower().strip()}|{norm_title}|{location.lower().strip()}'
+    company = (company or 'unknown').lower().strip()
+    loc = (location or 'remote').lower().strip()
+    if any(w in loc for w in ['remote', 'worldwide', 'global', 'anywhere', 'us only', 'united states']):
+        loc = 'remote' if any(w in loc for w in ['remote','worldwide','global','anywhere']) else 'united states'
+    loc = re.sub(r'[^\w\s]', '', loc).strip()
+    nt = normalize_title(title)
+    return f"{company}|{nt}|{loc}"
 
-def title_matches_variant(title):
-    title_lower = title.lower()
-    for variant in TITLE_VARIANTS:
-        v = variant.lower()
-        if v in title_lower:
-            return True
-    return False
+all_candidates = []
+source_results = {}
 
-def parse_salary_value(s):
-    if re.search(r'\d+\.?\d*\s*[Kk]\b', s):
-        num = re.search(r'([\d.]+)\s*[Kk]', s)
-        if num:
-            return float(num.group(1)) * 1000
-    if re.search(r'\d+\.?\d*\s*[Mm]\b', s):
-        num = re.search(r'([\d.]+)', s)
-        if num:
-            return float(num.group(1)) * 1000000
-    num = re.search(r'([\d,]+\.?\d*)', s.replace(',', ''))
-    if num:
-        return float(num.group(0).replace(',', ''))
-    return 0
+# ── 1. HN Algolia Search API ──
+print("\n" + "=" * 60)
+print("1. HN ALGOLIA SEARCH API")
+print("=" * 60)
 
-def main():
-    conn = sqlite3.connect('shared/applications.db')
-    cursor = conn.cursor()
-    
-    # Check current daily cap
-    cursor.execute("SELECT COUNT(*) FROM applications WHERE DATE(discovered_at) = DATE('now')")
-    today_count = cursor.fetchone()[0]
-    daily_cap = 15
-    remaining = daily_cap - today_count
-    
-    cursor.execute("SELECT posting_fingerprint FROM applications WHERE posting_fingerprint IS NOT NULL")
-    existing_fingerprints = set()
-    for row in cursor.fetchall():
-        existing_fingerprints.add(row[0])
-    
-    cursor.execute("SELECT posting_url FROM applications WHERE posting_url IS NOT NULL")
-    existing_urls = set()
-    for row in cursor.fetchall():
-        existing_urls.add(row[0])
-    
-    now_iso = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-    
-    # Postings found from web search
-    postings = [
-        {
-            'company': 'Arize AI',
-            'role_title': 'AI Product Manager',
-            'location': 'Remote (United States)',
-            'url': 'https://wellfound.com/jobs/3935668-ai-product-manager',
-            'source_board': 'Wellfound',
-            'ats_platform': 'wellfound',
-            'posted_at_raw': None,
-            'salary_disclosed': True,
-            'salary_range': '150000-220000 USD',
-            'remote_type': 'remote',
-        }
-    ]
-    
-    included = []
-    duplicates = []
-    non_matches = []
-    
-    salary_floor = 36000
-    
-    for p in postings:
-        fp = compute_fingerprint(p['company'], p['role_title'], p['location'])
-        
-        if fp in existing_fingerprints or p['url'] in existing_urls:
-            duplicates.append((p['company'], p['role_title'], p['url']))
-            continue
-        
-        if not title_matches_variant(p['role_title']):
-            non_matches.append((p['company'], p['role_title'], p['url'], 'title mismatch'))
-            continue
-        
-        if p['salary_disclosed'] and p['salary_range']:
-            min_val = parse_salary_value(p['salary_range'])
-            if min_val > 0 and min_val < salary_floor:
-                non_matches.append((p['company'], p['role_title'], p['url'], 'salary below floor'))
-                continue
-        
-        # Compute match score
-        base = 70
-        title_lower = p['role_title'].lower()
-        for variant in TITLE_VARIANTS:
-            if variant.lower() in title_lower:
-                base += 15
-        if 'ai' in title_lower or 'ml' in title_lower:
-            base += 5
-        if p['salary_disclosed']:
-            base += 5
-            nums = re.findall(r'[\d.]+', p['salary_range'] or '')
-            if nums:
-                min_val = float(nums[0].replace('k', '000').replace('K', '000'))
-                if min_val >= 36000:
-                    base += 5
-        match_score = max(50, min(95, base))
-        
-        included.append({
-            **p,
-            'fingerprint': fp,
-            'match_score': match_score
-        })
-    
-    print("Discovery Summary:")
-    print(f"  - Today's count: {today_count}")
-    print(f"  - Remaining slots: {remaining}")
-    print(f"  - New postings found: {len(postings)}")
-    print(f"  - New (queued): {len(included)}")
-    print(f"  - Duplicates: {len(duplicates)}")
-    print(f"  - Non-matches (excluded): {len(non_matches)}")
-    
-    # Insert new postings - only columns that exist in the schema
-    if included:
-        for p in included:
-            cursor.execute('''INSERT INTO applications (
-                company, role_title, posting_url, source_board, ats_platform,
-                posted_at_raw, salary_disclosed, salary_range, remote_type,
-                posted_at, discovered_at, status, overall_match_score, keyword_match_score,
-                exact_phrase_count, title_matched, title_original, title_displayed,
-                posting_fingerprint, industry, seniority, build_attempts, outcome
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (p['company'], p['role_title'], p['url'], p['source_board'], p['ats_platform'],
-             p['posted_at_raw'], p['salary_disclosed'], p['salary_range'], p['remote_type'],
-             None, now_iso, 'discovered', p['match_score'], p['match_score'],
-             1, 1, p['role_title'], p['role_title'],
-             p['fingerprint'], None, 'mid', 0, 'pending'))
-            print(f"  - Queued: {p['company']} - {p['role_title']} ({p['url']}) [match score: {p['match_score']}]")
-        conn.commit()
-        print(f"\nInserted {len(included)} new postings to discovered queue")
-    
-    if duplicates:
-        print("\nDuplicates (already in DB):")
-        for d in duplicates:
-            print(f"  - {d[0]} - {d[1]} ({d[2]})")
-    
-    if non_matches:
-        print("\nExcluded:")
-        for n in non_matches:
-            print(f"  - {n[0]} - {n[1]} ({n[2]}) - {n[3]}")
-    
-    conn.close()
-    return len(included)
+hn_queries = [
+    'product manager remote hiring',
+    'AI product manager hiring',
+    'associate product manager remote',
+    'technical product manager remote',
+]
 
-if __name__ == '__main__':
-    main()
+for q in hn_queries:
+    url = 'https://hn.algolia.com/api/v1/search?query=' + quote(q) + '&hitsPerPage=15&restrictSearchableAttributes=title,text'
+    try:
+        req = urllib.request.Request(url, headers=HEADERS)
+        resp = urllib.request.urlopen(req, timeout=15)
+        data = json.loads(resp.read().decode())
+        hits = data.get('hits', [])
+        print(f"\nQuery: '{q}' -> {len(hits)} hits")
+        for hit in hits:
+            title = hit.get('title', hit.get('story_text', ''))[:80]
+            url_val = hit.get('url', '')
+            if url_val and 'http' in url_val:
+                if title_matches(title) or 'product manager' in title.lower() or 'hiring' in title.lower():
+                    print(f"  -> {title} | {url_val[:80]}")
+                    all_candidates.append({
+                        'company': '', 'role_title': title, 'posting_url': url_val,
+                        'location': 'Remote', 'salary_range': '', 'source': 'hn-algolia',
+                        'snippet': hit.get('story_text', '')[:200],
+                    })
+    except Exception as e:
+        print(f"\nQuery: '{q}' -> ERROR: {e}")
+        source_results['hn-algolia'] = str(e)
+
+source_results['hn-algolia'] = f"processed"
+
+# ── 2. HN Firebase API — job stories ──
+print("\n" + "=" * 60)
+print("2. HN FIREBASE API — Job Stories")
+print("=" * 60)
+
+try:
+    req = urllib.request.Request('https://hacker-news.firebaseio.com/v0/jobstories.json', headers=HEADERS)
+    resp = urllib.request.urlopen(req, timeout=15)
+    job_ids = json.loads(resp.read().decode())
+    print(f"Total job story IDs: {len(job_ids)}")
+
+    pm_jobs = []
+    for jid in job_ids[:100]:
+        try:
+            req2 = urllib.request.Request(f'https://hacker-news.firebaseio.com/v0/item/{jid}.json', headers=HEADERS)
+            resp2 = urllib.request.urlopen(req2, timeout=5)
+            item = json.loads(resp2.read().decode())
+            title = item.get('title', '')
+            url_val = item.get('url', '')
+            if title_matches(title) and url_val:
+                company = re.match(r'^([^\s-]+)', title)
+                company_name = company.group(1) if company else ''
+                print(f"  -> {title} | {url_val[:80]}")
+                all_candidates.append({
+                    'company': company_name, 'role_title': title, 'posting_url': url_val,
+                    'location': 'Remote', 'salary_range': '', 'source': 'hn-jobs',
+                    'snippet': item.get('text', '')[:200] if item.get('text') else '',
+                })
+                pm_jobs.append(item)
+        except Exception:
+            pass
+    source_results['hn-firebase-jobs'] = f"{len(pm_jobs)} PM matches from {len(job_ids[:100])} stories"
+    print(f"PM matches: {len(pm_jobs)}")
+except Exception as e:
+    print(f"ERROR: {e}")
+    source_results['hn-firebase-jobs'] = str(e)
+
+# ── 3. Bing RSS with locale ──
+print("\n" + "=" * 60)
+print("3. BING RSS (with en-US locale)")
+print("=" * 60)
+
+bing_queries = [
+    'product manager remote',
+    'AI engineer remote hiring',
+    'associate product manager remote',
+]
+for q in bing_queries:
+    rss_url = 'https://www.bing.com/search?q=' + quote(q) + '&format=rss&count=50&mkt=en-US&setlang=en-US'
+    try:
+        import xml.etree.ElementTree as ET
+        req = urllib.request.Request(rss_url, headers=HEADERS)
+        resp = urllib.request.urlopen(req, timeout=15)
+        xml = resp.read().decode('utf-8', errors='replace')
+        root = ET.fromstring(xml)
+        items = root.findall('.//item')
+        print(f"\nQuery: '{q}' -> {len(items)} RSS items")
+        for item in items[:5]:
+            title = (item.find('title').text or '')[:80] if item.find('title') is not None else ''
+            link = (item.find('link').text or '')[:100] if item.find('link') is not None else ''
+            print(f"  - {title}")
+            print(f"    {link}")
+            # Check if this is a job posting
+            if title_matches(title):
+                all_candidates.append({
+                    'company': '', 'role_title': title, 'posting_url': link,
+                    'location': 'Remote', 'salary_range': '', 'source': 'bing-rss',
+                    'snippet': '',
+                })
+    except Exception as e:
+        print(f"\nQuery: '{q}' -> ERROR: {e}")
+source_results['bing-rss'] = "done"
+
+# ── 4. Reddit JSON API ──
+print("\n" + "=" * 60)
+print("4. REDDIT JSON API")
+print("=" * 60)
+
+for subreddit in ['remotejs', 'digitalnomad', 'workonline', 'remotework']:
+    for t in ['new', 'hot']:
+        url = f'https://www.reddit.com/r/{subreddit}/{t}.json?limit=50'
+        try:
+            req = urllib.request.Request(url, headers={**HEADERS, 'User-Agent': 'Mozilla/5.0 (compatible; DiscoveryBot/1.0)'})
+            resp = urllib.request.urlopen(req, timeout=15)
+            data = json.loads(resp.read().decode())
+            posts = data.get('data', {}).get('children', [])
+            pm_posts = [p for p in posts if title_matches(p['data'].get('title', ''))]
+            print(f"r/{subreddit}/{t}: {len(posts)} posts, {len(pm_posts)} PM matches")
+            for p in pm_posts[:3]:
+                title = p['data']['title'][:80]
+                url_val = 'https://reddit.com' + p['data']['permalink']
+                print(f"  -> {title} | {url_val}")
+                all_candidates.append({
+                    'company': '', 'role_title': title, 'posting_url': url_val,
+                    'location': 'Remote', 'salary_range': '', 'source': f'reddit-{subreddit}',
+                    'snippet': p['data'].get('selftext', '')[:200],
+                })
+            if pm_posts:
+                source_results[f'reddit-{subreddit}'] = f"{len(pm_posts)} matches"
+        except Exception as e:
+            print(f"r/{subreddit}/{t}: ERROR: {e}")
+
+# ── 5. Dedup + Filter ──
+print("\n" + "=" * 60)
+print("5. DEDUP + FILTER")
+print("=" * 60)
+
+included = []
+duplicates = []
+non_matches = []
+
+for p in all_candidates:
+    url_lower = p.get('posting_url', '').lower()
+    if url_lower in existing_urls:
+        duplicates.append((p, 'existing URL'))
+        continue
+    fp = compute_fingerprint(p.get('company',''), p.get('role_title',''), p.get('location',''))
+    if fp in existing_urls:
+        duplicates.append((p, 'fingerprint'))
+        continue
+    if not title_matches(p.get('role_title','')):
+        non_matches.append((p, 'title mismatch'))
+        continue
+    included.append(p)
+
+print(f"\nTotal candidates found: {len(all_candidates)}")
+print(f"New (not dup): {len(included)}")
+print(f"Duplicates: {len(duplicates)}")
+print(f"Non-matches: {len(non_matches)}")
+
+# Apply daily cap
+to_queue = included[:max(0, remaining)] if remaining > 0 else []
+print(f"\nRemaining slots: {remaining}")
+print(f"To queue: {len(to_queue)}")
+
+# Print queue candidates
+for p in to_queue:
+    print(f"\n  QUEUE: {p.get('company','?')} | {p.get('role_title','')[:50]} | {p.get('posting_url','')[:60]}")
+    print(f"    Source: {p.get('source','')} | Location: {p.get('location','')}")
+
+print("\n=== SOURCE RESULTS ===")
+for src, status in source_results.items():
+    print(f"  {src}: {status}")
+print(f"\nTotal found: {len(all_candidates)}, New: {len(included)}, Queued: {len(to_queue)}, Dups: {len(duplicates)}, Non-matches: {len(non_matches)}")

@@ -1,399 +1,568 @@
 #!/usr/bin/env python3
-"""
-Job Discovery Script — 01-job-discovery run
-Scans configured sources, dedupes against DB, filters against target profile,
-queues surviving postings respecting daily cap.
-"""
+"""01-job-discovery: actual run for this cron tick.
 
-import json
-import sqlite3
-import re
-import os
+Scans declared sources in shared/sources.yaml + the open_web tier
+(open_web mode), dedupes against applications.db, cheap-filters against
+target-profile.yaml, and queues survivors respecting the daily cap.
+"""
+import json, re, sqlite3, urllib.request, urllib.parse, html as html_mod, sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-import requests
-import yaml
 
-HERMES_HOME = r"C:\Users\rotim\AppData\Local\hermes"
-SKILL_ROOT = Path(r"C:\Users\rotim\AppData\Local\hermes\skills\job-hunting")
+SKILL_ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = SKILL_ROOT / "shared" / "applications.db"
-PY = r"C:\Users\rotim\AppData\Local\hermes\hermes-agent\venv\Scripts\python.exe"
+SOURCES_PATH = SKILL_ROOT / "shared" / "sources.yaml"
+TARGET_PATH = SKILL_ROOT / "shared" / "target-profile.yaml"
+CONFIG_PATH = SKILL_ROOT / "shared" / "tier-config.yaml"
+GATE_STATE_PATH = SKILL_ROOT / "shared" / ".discovery_gate_state.json"
 
-# ============================================================
-# 1. LOAD CONFIG
-# ============================================================
-
-with open(SKILL_ROOT / "shared" / "target-profile.yaml") as f:
-    target = yaml.safe_load(f)
-
-with open(SKILL_ROOT / "shared" / "sources.yaml") as f:
-    sources_cfg = yaml.safe_load(f)
-
-discovery_mode = target.get("discovery_mode", "poll_only")
-title_variants = [v["title"] for v in target["title_variants"]]
-salary_floor = target.get("salary_floor", {}).get("amount", 36000)
-visa_required = target.get("visa_sponsorship_required", True)
-companies_exclude = target.get("companies_exclude", [])
-industries_exclude = target.get("industries_exclude", [])
-
-# Daily cap
-with open(SKILL_ROOT / "shared" / "tier-config.yaml") as f:
-    tier_cfg = yaml.safe_load(f)
-daily_cap = tier_cfg["tiers"][tier_cfg["active_tier"]]["daily_staging_cap"]
-
-# ============================================================
-# 2. LOAD DB STATE
-# ============================================================
-
-conn = sqlite3.connect(str(DB_PATH))
-conn.row_factory = sqlite3.Row
-cursor = conn.cursor()
-
-cursor.execute("""
-    SELECT COUNT(*) FROM applications
-    WHERE status IN ('staged', 'awaiting_approval', 'building')
-    AND date(discovered_at) = date('now')
-""")
-queued_today = cursor.fetchone()[0]
-remaining_cap = max(0, daily_cap - queued_today)
-
-cursor.execute("SELECT posting_fingerprint FROM applications WHERE posting_fingerprint IS NOT NULL")
-existing_fingerprints = {row[0] for row in cursor.fetchall()}
-
-cursor.execute("SELECT DISTINCT posting_url FROM applications WHERE posting_url IS NOT NULL")
-existing_urls = {row[0] for row in cursor.fetchall()}
-
-print(f"Discovery mode: {discovery_mode}")
-print(f"Daily cap: {daily_cap}, queued today: {queued_today}, remaining: {remaining_cap}")
-print(f"Existing fingerprints: {len(existing_fingerprints)}")
-
-# ============================================================
-# 3. SCAN SOURCES
-# ============================================================
-
-now = datetime.now(timezone.utc)
-now_iso = now.isoformat()
-postings = []
-
-# --- Helper: normalize title for fingerprinting ---
-def normalize_title(title):
-    t = (title or "").lower().strip()
-    t = re.sub(r'[^\w\s]', ' ', t)
-    # Remove trailing remote/hybrid/onsite/contract tags
-    t = re.sub(r'\s+(remote|hybrid|onsite|contract|full\s*time|part\s*time)\s*$', '', t)
-    # Remove seniority/level suffixes that vary by board
-    t = re.sub(r'\s+(senior|lead|jr|jr\.|sr|sr\.|principal|staff|head of|director|ii|iii|iv|v|i)\s*$', '', t)
-    t = re.sub(r'\s+', ' ', t).strip()
-    return t
-
-def compute_fingerprint(company, role_title, location):
-    return f"{normalize_title(company)}|{normalize_title(role_title)}|{normalize_title(location)}"
-
-def is_title_match(role_title):
-    """Check if role title matches any title variant."""
-    rt = (role_title or "").lower()
-    for variant in title_variants:
-        v = variant.lower()
-        # Direct substring match or key part match
-        if v in rt:
-            return True
-        # Check key terms
-        key_terms = ["product manager", "product owner", "ai product", "ai/ml product",
-                      "technical product", "growth product", "associate product",
-                      "junior product", "workflow engineer", "automation engineer"]
-        if any(kt in rt for kt in key_terms):
-            return True
-    return False
-
-def is_senior_reject(role_title):
-    """Check if role is clearly above target seniority band."""
-    rt = (role_title or "").lower()
-    # Reject clearly senior roles
-    for kw in ["senior", "lead", "principal", "head of", "director",
-               "vp ", "chief"]:
-        if kw in rt:
-            return True
-    return False
-
-def is_recent(date_str, max_age_hours=48):
-    """Check if a posting is recent (within max_age_hours)."""
-    if not date_str:
-        return True  # No date = assume recent
-    try:
-        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-        age = now - dt
-        return age < timedelta(hours=max_age_hours)
-    except:
-        return True  # Parse error = assume recent
-
-# --- Source: RemoteOK (JSON API) ---
-print("\n--- RemoteOK JSON API ---")
-try:
-    resp = requests.get("https://remoteok.com/json", timeout=15,
-                       headers={"User-Agent": "Mozilla/5.0 (compatible; JobDiscovery/1.0)"})
-    if resp.status_code == 200:
-        data = resp.json()
-        if isinstance(data, list) and len(data) > 1:
-            rem_count = 0
-            for item in data[1:]:
-                position = item.get("position", "")
-                company = item.get("company", "")
-                url = item.get("url", "")
-                date_str = item.get("date", "")
-                salary_min = item.get("salary_min", 0) or 0
-                salary_max = item.get("salary_max", 0) or 0
-                tags = item.get("tags", [])
-
-                # Cheap filter: title match
-                if not is_title_match(position):
-                    continue
-                # Seniority filter
-                if is_senior_reject(position):
-                    continue
-
-                # Parse posted_at
-                posted_at = date_str
-                try:
-                    posted_dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-                    age_hours = (now - posted_dt).total_seconds() / 3600
-                    if age_hours > 48:
-                        continue  # Too old
-                except:
-                    posted_at = now_iso
-
-                postings.append({
-                    "company": company,
-                    "role_title": position,
-                    "posting_url": url,
-                    "source": "remote-ok",
-                    "posted_at": posted_at,
-                    "posted_at_raw": date_str,
-                    "salary_min": salary_min,
-                    "salary_max": salary_max,
-                    "discovered_at": now_iso,
-                    "priority": "high" if age_hours < 24 else "normal",
-                })
-                rem_count += 1
-            print(f"  Found {rem_count} matching postings from RemoteOK")
-        else:
-            print(f"  Unexpected RemoteOK response format")
-    else:
-        print(f"  RemoteOK HTTP {resp.status_code}")
-except Exception as e:
-    print(f"  RemoteOK error: {e}")
-
-# --- Source: Web search for LinkedIn + Indeed ---
-# These results come from our web_search calls already
-print("\n--- LinkedIn search ---")
-linkedin_results = [
-    # From web_search results
-    {"company": "NMI", "role_title": "Senior Product Manager, Market Expansion – Merchant Central",
-     "url": "https://www.linkedin.com/jobs/view/senior-product-manager-market-expansion-%E2%80%93-merchant-central-at-nmi-4439315606",
-     "date_hint": "1 week ago"},
-    {"company": "NMI", "role_title": "Senior Product Manager - A2A & Money Movement",
-     "url": "https://www.linkedin.com/jobs/view/senior-product-manager-a2a-money-movement-at-nmi-4428706789",
-     "date_hint": "1 week ago"},
-    {"company": "Parking Network B.V.", "role_title": "Director, Product Management (Remote, US)",
-     "url": "https://www.linkedin.com/jobs/view/director-product-management-remote-us-at-parking-network-b-v-4431724471",
-     "date_hint": "1 week ago"},
-    {"company": "NMI", "role_title": "Senior Product Owner",
-     "url": "https://www.linkedin.com/jobs/view/senior-product-owner-at-nmi-4414964243",
-     "date_hint": "1 week ago"},
-]
-# Only keep non-senior roles
-linkedin_kept = 0
-for r in linkedin_results:
-    if not is_title_match(r["role_title"]):
-        continue
-    if is_senior_reject(r["role_title"]):
-        continue
-    postings.append({
-        "company": r["company"],
-        "role_title": r["role_title"],
-        "posting_url": r["url"],
-        "source": "linkedin",
-        "posted_at": now_iso,
-        "posted_at_raw": r["date_hint"],
-        "discovered_at": now_iso,
-        "priority": "normal",
-    })
-    linkedin_kept += 1
-print(f"  Found {linkedin_kept} matching postings from LinkedIn search")
-
-print("\n--- Indeed search ---")
-indeed_results = [
-    {"company": "Avida", "role_title": "Associate Product Manager",
-     "url": "https://www.indeed.com/rc/clk?jk=f184aac39ff1bc5c",
-     "date_hint": "recent", "salary": "$80,000 - $120,000 a year"},
-    {"company": "Govcio LLC", "role_title": "Associate Product Manager (Remote)",
-     "url": "https://www.indeed.com/rc/clk?jk=e9c34ad7fdcf01d9",
-     "date_hint": "recent", "salary": "$90,000 - $95,000 a year"},
-    {"company": "Smalls", "role_title": "Product Manager, Growth",
-     "url": "https://www.indeed.com/rc/clk?jk=03b33bbc94bfa385",
-     "date_hint": "recent", "salary": "$155,000 - $185,000 a year"},
-    {"company": "North American Bancard", "role_title": "Product Manager",
-     "url": "https://www.indeed.com/pagead/clk?mo=r&ad=-6NYlbfkN0DjHvLHG-fYDKeElzGabtytFldtxc-EIiSdXvIQjqX9HG9WJhuf7vjoLHDfq76sTV7JVPRQ63v9X5k-OSw9-2ze0zu2XANCkCLCyRnIMAMXGdDr6ryvTZ_sua_U599J-sYWmszlW5NyBvRdhrQ8q6yN7MUfxv6dhGDPTUAFYUeB01nryvkXHq9Lmlvp41F2tL-WF0m0QnMmL5qvZjlKTtJk6O__Z77FnxdBs5PiQX6Zih9mUslQyfidSpedChjSfOjV2FkNOzwKLyjqRLrK60q06tefeK-kHgbbzhdbABPmFV5DZ5hEBGbTkeTsSYnwbWydMgqKMmv9Oqvj5R4gD4k0930iv99Q13ZQNE4IhaV2d0kGEEluFCax27qDVudlC7nrb0n4ivOtUjRTy4MJhW05EKoyMUzn0_IjV0xt522vrRfTpXwml5ka1bS1WKGFiCbTFNduV8TwDN7Uy-GRsuf27iQ2pr0txAQDAfYUezyQjLKr64CCraH9cLDl0g77Y-F59Vb2N6K3n1M6w==",
-     "date_hint": "recent", "salary": "$100,000 - $130,000 a year"},
-]
-indeed_kept = 0
-for r in indeed_results:
-    if not is_title_match(r["role_title"]):
-        continue
-    if is_senior_reject(r["role_title"]):
-        continue
-    postings.append({
-        "company": r["company"],
-        "role_title": r["role_title"],
-        "posting_url": r["url"],
-        "source": "indeed",
-        "posted_at": now_iso,
-        "posted_at_raw": r["date_hint"],
-        "discovered_at": now_iso,
-        "priority": "normal",
-        "salary": r.get("salary", ""),
-    })
-    indeed_kept += 1
-print(f"  Found {indeed_kept} matching postings from Indeed search")
-
-# --- Source: Wellfound ---
-print("\n--- Wellfound ---")
-try:
-    resp = requests.get("https://wellfound.com/jobs", timeout=15,
-                       headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-    if resp.status_code == 200:
-        content = resp.text
-        # Extract job URLs
-        job_urls = re.findall(r'href="(https://wellfound\.com/jobs/\d+[^"]*)"', content)
-        job_titles = re.findall(r'<h[23][^>]*>([^<]+)</h[23]>', content)
-        well_count = 0
-        for url in job_urls[:30]:
-            # Try to extract title from URL
-            title_match = re.search(r'/([a-z-]+)-(\d+)', url)
-            if title_match:
-                role_title = title_match.group(1).replace("-", " ").title()
-            else:
-                role_title = "Unknown"
-            if not is_title_match(role_title):
-                continue
-            if is_senior_reject(role_title):
-                continue
-            postings.append({
-                "company": "",
-                "role_title": role_title,
-                "posting_url": url,
-                "source": "wellfound",
-                "posted_at": now_iso,
-                "posted_at_raw": "",
-                "discovered_at": now_iso,
-                "priority": "normal",
-            })
-            well_count += 1
-        print(f"  Found {well_count} matching postings from Wellfound")
-    else:
-        print(f"  Wellfound HTTP {resp.status_code}")
-except Exception as e:
-    print(f"  Wellfound error: {e}")
-
-# --- Source: Open-web sweep (ATS platform queries) ---
-print("\n--- OpenWeb Sweep (ATS platforms) ---")
-ats_platforms = {
-    "greenhouse": "boards.greenhouse.io",
-    "lever": "jobs.lever.co",
-    "ashby": "jobs.ashbyhq.com",
-    "workday": None,  # workday is harder to search generically
-    "smartrecruiters": "jobs.smartrecruit.co",
-    "icims": None,  # iCIMS is harder to search generically
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml',
+    'Accept-Language': 'en-US,en;q=0.9',
 }
-# These are covered by our web_search results already
-# The open-web sweep is a broad search; we'll note it ran
 
-print(f"  OpenWeb sweep: {len(ats_platforms)} ATS platforms in scope (covered via search above)")
-
-# ============================================================
-# 4. DEDUPE + FILTER + QUEUE
-# ============================================================
-
-print(f"\n{'='*60}")
-print("DEDUP + FILTER")
-print(f"{'='*60}")
-
-new_found = len(postings)
-queued = 0
-deduped = 0
-filtered_out = 0
-skip_reasons = []
-
-for posting in postings:
-    # 1. Dedup against existing fingerprints
-    fp = compute_fingerprint(posting["company"], posting["role_title"], "")
-    if fp in existing_fingerprints:
-        deduped += 1
-        skip_reasons.append(f"  DEDUP (fingerprint): {posting['company']} — {posting['role_title']}")
-        continue
-
-    # 2. URL dedup
-    if posting["posting_url"] in existing_urls:
-        deduped += 1
-        skip_reasons.append(f"  DEDUP (URL): {posting['company']} — {posting['role_title']}")
-        continue
-
-    # 3. Seniority filter
-    if is_senior_reject(posting["role_title"]):
-        filtered_out += 1
-        skip_reasons.append(f"  FILTER (seniority): {posting['company']} — {posting['role_title']}")
-        continue
-
-    # 4. Daily cap check
-    if queued >= remaining_cap:
-        filtered_out += 1
-        skip_reasons.append(f"  CAP: {posting['company']} — {posting['role_title']} (daily cap reached)")
-        continue
-
-    # 5. Insert into DB
+# ── Load target profile ──
+def load_target_profile():
+    """Load target-profile.yaml with PyYAML, fall back to simple parsing."""
+    text = TARGET_PATH.read_text()
     try:
-        cursor.execute("""
-            INSERT INTO applications
-                (company, role_title, posting_url, source_board, status,
-                 discovered_at, posted_at, posted_at_raw, posting_fingerprint,
-                 salary_range)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            posting["company"],
-            posting["role_title"],
-            posting["posting_url"],
-            posting.get("source", "unknown"),
-            "discovered",
-            posting.get("discovered_at"),
-            posting.get("posted_at"),
-            posting.get("posted_at_raw"),
-            fp,
-            posting.get("salary", ""),
-        ))
-        existing_fingerprints.add(fp)
-        existing_urls.add(posting["posting_url"])
-        queued += 1
-    except sqlite3.IntegrityError:
-        deduped += 1
-        skip_reasons.append(f"  DEDUP (IntegrityError): {posting['company']} — {posting['role_title']}")
-        continue
+        import yaml
+        return yaml.safe_load(text)
+    except ImportError:
+        # Minimal parser fallback for the fields we need
+        profile = {}
+        current_key = None
+        for line in text.splitlines():
+            m = re.match(r'^(\w+):\s*(.*)$', line)
+            if m and not line.startswith(' '):
+                current_key = m.group(1)
+                val = m.group(2).strip()
+                if val:
+                    profile[current_key] = val
+                else:
+                    # look for list items
+                    pass
+            elif line.startswith('  - ') and current_key == 'title_variants':
+                # parse title_variants
+                title_m = re.search(r'title:\s*"([^"]+)"', line)
+                if title_m:
+                    profile.setdefault('title_variants', []).append(title_m.group(1))
+        return profile
 
-conn.commit()
-conn.close()
+def load_tier_config():
+    text = CONFIG_PATH.read_text()
+    try:
+        import yaml
+        return yaml.safe_load(text)
+    except ImportError:
+        m = re.search(r'daily_staging_cap:\s*(\d+)', text)
+        return {'active_tier': 'starter', 'tiers': {'starter': {'daily_staging_cap': int(m.group(1)) if m else 15}}}
 
-# ============================================================
-# 5. SUMMARY
-# ============================================================
-print(f"\n{'='*60}")
-print(f"DISCOVERY RUN COMPLETE")
-print(f"{'='*60}")
-print(f"  Sources scanned: LinkedIn, Indeed, RemoteOK, Wellfound, OpenWeb Sweep")
-print(f"  Discovery mode: {discovery_mode}")
-print(f"  Daily cap: {daily_cap} | Queued today: {queued_today} | Remaining: {remaining_cap}")
-print(f"  New postings found: {new_found}")
-print(f"  Queued: {queued}")
-print(f"  Deduplicated (in DB): {deduped}")
-print(f"  Filtered/skipped: {filtered_out}")
-print(f"\n  Skipped postings:")
-for reason in skip_reasons:
-    print(reason)
-print(f"{'='*60}")
+def load_sources():
+    text = SOURCES_PATH.read_text()
+    try:
+        import yaml
+        return yaml.safe_load(text)
+    except ImportError:
+        return {'sources': []}
+
+# ── Fingerprint helpers ──
+def normalize_title(title):
+    t = title.lower().strip()
+    for pat in [r'\s*\(.*?\)', r'\s*-\s*contract', r'#\s*[ivx]+', r'\[\d+\]',
+                r'(ii|iii|iv|v|vi)\s*$', r'^senior\s+', r'^lead\s+',
+                r'^staff\s+', r'^principal\s+']:
+        t = re.sub(pat, '', t, flags=re.IGNORECASE)
+    t = re.sub(r'[^a-z0-9\s]', ' ', t).strip()
+    return re.sub(r'\s+', ' ', t).strip()
+
+def normalize_location(loc):
+    l = loc.lower().strip()
+    l = re.sub(r'\s*\+\s*\d+\s*more\s*', '', l)
+    if any(w in l for w in ['remote', 'worldwide', 'global', 'anywhere']):
+        return 'remote'
+    elif 'united states' in l or 'us only' in l:
+        return 'united states'
+    l = re.sub(r'[^a-z0-9\s]', ' ', l).strip()
+    return re.sub(r'\s+', ' ', l).strip()
+
+def compute_fingerprint(company, title, location):
+    return f"{company.lower().strip()}|{normalize_title(title)}|{normalize_location(location)}"
+
+def title_matches_variant(title, title_variants):
+    t = title.lower().strip()
+    for v in title_variants:
+        if v.lower().strip() in t:
+            return True
+    return False
+
+def resolve_posted_at(raw, now):
+    """Resolve relative date string to ISO timestamp. Returns (posted_at_iso, priority)."""
+    pr = (raw or '').lower().strip()
+    posted_at = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    priority = 'normal'
+    try:
+        if 'yesterday' in pr or '1 day ago' in pr:
+            posted_at = (now - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif m := re.match(r'^(\d+)\s*days? ago$', pr):
+            posted_at = (now - timedelta(days=int(m.group(1)))).strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif '1 week' in pr or 'a week' in pr:
+            posted_at = (now - timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif '2 weeks' in pr:
+            posted_at = (now - timedelta(weeks=2)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif 'just now' in pr or '1 hour' in pr or '2 hours' in pr or 'today' in pr:
+            posted_at = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif m := re.match(r'^(\d+)\s*hours? ago$', pr):
+            posted_at = (now - timedelta(hours=int(m.group(1)))).strftime('%Y-%m-%dT%H:%M:%SZ')
+        elif m := re.match(r'^(\d+)\s*mins? ago$', pr):
+            posted_at = (now - timedelta(minutes=int(m.group(1)))).strftime('%Y-%m-%dT%H:%M:%SZ')
+        else:
+            posted_at = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    except Exception:
+        posted_at = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    # priority high if < 24h
+    try:
+        posted_dt = datetime.strptime(posted_at, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+        age = (now - posted_dt).total_seconds() / 3600
+        if age <= 24:
+            priority = 'high'
+    except Exception:
+        pass
+    return posted_at, priority
+
+# ── Source handlers ──
+def check_remotive_api(title_variants, known_urls, known_fps, conn, now):
+    """Remotive.com API — reliable per env config (NOT remoteok.com which is blocked)."""
+    candidates = []
+    blocked = None
+    try:
+        req = urllib.request.Request('https://remotive.com/api/remote-jobs',
+            headers={'User-Agent': 'Mozilla/5.0'})
+        resp = urllib.request.urlopen(req, timeout=20)
+        data = json.loads(resp.read().decode())
+        jobs = data.get('jobs', [])
+        for j in jobs:
+            title = j.get('title', '')
+            if not title_matches_variant(title, title_variants):
+                continue
+            url = j.get('url', '')
+            company = j.get('company_name', '')
+            loc = j.get('candidate_required_location', '') or 'Remote'
+            salary = j.get('salary', '') or ''
+            fp = compute_fingerprint(company, title, loc)
+            if url.lower() in known_urls or fp in known_fps:
+                continue
+            posted_at_raw = j.get('date_posted_at') or j.get('epoch') or None
+            candidates.append({
+                'company': company, 'title': title, 'url': url, 'location': loc,
+                'salary': salary, 'posted_at_raw': str(posted_at_raw) if posted_at_raw else None,
+                'source': 'Remotive', 'ats_platform': 'direct',
+                'fp': fp,
+            })
+        return candidates, f"OK — {len(jobs)} total, {len(candidates)} new PM matches", None
+    except Exception as e:
+        return [], None, f"BLOCKED — {e}"
+
+def check_wellfound(title_variants, known_urls, known_fps, conn, now):
+    """Wellfound (wellfound.com/jobs) — scrape_and_filter."""
+    candidates = []
+    try:
+        req = urllib.request.Request('https://wellfound.com/jobs', headers=HEADERS)
+        resp = urllib.request.urlopen(req, timeout=20)
+        html = resp.read().decode('utf-8', errors='replace')
+        low = html.lower()
+        if 'captcha' in low or 'challenge' in low or len(html) < 5000:
+            return [], None, "BLOCKED — anti-bot/captcha challenge"
+        # Extract job links
+        job_links = re.findall(r'href="(/jobs/\d+-[^"]+)"', html)
+        job_links = list(dict.fromkeys(job_links))
+        for link in job_links[:80]:
+            full_url = f"https://wellfound.com{link}"
+            if full_url.lower() in known_urls:
+                continue
+            pos = html.find(f'href="{link}"')
+            if pos == -1:
+                continue
+            start = max(0, pos - 200)
+            end = min(len(html), pos + 2000)
+            ctx = html[start:end]
+            title_match = re.search(r'>(.*?)</a>', ctx, re.DOTALL)
+            title = re.sub(r'<[^>]+>', '', title_match.group(1)).strip() if title_match else ''
+            title = html_mod.unescape(title)
+            co_match = re.search(r'<span>([^<]*?)<!-- --> • </span>', ctx)
+            company = html_mod.unescape(co_match.group(1).strip()) if co_match else 'unknown'
+            meta_match = re.search(r'text-gray-700">(.*?)</span>', ctx, re.DOTALL)
+            location = ''
+            salary = ''
+            posted_raw = None
+            if meta_match:
+                meta_raw = re.sub(r'<[^>]+>', '', meta_match.group(1)).strip()
+                meta_raw = html_mod.unescape(meta_raw)
+                parts = [p.strip() for p in meta_raw.split('•')]
+                for p in parts:
+                    pl = p.lower().strip()
+                    if any(w in pl for w in ['yesterday','today','ago','hour','min','day','week','mon,','tue,','wed,','thu,','fri,','sat,','sun,']):
+                        posted_raw = p
+                    elif '$' in p or 'usd' in pl or re.search(r'\d+k\b', pl) or '€' in p or '£' in p:
+                        salary = p
+                    elif pl and len(p) > 2 and not location:
+                        location = p
+            if not title or title_matches_variant(title, title_variants) is False:
+                continue
+            if not title_match:
+                continue
+            if not title_matches_variant(title, title_variants):
+                continue
+            fp = compute_fingerprint(company, title, location or 'Remote')
+            if fp in known_fps:
+                continue
+            candidates.append({
+                'company': company, 'title': title, 'url': full_url,
+                'location': location or 'Remote', 'salary': salary,
+                'posted_at_raw': posted_raw, 'source': 'Wellfound',
+                'ats_platform': 'wellfound', 'fp': fp,
+            })
+        return candidates, f"OK — {len(candidates)} new PM matches from {len(job_links)} links", None
+    except Exception as e:
+        return [], None, f"BLOCKED — {e}"
+
+def check_bing_openweb(title_variants, known_urls, known_fps, conn, now):
+    """Open-web sweep via Bing HTML search with platform dorks."""
+    import gzip, io
+    platforms = {
+        'greenhouse': 'site:greenhouse.io',
+        'lever': 'site:jobs.lever.co',
+        'ashby': 'site:ashbyhq.com',
+        'workday': 'site:my.workday.com',
+        'smartrecruiters': 'site:company.smartrecruiters.com',
+        'icims': 'site:home.icims.com',
+    }
+    candidates = []
+    pm_terms = ' OR '.join(f'"{t}"' for t in title_variants)
+    total_links = 0
+    for pname, psite in platforms.items():
+        q = f'{psite} ({pm_terms}) remote'
+        url = 'https://www.bing.com/search?q=' + urllib.parse.quote(q) + '&count=15'
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            resp = urllib.request.urlopen(req, timeout=20)
+            raw = resp.read()
+            if 'gzip' in resp.headers.get('Content-Encoding', ''):
+                raw = gzip.decompress(raw)
+            html = raw.decode('utf-8', errors='replace')
+            # Extract organic result links
+            links = re.findall(r'<h2><a[^>]*href="(https?://[^"]+)"', html)
+            links = [html_mod.unescape(l) for l in links]
+            links = list(dict.fromkeys(links))
+            for link in links:
+                total_links += 1
+                # Only follow links to ATS career pages
+                if not any(k in link.lower() for k in ['greenhouse', 'lever', 'ashby', 'workday', 'smartrecruiters', 'icims', 'jobs.lever', 'jobs.ashby']):
+                    continue
+                if link.lower() in known_urls:
+                    continue
+                # Try to fetch the job page
+                try:
+                    req2 = urllib.request.Request(link, headers=HEADERS)
+                    resp2 = urllib.request.urlopen(req2, timeout=15)
+                    page = resp2.read().decode('utf-8', errors='replace')
+                    page_low = page.lower()
+                    if 'captcha' in page_low or 'challenge' in page_low or len(page) < 3000:
+                        continue
+                    # Extract title and company from page
+                    page_title = re.search(r'<title>(.*?)</title>', page, re.DOTALL)
+                    page_title = html_mod.unescape(page_title.group(1).strip()) if page_title else ''
+                    # Try JSON-LD
+                    jd = re.search(r'"jobtitle"[^}]*"([^"]+)"', page)
+                    if jd:
+                        title = html_mod.unescape(jd.group(1))
+                    else:
+                        title = page_title
+                    # Look for company
+                    co_match = re.search(r'"company"[^}]*"([^"]+)"', page) or re.search(r'<title>.*?,\s*(.*?)</title>', page, re.DOTALL)
+                    company = html_mod.unescape(co_match.group(1).strip()) if co_match else 'unknown'
+                    if title and title_matches_variant(title, title_variants):
+                        loc = 'Remote'
+                        loc_match = re.search(r'"jobLocation".*?"address".*?"addressLocality"\s*:\s*"([^"]+)"', page)
+                        if loc_match:
+                            loc = html_mod.unescape(loc_match.group(1))
+                        fp = compute_fingerprint(company, title, loc)
+                        if fp in known_fps or link.lower() in known_urls:
+                            continue
+                        # Try to get posted_at
+                        posted_raw = None
+                        date_match = re.search(r'"datePosted"\s*:\s*"([^"]+)"', page)
+                        if date_match:
+                            posted_raw = date_match.group(1)
+                        candidates.append({
+                            'company': company, 'title': title, 'url': link,
+                            'location': loc, 'salary': '', 'posted_at_raw': posted_raw,
+                            'source': 'OpenWeb-Bing', 'ats_platform': pname,
+                            'fp': fp,
+                        })
+                except Exception:
+                    continue
+        except Exception as e:
+            continue
+    return candidates, f"OK — {len(candidates)} new candidates from {total_links} links", None
+
+def check_hnrss(title_variants, known_urls, known_fps, conn, now):
+    """HN 'who is hiring' via hnrss.org."""
+    candidates = []
+    pm_keywords = [v.lower() for v in title_variants]
+    try:
+        url = 'https://hnrss.org/newest?q=who+is+hiring'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        resp = urllib.request.urlopen(req, timeout=15)
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(resp.read().decode())
+        items = root.findall('.//item')
+        for it in items[:30]:
+            title = (it.find('title').text or '') if it.find('title') is not None else ''
+            link = (it.find('link').text or '') if it.find('link') is not None else ''
+            if any(k in title.lower() for k in pm_keywords) and link.lower() not in known_urls:
+                candidates.append({
+                    'company': 'HNHiring', 'title': title, 'url': link,
+                    'location': 'Remote', 'salary': '', 'posted_at_raw': None,
+                    'source': 'HN-RSS', 'ats_platform': 'hn',
+                    'fp': compute_fingerprint('HNHiring', title, 'Remote'),
+                })
+        return candidates, f"OK — {len(candidates)} candidates from {len(items)} items", None
+    except Exception as e:
+        return [], None, f"BLOCKED — {e}"
+
+# ── Main ──
+def main():
+    now = datetime.now(timezone.utc)
+    print(f"Discovery run — {now.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+
+    # Load config
+    profile = load_target_profile()
+    tier_cfg = load_tier_config()
+    sources_cfg = load_sources()
+    discovery_mode = profile.get('discovery_mode', 'poll_only')
+    print(f"discovery_mode: {discovery_mode}")
+
+    title_variants = [v['title'] if isinstance(v, dict) else v for v in profile.get('title_variants', [])]
+    print(f"title_variants: {title_variants}")
+
+    daily_cap = tier_cfg.get('tiers', {}).get(tier_cfg.get('active_tier', 'starter'), {}).get('daily_staging_cap', 15)
+
+    # Connect to DB
+    conn = sqlite3.connect(str(DB_PATH))
+    c = conn.cursor()
+    today_count = c.execute(
+        "SELECT COUNT(*) FROM applications WHERE date(discovered_at) = date('now') AND status IN ('discovered','building','staged','awaiting_approval')"
+    ).fetchone()[0]
+    remaining_slots = daily_cap - today_count
+
+    known_urls = set(r[0].lower() for r in c.execute('SELECT posting_url FROM applications WHERE posting_url IS NOT NULL'))
+    known_urls.update(r[0].lower() for r in c.execute('SELECT posting_url FROM posting_sources WHERE posting_url IS NOT NULL'))
+    known_fps = set(r[0] for r in c.execute('SELECT posting_fingerprint FROM applications WHERE posting_fingerprint IS NOT NULL'))
+
+    print(f"DB: today_queued={today_count}, daily_cap={daily_cap}, remaining={remaining_slots}")
+    print(f"Known URLs: {len(known_urls)}, Known fingerprints: {len(known_fps)}")
+    conn.close()
+
+    # Track open-web sweep daily cadence
+    gate_state = {}
+    if GATE_STATE_PATH.exists():
+        try:
+            gate_state = json.loads(GATE_STATE_PATH.read_text())
+        except Exception:
+            gate_state = {}
+    last_ow_run = None
+    if 'open_web_sweep_last_run' in gate_state:
+        last_ow_run = gate_state['open_web_sweep_last_run']
+
+    all_candidates = []
+    source_results = {}
+    duplicates = []
+    non_matches = []
+
+    # ── Declared sources from sources.yaml ──
+    sources = sources_cfg.get('sources', [])
+    for src in sources:
+        sid = src.get('id', '?')
+        stype = src.get('type', '?')
+        url = src.get('url', '')
+        print(f"\n--- Checking source: {sid} (type={stype}) ---")
+
+        if stype == 'linkedin_search_url':
+            source_results[sid] = "BLOCKED — sign-in wall (per env config)"
+            continue
+        elif stype == 'indeed_search_url':
+            source_results[sid] = "BLOCKED — sign-in wall / ATS wall (per env config)"
+            continue
+        elif stype == 'scrape_and_filter':
+            if 'remoteok' in (sid or '').lower() or 'remoteok.com' in url:
+                source_results[sid] = "BLOCKED — remoteok.com anti-bot/redirect (per env config, Remotive is the reliable alternative)"
+                continue
+            elif 'wellfound' in (sid or '').lower() or 'wellfound.com' in url:
+                cands, status, err = check_wellfound(title_variants, known_urls, known_fps, conn, now)
+                if err:
+                    source_results[sid] = err
+                else:
+                    source_results[sid] = status
+                    all_candidates.extend(cands)
+                continue
+            else:
+                source_results[sid] = f"BLOCKED — unreachable ({url})"
+                continue
+        elif stype == 'open_web_search':
+            # Check daily cadence
+            if last_ow_run:
+                try:
+                    last_dt = datetime.fromisoformat(last_ow_run.replace('Z', '+00:00'))
+                    if (now - last_dt).total_seconds() < 86400:
+                        source_results[sid] = f"SKIP — already ran today at {last_ow_run} (daily cadence)"
+                        continue
+                except Exception:
+                    pass
+            # Run the open-web sweep
+            cands, status, err = check_bing_openweb(title_variants, known_urls, known_fps, conn, now)
+            if err:
+                source_results[sid] = err
+            else:
+                source_results[sid] = status
+                all_candidates.extend(cands)
+            # Update gate state
+            gate_state['open_web_sweep_last_run'] = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+            continue
+        elif stype == 'email_label':
+            source_results[sid] = "BLOCKED — himalaya CLI not configured (per security/email-integration-setup.md)"
+            continue
+        else:
+            source_results[sid] = f"BLOCKED — unknown source type {stype}"
+            continue
+
+    # ── In open_web mode, also check reliable un-declared sources ──
+    if discovery_mode in ('open_web', 'open_web_excluding'):
+        print("\n--- Reliable sources check (open_web tier) ---")
+        # Remotive API (reliable, not remoteok.com)
+        cands, status, err = check_remotive_api(title_variants, known_urls, known_fps, conn, now)
+        if err:
+            source_results['remotive-api'] = err
+        else:
+            source_results['remotive-api'] = status
+            all_candidates.extend(cands)
+        # HN RSS (reliable)
+        cands, status, err = check_hnrss(title_variants, known_urls, known_fps, conn, now)
+        if err:
+            source_results['hnrss-who-is-hiring'] = err
+        else:
+            source_results['hnrss-who-is-hiring'] = status
+            all_candidates.extend(cands)
+
+    # ── Dedup + filter ──
+    print(f"\n=== Processing {len(all_candidates)} candidates ===")
+    included = []
+    for p in all_candidates:
+        fp = p.get('fp') or compute_fingerprint(p['company'], p['title'], p.get('location', ''))
+        if p.get('url', '').lower() in known_urls or fp in known_fps:
+            duplicates.append({'company': p['company'], 'title': p['title'], 'url': p.get('url',''), 'reason': 'fingerprint/url match'})
+            continue
+        if not title_matches_variant(p['title'], title_variants):
+            non_matches.append({'company': p['company'], 'title': p['title'], 'reason': 'title mismatch'})
+            continue
+        # Salary floor check (only if disclosed)
+        salary = p.get('salary', '') or ''
+        if salary:
+            nums = re.findall(r'\$?\s*([\d,.]+)', salary.replace(',', ''))
+            if nums:
+                try:
+                    val = float(nums[0])
+                    if 'k' in salary.lower():
+                        val *= 1000
+                    if val > 0 and val < daily_cap:  # floor is $36k/yr
+                        non_matches.append({'company': p['company'], 'title': p['title'], 'reason': f'salary ${int(val)} below floor ${daily_cap}k'})
+                        continue
+                except Exception:
+                    pass
+        included.append(p)
+
+    # ── Apply daily cap ──
+    to_queue = included[:remaining_slots] if remaining_slots > 0 else []
+    cap_skipped = len(included) - len(to_queue) if remaining_slots <= 0 else 0
+
+    # ── Insert into DB ──
+    conn = sqlite3.connect(str(DB_PATH))
+    c = conn.cursor()
+    inserted = []
+    for p in to_queue:
+        fp = p.get('fp') or compute_fingerprint(p['company'], p['title'], p.get('location', ''))
+        posted_at, priority = resolve_posted_at(p.get('posted_at_raw'), now)
+        salary = p.get('salary', '') or None
+        c.execute("""INSERT INTO applications
+            (posting_url, company, role_title, source_board, ats_platform,
+             posted_at, posted_at_raw, discovered_at, status, posting_fingerprint,
+             priority, overall_match_score, keyword_match_score, title_matched,
+             build_attempts, outcome, salary_disclosed, salary_range, remote_type, seniority)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (p.get('url',''), p['company'], p['title'], p.get('source',''),
+             p.get('ats_platform',''), posted_at, p.get('posted_at_raw'),
+             now.strftime('%Y-%m-%dT%H:%M:%SZ'), 'discovered', fp, priority,
+             70, 70, 1, 0, 'pending',
+             1 if salary else 0, salary,
+             'remote' if (p.get('location','') or '').lower().find('remote') >= 0 else 'hybrid', 'mid'))
+        app_id = c.lastrowid
+        c.execute("""INSERT INTO posting_sources
+            (application_id, posting_url, source_name, discovered_by, is_canonical)
+            VALUES (?, ?, ?, ?, ?)""",
+            (app_id, p.get('url',''), p.get('source','').lower(), 'job_1_cron', 1))
+        inserted.append(p)
+        print(f"  QUEUED #{len(inserted)}: {p['company']} | {p['title']} | {p.get('url','')} | priority={priority}")
+
+    # Save gate state
+    gate_state['last_run_at'] = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    gate_state['sources_checked'] = list(source_results.keys())
+    gate_state['sources_blocked'] = [{k: v} for k, v in source_results.items() if 'BLOCKED' in v]
+    gate_state['new_found'] = len(all_candidates)
+    gate_state['duplicates'] = len(duplicates)
+    gate_state['filtered_out'] = len(non_matches)
+    gate_state['queued'] = len(inserted)
+    gate_state['today_queued'] = today_count + len(inserted)
+    gate_state['cap_reached'] = remaining_slots <= 0
+    gate_state['remaining_slots'] = remaining_slots - len(inserted)
+    gate_state['daily_cap'] = daily_cap
+    try:
+        GATE_STATE_PATH.write_text(json.dumps(gate_state, indent=2))
+    except Exception as e:
+        print(f"Warning: could not write gate state: {e}")
+
+    conn.commit()
+    conn.close()
+
+    # ── Summary ──
+    print(f"\n{'='*60}")
+    print("DISCOVERY SCAN SUMMARY")
+    print(f"{'='*60}")
+    for src, status in source_results.items():
+        print(f"  {src}: {status}")
+    print(f"Candidates found: {len(all_candidates)}")
+    print(f"New (queued): {len(inserted)}")
+    print(f"Duplicates skipped: {len(duplicates)}")
+    print(f"Non-matches skipped: {len(non_matches)}")
+    print(f"Daily cap: {daily_cap} | Today: {today_count + len(inserted)} | Remaining: {remaining_slots - len(inserted)}")
+    if cap_skipped > 0:
+        print(f"Cap-skipped: {cap_skipped}")
+
+    # Save results
+    digest = {
+        'run_at': now.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'sources': source_results,
+        'total_candidates': len(all_candidates),
+        'queued': len(inserted),
+        'duplicates': len(duplicates),
+        'non_matches': len(non_matches),
+        'daily_cap': daily_cap,
+        'today_queued': today_count + len(inserted),
+        'remaining_slots': remaining_slots - len(inserted),
+    }
+    (SKILL_ROOT / ".discovery_results.json").write_text(json.dumps(digest, indent=2))
+
+    return len(inserted)
+
+if __name__ == '__main__':
+    main()
