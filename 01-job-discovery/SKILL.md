@@ -21,7 +21,9 @@ metadata:
 
 ## When this skill applies
 
-Use this skill to scan configured job boards/company career pages/RSS or email alerts for new postings matching Kenechukwu's target roles, and to queue them into the pipeline. Triggers: 'check for new jobs', 'scan for postings', 'what's new today', or the scheduled cron job that runs this automatically. This skill only discovers and queues — it never parses in depth, tailors, or applies. Do NOT use this skill to process a specific job posting URL Kenechukwu already has in hand; use 02-jd-parser directly for that.
+Use this skill to scan configured job boards/company career pages/RSS or email alerts for new postings matching Kenechukwu's target roles, and to queue them into the pipeline. Triggers: 'check for new jobs', 'scan for postings', 'what's new today', or the scheduled cron job that runs this automatically. This skill only discovers and queues - it never parses in depth, tailors, or applies. Do NOT use this skill to process a specific job posting URL Kenechukwu already has in hand; use 02-jd-parser directly for that.
+
+Read `references/scan-script-pitfalls.md` before changing or running a discovery scan script.
 
 The one stage of this pipeline that's genuinely safe to run unattended,
 because its only output is "here's a posting that might be worth applying
@@ -149,6 +151,12 @@ to" — nothing leaves the system and no claim about Kenechukwu is made.
    title strings and a numeric salary floor to compare against, not a
    markdown sentence. Reject obvious non-matches here — don't waste a
    full pipeline run on them.
+   Apply the location policy literally: remote and hybrid postings pass this
+   filter, a strictly on-site posting fails when `onsite_ok` is false, and an
+   unknown location stays queued for live verification. Do not turn a
+   region-limited remote label into an automatic location rejection. Sponsorship
+   is a rejection only when the live posting explicitly says sponsorship is
+   unavailable; otherwise surface it for human review.
 5. Check `posted_at` against "now," using the `posted_at.method` declared
    for that source in `sources.yaml` (relative-text-on-page, RSS
    `pubDate`, JSON-LD `datePosted`, email receipt time, aggregator field,

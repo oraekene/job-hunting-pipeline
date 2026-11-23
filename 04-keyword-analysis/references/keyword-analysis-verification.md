@@ -51,7 +51,7 @@ Per-keyword sanity: `category` in {Hard Skill, Domain Concept, Soft Skill},
   every app dir. The fix: `def check(cond, msg, fails=None)` with the append
   guarded by `fails is not None`. The script now exits 0 with ALL CHECKS PASSED
   (verified on app_20/21/22). The sibling copy at
-  `job-hunting-artifact-qa/scripts/verify_app_artifacts.py` still carries the
+  `08-application-qa/scripts/verify_app_artifacts.py` still carries the
   old 3-arg bug — apply the same one-line fix there before relying on it.** A
   tempfile-based ad-hoc replica (`hermes-verify-*` prefix in the OS temp dir,
   delete after run) remains a valid second opinion. When generating that ad-hoc

@@ -94,7 +94,7 @@ delivered" but do not carry the executable detail.
 
 ## 5. Verifier state
 
-The sibling verifier copy at `job-hunting-artifact-qa/scripts/verify_app_artifacts.py`
+The sibling verifier copy at `08-application-qa/scripts/verify_app_artifacts.py`
 still carries the old 3-arg `check()` bug (crashes on its first check). Apply
 `def check(cond, msg, fails=None)` with the append guarded by `fails is not
 None` — same one-line fix applied to this skill's copy on 2026-08-17 (verified

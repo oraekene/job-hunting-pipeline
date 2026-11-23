@@ -84,7 +84,7 @@ Do NOT use this to author the artifacts themselves (that is the user's
    application_qa.md, generate_resume.py) per the app_16 format template.
 3. Run `generate_resume.py` (writes `tailored_resume.docx`); it should include
    an in-script forbidden-claim grep that fails the build on any hit.
-4. Independently verify: run `scripts/verify_app_artifacts.py <app_dir>` — it
+4. Independently verify: run `08-application-qa/scripts/verify_app_artifacts.py <app_dir>` — it
    simulates every processor parser against the artifacts (no DB writes) and
    reads the generated docx back with python-docx for a second forbidden-grep
    pass (headline + STAR-bank numbers + forbidden patterns).
@@ -111,11 +111,11 @@ Do NOT use this to author the artifacts themselves (that is the user's
 
 ## Files
 
-- `references/processor-parsing-contracts.md` — exact regexes, function names,
+- `08-application-qa/references/processor-parsing-contracts.md` — exact regexes, function names,
   and behaviors verified against pipeline_processor.py, plus the app_15/app_18
   score math worked examples.
-- `scripts/verify_app_artifacts.py` — re-runnable verification harness:
+- `08-application-qa/scripts/verify_app_artifacts.py` — re-runnable verification harness:
   artifact presence, JSON schema + score math, first-% score, Gate verdicts,
   displayed title, risk-gap parsing, cover-letter word count, docx read-back
-  forbidden grep. Usage: `python verify_app_artifacts.py <app_dir>
-  [--forbidden "pat1,pat2"]`.
+  forbidden grep. Usage:
+  `python 08-application-qa/scripts/verify_app_artifacts.py <app_dir> [--forbidden "pat1,pat2"]`.

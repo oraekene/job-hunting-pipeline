@@ -50,6 +50,8 @@ skill or any skill it calls. Those rules are not optional.
 
 ## Running a full cycle
 
+Read `references/sweep-run-lessons.md` before changing the sweep flow or recovering a failed build. It records the verified recovery cases that the live instructions cannot explain in full.
+
 1. If `MEMORY.md` / `USER.md` / the STAR bank don't exist yet or look thin,
    run `onboarding` first — same trigger condition as before, one extra
    hop. `onboarding` runs `07-context-architect`'s Phase 0-4 as its own
@@ -159,8 +161,10 @@ loss, and mojibake in open_gaps.
 curator once auto-created a skill inside this bundle during a pipeline run
 (`job-hunting-build-artifacts`, 2026-08-12) without `metadata.hermes`
 frontmatter and with reference paths that did not exist — and the bundle
-silently failed its own integrity gate for a day. The guard: any skill that
-appears in this bundle, however it got there, must pass
+silently failed its own integrity gate for a day. The skill was repaired and
+kept because it documents the offline artifact-build path that the live
+orchestrator does not replace. The guard remains: any skill that appears in
+this bundle, however it got there, must pass
 `python 00-orchestrator/scripts/dry-run.py --skill-dir .` before it may
 stay. Curator-created skills are not exempt — repair them or delete them,
 never keep them failing.

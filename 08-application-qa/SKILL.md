@@ -24,6 +24,8 @@ statement that could apply to any candidate.
 
 ## Process
 
+Artifact-package QA is separate from answering application questions. Read `references/processor-parsing-contracts.md` before writing or checking a stage artifact set, and run `scripts/verify_app_artifacts.py` when a full package exists.
+
 0. **Check for a matching output template.** Look in
    `shared/output-templates.yaml` for an `artifact_type:
    application_answer` entry whose `trigger_conditions` — question
@@ -54,7 +56,15 @@ statement that could apply to any candidate.
    `variant_dimensions` set, use the research cache's stage/size signal
    to pick the matching variant (`07-context-architect/references/
    answer-variants.md`), falling back to the JD text alone only when the
-   cache has no reliable signal. If the Holographic memory layer is
+   cache has no reliable signal. For a **factual** question (degree,
+   clearance, citizenship, tools, years of experience, sector experience),
+   there is no story to pick: the answer comes from
+   `memory/answer-facts.md`, which exists so the same fact reads the same way
+   every time. If the question is in neither memory file, it may still be
+   drafted live from `%USERPROFILE%\Videos\personal_context`, but Rule 5b in
+   `shared/pipeline-rules.md` applies: the draft quotes the source line it
+   relied on, and it does not contradict the conflicts table in
+   `memory/SOURCES.md`. If the Holographic memory layer is
    configured (optional — see `07-context-architect/references/
    holographic-memory-layer.md`), `fact_store(action="reason",
    entities=[...])` across the company and the question's topic can

@@ -37,6 +37,8 @@ tech-stack explosion rule, and the weighted scoring formula
 mismatches). That file is the source of truth for the scoring mechanics
 — don't improvise a different formula.
 
+For the arithmetic self-check and the Senior/Lead/Principal penalty encoding, read `references/keyword-analysis-verification.md` and `references/seniority-penalty-encoding.md` before writing the JSON.
+
 Output strictly the JSON format defined there. `05-resume-customizer` and
 `08-application-qa` both parse this JSON programmatically — free-text
 deviation breaks them.
