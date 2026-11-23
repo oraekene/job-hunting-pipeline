@@ -81,7 +81,7 @@ REQUIRED_SHARED = [
 # The previous range(2, 15) stopped four short of README step 4.
 SCHEMA_FILES = ["shared/applications_db_schema_addendum.sql"] + [
     f"shared/applications_db_schema_addendum_{i}.sql"
-    for i in range(2, 22)
+    for i in range(2, 23)
     if i != 3
 ]
 

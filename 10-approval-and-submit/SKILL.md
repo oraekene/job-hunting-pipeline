@@ -76,6 +76,10 @@ step a genuine human decision, not a formality.
    throwaway one, and login walls / bot walls / CAPTCHAs mean flag that
    application for manual completion in the handoff digest and move on —
    never loop.
+
+   For the concrete Zoho Recruit and Ashby fill sequence, including resume
+   autofill and stale-element handling, read
+   `references/form-fill-technique.md`.
 2. Before opening the posting's form, write
    `shared/.active_application/<session_id>.json` —
    `{"application_id": <id>, "company": "...", "role_title": "...",
@@ -137,7 +141,20 @@ step a genuine human decision, not a formality.
    write `approval_decision = 'approve'` to this application's row in the
    applications DB (the submit gate accepts `'approved'` as a synonym —
    that spelling is what earlier sweeps actually wrote), **then**
-   press submit. Any other reply — silence,
+   press submit.
+
+   **Verify the row still exists before writing it.** The DB and the
+   approval pings can drift apart — the DB is rebuilt/re-indexed and old
+   application ids (like app 1) disappear while their pings are still in
+   flight. Before writing an approval, `SELECT id, company FROM
+   applications WHERE id=<id>` and confirm the id and company match what
+   the ping said. If the row is missing, do NOT write the approval and do
+   NOT re-ping by old id: re-queue the application fresh so it gets a
+   current id, or tell the user which staged ids exist and let them
+   approve those. Writing an approval against a stale id is how a
+   submission gate gets bypassed with the wrong application's consent.
+
+   Any other reply — silence,
    "edit," "skip," anything ambiguous — leaves the application in
    `awaiting_approval`, leaves `approval_decision` unset or non-approve,
    and does nothing further. The DB write has to land before the submit

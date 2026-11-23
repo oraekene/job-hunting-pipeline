@@ -321,7 +321,10 @@ def static_checks(root: Path):
             if os.path.basename(py) == "dry-run.py": continue  # exercised for real below
             # title_taxonomy_builder.py targets its own title_taxonomy.sqlite
             # (profiles/profile_vectors), not applications.db - out of scope.
-            if os.path.basename(py) == "title_taxonomy_builder.py": continue
+            # journal_checkin.py queries Hermes's own state.db for the Telegram
+            # session and reply, also not applications.db.
+            if os.path.basename(py) in ("title_taxonomy_builder.py", "journal_checkin.py"):
+                continue
             try:
                 body = Path(py).read_text(encoding="utf-8", errors="replace")
                 tree = _ast.parse(body)

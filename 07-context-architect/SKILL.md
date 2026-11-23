@@ -72,11 +72,27 @@ them invent and persist claims about Kenechukwu's career on their own.
   isn't a separate invented rule, it's this skill's obligation to
   satisfy what `05-resume-customizer` Phase 5 and `06-cover-letter`'s
   formula paragraph 3 already require downstream.
+- **`memory/answer-facts.md`** — the factual half of the same idea: the
+  lookup table for questions whose honest answer is a fact and not a
+  story (degrees, clearance and citizenship, languages, tools, years of
+  experience, sector experience). Split out of the story bank on
+  2026-11-19 because a fact must read the same way every time an
+  employer asks it, and a story has to be told rather than looked up.
+  This skill maintains it, on the same Rule 5 confirm-before-write
+  terms.
 - **`memory/domain-knowledge.md`** — Technical Expertise, Industry
   Knowledge, Market Analysis Experience, Product Knowledge, each mapped
   to proficiency level and the specific project that proves it.
 - **`memory/career-timeline.md`** — the full Career Journey Document:
   timeline table, motivations, transitions, the "Spark" for each pivot.
+- **`memory/personal-context.md`** — private identity, circumstances,
+  constraints, voice and the never-outward-facing list. Gitignored because the
+  repo is public. Read it to avoid a harmful question or sentence; it is never
+  a source for an application claim, and nothing in it leaves the machine
+  without a fresh per-use yes.
+- **`memory/interests-profile.md`** — proposed by `20-interests-profile`,
+  written only here, under Rule 5 as usual. Entries carry no quantification
+  bar, but a proposed entry is not evidence until Kenechukwu confirms it.
 - **`shared/question_bank.yaml`** — the curated bank of real application
   questions sourced from currently-open job postings (built and
   refreshed via `references/question-bank-pipeline.md` and its crawler
@@ -384,6 +400,12 @@ conclusion above).
   — the row stays as a historical record, it just stops showing up in the
   worklist.
 - Whenever Kenechukwu mentions a new project, story, or transition unprompted.
+- Whenever a live draft works for a question that keeps recurring. A live
+  draft is allowed under Rule 5b in `shared/pipeline-rules.md`, provided it
+  quotes the source line it relied on, but the second time the same question
+  appears the answer gets promoted into `memory/star-story-bank.md` (narrative)
+  or `memory/answer-facts.md` (factual), so every later application reuses
+  one version instead of inventing a new one (Rule 5c).
 - For the target profile specifically: only on explicit request or a
   suggested re-run after a repeated-mismatch signal (see Phase 0.4) —
   never as a background trigger on arbitrary memory changes.
@@ -509,8 +531,10 @@ properly rather than answering the question and moving on.
   how the title-profile database behind Phase 1.5's adjacent-title
   expansion gets built, embedded, queried, and kept fresh.
 - `references/question-bank-pipeline.md` + `references/question_bank_crawler.py`
-  + `templates/seed_companies.yaml` — how `shared/question_bank.yaml`
-  gets built and refreshed from real, currently-open postings.
+  + `templates/seed_companies.yaml` + `shared/seed_companies.yaml` — how
+  `shared/question_bank.yaml` gets built and refreshed from real,
+  currently-open postings. The shared file is the expanded working list;
+  the template remains the small starter.
 - `references/answer-variants.md` — which contextual dimensions
   (company stage, seniority, industry, etc.) actually change a good
   answer, and how variant answers are stored.

@@ -102,3 +102,39 @@ section — the worklist moved, the discipline didn't. See
 `09-risk-tactics-gate/SKILL.md`'s "Fail handling" section and
 `07-context-architect/SKILL.md`'s "When to re-run" section for the
 mechanics on each side.
+
+## Rule 5b — A live draft must quote its source line
+
+An answer that is not already in memory may still be drafted at answer time
+from the raw evidence folder (`%USERPROFILE%\Videos\personal_context`), and
+that is not a Rule 5 violation, because nothing durable is being written. The
+draft may leave the machine only if it carries the exact source line it
+relied on, quoted with its file or note name, and that line is not one of the
+conflicts already ruled out in `memory/SOURCES.md`.
+
+That requirement is the whole check. It replaces the older, narrower wording
+in `09-risk-tactics-gate/SKILL.md` that a claim had to match "a specific line
+in the base resume, portfolio, or STAR bank". The risk this rule exists to
+stop is not inaccuracy, because a live reader can produce a confident false
+number as easily as the old AI-written template produced NGN 2.3M. The risk
+is a claim with no traceable source, which nobody can check in seconds.
+
+A live draft may not pull from `context 2`, `context 3`, or anything else
+marked sensitive in `memory/personal-context.md`, and it may not use
+`cold-email/` material, which the evidence folder excludes by its own rule.
+Hardship material never goes to an employer.
+
+## Rule 5c — Promote a live draft when the question repeats
+
+When a live draft works and the same question turns up again, the answer is
+promoted into `memory/star-story-bank.md` for a narrative question or
+`memory/answer-facts.md` for a factual one. `07-context-architect` does that
+write, and only after Kenechukwu confirms it. The promoted answer then
+becomes the stored one that every later application reuses.
+
+The corpus says which questions repeat. In the 379-question live bank one
+clearance question appears 64 times across postings, a work-authorisation
+question 30 times, a degree-classification question 26 times, and questions
+that appear at more than one company sit in the same cluster. A repeated
+question is a question worth storing, and the stored version is what stops
+the story drifting between applications months apart.

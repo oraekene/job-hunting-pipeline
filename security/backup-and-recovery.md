@@ -15,7 +15,7 @@ Three answers, three policies.
 | Artifact | Why irreplaceable |
 |---|---|
 | `shared/applications.db` | Every application, outcome, timestamp and correlation. It cannot be reconstructed from anything, and losing it silently degrades job 5's learning loop with no signal that anything is wrong. |
-| `memory/*.md` — MEMORY, USER, career-timeline, domain-knowledge, star-story-bank, interests-profile | Built through dozens of elicitation conversations under Rule 5's confirm-before-write. Rebuilding means running every one of those interviews again, and the answers would not be identical. |
+| `memory/*.md` — MEMORY, USER, career-timeline, domain-knowledge, star-story-bank, answer-facts, interests-profile, personal-context, SOURCES | Built through dozens of elicitation conversations under Rule 5's confirm-before-write. Rebuilding means running every one of those interviews again, and the answers would not be identical. |
 | **The skill files themselves** | Job 5 has been editing these under `write_approval` since install. After six months the `SKILL.md` bodies encode months of outcome-driven tuning that exists nowhere else. A fresh install gets you the package, not your version of it. |
 | Holographic fact store (`~/.hermes/memory/`, outside this package) | The fact graph, trust scores, and contradiction history. Same argument as `memory/*.md` and easier to forget because it lives outside the skill tree. |
 | Generated artifacts actually sent — resumes, cover letters, Q&A answers | The record of what an employer actually read. Needed for consistency across applications to the same company, and `13-interview-prep`'s claims map depends on it. Regenerating produces a *different* document, which is worse than useless: it looks like the record and isn't. |

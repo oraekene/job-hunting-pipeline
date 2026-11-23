@@ -175,10 +175,67 @@ def fetch_ashby(slug: str) -> list:
     return results
 
 
+def _questions_from_text(text: str) -> list:
+    """Best-effort extraction of question-like sentences from a job ad.
+    This is implicit JD text, not an application-form field."""
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"\s+", " ", text)
+    parts = re.split(r"(?<=[.!?])\s+", text)
+    out = []
+    for s in parts:
+        s = s.strip()
+        if 20 <= len(s) <= 300 and (
+            s.endswith("?")
+            or re.match(r"(?i)(please|describe|tell us|confirm|provide|explain|list)\b", s)
+        ):
+            out.append(s)
+    return list(dict.fromkeys(out))
+
+
+def fetch_smartrecruiters(slug: str) -> list:
+    """SmartRecruiters: postings API gives job-ad text, not the application
+    form's custom fields. Returns implicit JD questions only."""
+    results = []
+    url = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings?limit=100"
+    try:
+        resp = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=15)
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        print(f"  [smartrecruiters:{slug}] list fetch failed: {e}", file=sys.stderr)
+        return results
+
+    for posting in resp.json().get("content", [])[:25]:
+        pid = posting.get("id")
+        detail_url = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings/{pid}"
+        time.sleep(REQUEST_DELAY_SECONDS)
+        try:
+            detail = requests.get(detail_url, headers={"User-Agent": USER_AGENT}, timeout=15)
+            detail.raise_for_status()
+        except requests.RequestException as e:
+            print(f"  [smartrecruiters:{slug}] {pid} failed: {e}", file=sys.stderr)
+            continue
+        sections = (detail.json().get("jobAd") or {}).get("sections") or {}
+        text = " ".join(
+            v.get("text", "") for v in sections.values() if isinstance(v, dict)
+        )
+        questions = _questions_from_text(text)
+        if questions:
+            results.append({
+                "job_title": posting.get("name", ""),
+                "questions": questions,
+                "company_slug": slug,
+                "platform": "smartrecruiters",
+                "location": (posting.get("location") or {}).get("city", ""),
+                "url": posting.get("ref", "") or f"https://jobs.smartrecruiters.com/{slug}/{pid}",
+            })
+    return results
+
+
 FETCHERS = {
     "greenhouse": fetch_greenhouse,
     "lever": fetch_lever,
     "ashby": fetch_ashby,
+    "smartrecruiters": fetch_smartrecruiters,
 }
 
 
@@ -198,12 +255,12 @@ def cmd_crawl(args):
               f"in this folder for the expected format.", file=sys.stderr)
         sys.exit(1)
 
-    seed = yaml.safe_load(seed_path.read_text())
+    seed = yaml.safe_load(seed_path.read_text(encoding="utf-8"))
 
     already_crawled = set()
     out_path = Path(args.out)
     if args.skip_crawled and out_path.exists():
-        for line in out_path.read_text().splitlines():
+        for line in out_path.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 already_crawled.add(json.loads(line)["company_slug"])
 
@@ -239,7 +296,7 @@ def cmd_crawl(args):
                 })
                 total_questions += 1
 
-    with open(out_path, "a") as f:
+    with open(out_path, "a", encoding="utf-8") as f:
         for row in raw_rows:
             f.write(json.dumps(row) + "\n")
 
@@ -372,9 +429,104 @@ def _looks_jurisdiction_dependent(text: str) -> bool:
     return any(kw in lowered for kw in JURISDICTION_KEYWORDS)
 
 
+# Category is a first-pass sort for the human review, not a final judgement.
+# Order matters: work authorization before logistics, compensation before
+# logistics, motivation before behavioural.
+CATEGORY_RULES = [
+    ("demographic", [
+        "ethnic", "ethnicity", "race", "racial", "disability", "disabled",
+        "veteran", "gender", "origen", "tnico", "discapacidad",
+        "grupo tnico", "pronoun",
+    ]),
+    ("consent", [
+        "consent", "privacy", "attestation", "certify", "i understand",
+        "i agree", "terms", "policy", "equal opportunity", "voluntary",
+        "data retention", "background check", "opt-in", "opt in",
+        "please review the note",
+    ]),
+    ("early_career", [
+        "internship", "interns", "graduate", "graduation", "final year",
+        "summer break", "academic requirement", "university agreement",
+        "end-of-study", "student", "pursuing",
+    ]),
+    ("work_authorization", [
+        "sponsor", "visa", "authorized to work", "authorised to work",
+        "work permit", "right to work", "eligible to work",
+        "legally entitled to work", "entitled to work", "work authorization",
+        "classified by", "autoris", "travailler", "parrainage",
+        "trabaj", "patrocin", "trabalh", "patroc",
+    ]),
+    ("compensation", [
+        "salary", "compensation", "pay expectation", "hourly rate",
+        "desired rate", "expected pay", "fixed pay", "bonus", "stocks",
+        "variable pay",
+    ]),
+    ("language", [
+        "fluency", "fluent", "languages do you speak", "language skills",
+        "german", "french", "spanish", "portuguese", "dutch", "korean",
+    ]),
+    ("legal_screen", [
+        "non-compete", "non-solicit", "conflict of interest", "relatives",
+        "in process with other companies", "employee id", "government employee",
+        "conflicts before",
+    ]),
+    ("motivation", [
+        "why do you want", "why this", "what interests you",
+        "what excites you", "why are you interested", "why you are interested",
+        "why us", "chosen to apply", "makes you interested",
+    ]),
+    ("factual_profile", [
+        "current or previous employer", "current or previous job title",
+        "preferred name", "how did you hear", "how did you first hear",
+        "heard about us", "referral", "employed by", "affiliate", "phone",
+        "email", "linkedin", "website", "portfolio", "previously worked",
+        "worked for", "worked at", "add their name", "curp",
+    ]),
+    ("logistics", [
+        "country", "city", "location", "reside", "residing", "remote",
+        "hybrid", "office", "relocat", "timezone", "time zone", "start date",
+        "notice period", "travel", "based in", "intend to work",
+        "available to work", "available to start", "able to start",
+        "cities are you", "working hours", "horaire", "schedule",
+        "restrictions", "located in", "hours",
+    ]),
+    ("behavioral", [
+        "tell me about a time", "describe a situation", "describe any",
+        "describe a", "give me an example", "give an example",
+        "how do you handle", "disagreement", "conflict", "failure",
+        "feedback", "prioriti", "tradeoff", "stakeholder", "challenge",
+        "what was your role",
+    ]),
+    ("experience_screen", [
+        "years of experience", "experience with", "have you worked",
+        "do you have experience", "proficiency", "familiar", "certification",
+        "degree", "clearance", "knowledge of", "background in",
+        "accounts do you", "deals you", "sales role", "have you owned",
+        "manager-level", "relevant experience", "have you used",
+        "years of sales experience", "years of full sales cycle",
+        "years of work experience", "you have worked on",
+    ]),
+    ("technical", [
+        "coding", "sql", "python", "system design", "case study",
+        "take-home", "assessment", "technical", "programming languages",
+        "scripting",
+    ]),
+]
+
+
+def _classify_category(text: str) -> str:
+    """First-pass category for the review sheet. Not final; the human pass
+    in question-bank-pipeline.md Step 5 can change any row."""
+    lowered = text.lower()
+    for category, keywords in CATEGORY_RULES:
+        if any(k in lowered for k in keywords):
+            return category
+    return "other"
+
+
 def cmd_curate(args):
     raw_path = Path(args.raw)
-    rows = [json.loads(line) for line in raw_path.read_text().splitlines() if line.strip()]
+    rows = [json.loads(line) for line in raw_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     print(f"loaded {len(rows)} raw question rows")
 
     clusters = cluster_questions(rows)
@@ -387,7 +539,10 @@ def cmd_curate(args):
     for i, c in enumerate(top, start=1):
         bank.append({
             "id": f"qb_{i:04d}",
+            "question": c["canonical_text"],
             "canonical_text": c["canonical_text"],
+            "category": _classify_category(c["canonical_text"]),
+            "variant_dimensions": [],
             "variants_seen": c["variants_seen"],
             "tags": {
                 "industry": c["industry"],
@@ -400,7 +555,7 @@ def cmd_curate(args):
         })
 
     out_path = Path(args.out)
-    out_path.write_text(yaml.dump(bank, sort_keys=False, allow_unicode=True))
+    out_path.write_text(yaml.dump(bank, sort_keys=False, allow_unicode=True), encoding="utf-8")
     print(f"wrote curated bank to {out_path}")
     print("\nNext: Kenechukwu reviews this file once by hand before "
           "07-context-architect starts drawing from it live.")
@@ -416,15 +571,27 @@ def cmd_curate(args):
 # applied to a data file instead of a skill file.
 # ----------------------------------------------------------------------
 
+def _bank_questions(doc):
+    """The live bank is a dict with a `questions` key; the crawler's
+    candidates are plain lists. Accept both."""
+    if isinstance(doc, dict):
+        return doc.get("questions", []) or []
+    return doc or []
+
+
+def _bank_text(row):
+    return row.get("canonical_text") or row.get("question") or ""
+
+
 def cmd_diff(args):
     live_path = Path(args.live)
     candidate_path = Path(args.candidate)
 
-    live = (yaml.safe_load(live_path.read_text()) or []) if live_path.exists() else []
-    candidate = yaml.safe_load(candidate_path.read_text()) or []
+    live = _bank_questions(yaml.safe_load(live_path.read_text(encoding="utf-8")) if live_path.exists() else [])
+    candidate = _bank_questions(yaml.safe_load(candidate_path.read_text(encoding="utf-8")) or [])
 
-    live_texts = {row["canonical_text"] for row in live}
-    candidate_texts = {row["canonical_text"] for row in candidate}
+    live_texts = {_bank_text(row) for row in live}
+    candidate_texts = {_bank_text(row) for row in candidate}
 
     added = candidate_texts - live_texts
     dropped = live_texts - candidate_texts
@@ -434,17 +601,17 @@ def cmd_diff(args):
     if added:
         print(f"NEW ({len(added)}):")
         for row in candidate:
-            if row["canonical_text"] in added:
+            if _bank_text(row) in added:
                 tags = row.get("tags", {})
                 tag_str = ", ".join(f"{k}={v}" for k, v in tags.items() if v)
-                print(f"  + {row['canonical_text']}  [{tag_str}]")
+                print(f"  + {_bank_text(row)}  [{tag_str}]")
         print()
 
     if dropped:
         print(f"DROPPED ({len(dropped)}) — no longer among the top {len(candidate)} by coverage:")
         for row in live:
-            if row["canonical_text"] in dropped:
-                print(f"  - {row['canonical_text']}")
+            if _bank_text(row) in dropped:
+                print(f"  - {_bank_text(row)}")
         print()
 
     if not added and not dropped:
@@ -460,9 +627,9 @@ def cmd_promote(args):
     live_path = Path(args.live)
     if live_path.exists():
         backup = live_path.with_suffix(live_path.suffix + ".bak")
-        backup.write_text(live_path.read_text())
+        backup.write_text(live_path.read_text(encoding="utf-8"), encoding="utf-8")
         print(f"backed up previous live bank to {backup}")
-    live_path.write_text(candidate_path.read_text())
+    live_path.write_text(candidate_path.read_text(encoding="utf-8"), encoding="utf-8")
     print(f"promoted {candidate_path} -> {live_path}")
 
 

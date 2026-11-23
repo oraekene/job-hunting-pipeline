@@ -45,6 +45,7 @@ base repository and the only tree Hermes runs the pipeline from.**
 | Concern | Location |
 |---|---|
 | Pipeline rules (Rule 1) | `shared/pipeline-rules.md` |
+| Live memory bank (gitignored, local only) | `memory/` — `personal-context.md` is private and never application evidence |
 | Orchestrator + processor CLI | `00-orchestrator/` |
 | Cron jobs + registration | `cron/` |
 | DB schema + addenda | `shared/` |

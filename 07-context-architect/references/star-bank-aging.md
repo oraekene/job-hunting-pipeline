@@ -64,6 +64,10 @@ it matches how the material is used.
 
 ## Implementation notes
 
+- **The facts table is not part of this mechanism.** `memory/answer-facts.md`
+  is a lookup table selected by question type, not a set of competing
+  stories, so it is read by topic rather than aged by recency. Only the story
+  bank needs the tiered read.
 - **Storage stays append-only.** OptMem never edits its log; summaries are
   a rebuildable cache. Keep the same split: `star-story-bank.md` remains
   the record, the tiered read is derived and disposable.

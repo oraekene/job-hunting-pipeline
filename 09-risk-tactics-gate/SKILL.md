@@ -32,8 +32,12 @@ For every tactic application in the drafts it receives — from
 — verify:
 
 ### 1. Exact-phrase mirroring
-- Is there a specific line in the base resume, portfolio, or STAR bank
-  (`07-context-architect`'s files) that supports this claim?
+- Is there a specific line that supports this claim? It may be in the base
+  resume, the portfolio, `memory/star-story-bank.md`, `memory/answer-facts.md`,
+  or, for a live draft, quoted in the draft itself from the raw evidence
+  folder (`%USERPROFILE%\Videos\personal_context`) with its file or note
+  name. A quoted raw line counts only if it is not one of the conflicts ruled
+  out in `memory/SOURCES.md` (Rule 5b in `shared/pipeline-rules.md`).
 - When `target-profile.yaml`'s `profile_stage` is `first_time`, three
   further sources count as legitimate homes for that evidence: school
   records and coursework, documented extracurricular or volunteer work,

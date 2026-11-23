@@ -35,6 +35,10 @@ default) asking some rotation of: what got hard this week, what got
 resolved, what shipped, who you worked with and how it went, what you'd
 do differently. Not a form — a normal chat turn, kept short.
 
+The reusable Telegram prompt, reply poll, and journal write path is
+`scripts/journal_checkin.py`. Run it with `--dry-run` before enabling an
+unattended check-in.
+
 - **Raw entries are stored immediately**, before any confirmation step,
   in a new `career_journal` table (see the schema addendum) — this
   mirrors the README's existing distinction between curated memory

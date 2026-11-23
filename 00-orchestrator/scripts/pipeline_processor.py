@@ -976,8 +976,9 @@ def main():
         app_id = int(args.reject[0])
         reason = args.reject[1]
         sub_reason = (
-            "Visa sponsorship not available — job board explicitly states "
-            "'Not Available'. User profile requires visa sponsorship."
+            "Role requires employer sponsorship. The live posting states "
+            "sponsorship is unavailable, or the role is strictly on-site "
+            "outside Nigeria. User profile requires visa sponsorship."
             if reason == "visa" else
             "Posting returned 404 / content not found — job listing is gone."
         )

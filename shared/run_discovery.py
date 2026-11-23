@@ -23,6 +23,7 @@ import os
 import re
 import sqlite3
 import datetime
+import base64
 import urllib.request
 import urllib.parse
 
@@ -172,6 +173,27 @@ def fetch_url(url, timeout=20):
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.status, r.read().decode("utf-8", errors="replace")
+
+
+def decode_bing_redirect(href):
+    """Recover the real target from a Bing ck/a redirect (...&u=a1<base64 url>).
+
+    Bing wraps some organic results this way. The sweep drops any href that
+    still contains bing.com, so an undecoded redirect is silently lost.
+    Returns the href unchanged when it is not a decodable redirect.
+    """
+    if not href or "bing.com/ck/a" not in href:
+        return href
+    m = re.search(r"[&?]u=a1([A-Za-z0-9+/=]+)", href)
+    if not m:
+        return href
+    enc = m.group(1)
+    enc += "=" * (-len(enc) % 4)
+    try:
+        target = base64.b64decode(enc).decode("utf-8", "ignore")
+    except Exception:
+        return href
+    return target if target.startswith("http") else href
 
 
 # ─── Load DB state ────────────────────────────────────────────────
@@ -466,11 +488,28 @@ except Exception as e:
     print(f"  HN error: {e}")
 
 # ──────────────────────────────────────────────────────────────────
-# 7. Bing Open-Web Sweep (ATS platforms)
+# 7. Bing Open-Web Sweep (ATS platforms) — daily cadence only
 # ──────────────────────────────────────────────────────────────────
-print("\n" + "=" * 60)
-print("7. Bing Open-Web Sweep (ATS platforms)")
-print("=" * 60)
+# open_web_search sources run on their own daily cadence (sources.yaml
+# cadence: daily), NOT at every 3-hour tick. Skip if already ran today.
+try:
+    with open(GATE_STATE_PATH) as f:
+        _gate_check = json.load(f)
+    _today = now.strftime("%Y-%m-%d")
+    _sweep_already_today = _gate_check.get("open_web_sweep_last_run", "").startswith(_today)
+except:
+    _sweep_already_today = False
+
+_sweep_ran_today = not _sweep_already_today
+if _sweep_already_today:
+    print("\n" + "=" * 60)
+    print("7. Bing Open-Web Sweep — SKIPPED (already ran today, daily cadence)")
+    print("=" * 60)
+    sources_checked.append("open-web-sweep-skipped-daily-cadence")
+else:
+    print("\n" + "=" * 60)
+    print("7. Bing Open-Web Sweep (ATS platforms)")
+    print("=" * 60)
 
 ATS_QUERIES = [
     'site:boards.greenhouse.io "product manager" remote',
@@ -498,13 +537,13 @@ for query in ATS_QUERIES:
         result_urls = []
         for li in soup.select("li.b_algo"):
             a = li.select_one("h2 a") or li.select_one("a")
-            href = a.get("href", "") if a else ""
+            href = decode_bing_redirect(a.get("href", "") if a else "")
             if href and href.startswith("http") and "bing.com" not in href and "microsoft.com" not in href:
                 result_urls.append((href, a.get_text(strip=True)[:100] if a else ""))
         # Fallback: extract from all <a> tags
         if not result_urls:
             for a in soup.find_all("a", href=True):
-                href = a.get("href")
+                href = decode_bing_redirect(a.get("href"))
                 if href and href.startswith("http") and "bing.com" not in href and "microsoft.com" not in href:
                     result_urls.append((href, a.get_text(strip=True)[:100]))
         # Deduplicate
@@ -655,6 +694,7 @@ try:
 except:
     gate = {"sources_checked": [], "sources_blocked": [], "daily_cap": 15, "duplicates": 0, "filtered_out": 0}
 
+gate.setdefault("sources_blocked", [])
 gate["sources_checked"] = list(set(gate.get("sources_checked", []) + sources_checked))
 existing_blocked_keys = set()
 for b in gate.get("sources_blocked", []):
@@ -676,7 +716,7 @@ gate["today_queued"] = today_queued + len(to_queue)
 gate["remaining_slots"] = daily_cap - gate["today_queued"]
 gate["cap_reached"] = gate["remaining_slots"] <= 0
 gate["daily_cap"] = daily_cap
-if "hnrss" in str(sources_checked) or "remotive" in str(sources_checked):
+if _sweep_ran_today:
     gate["open_web_sweep_last_run"] = now_str
 
 with open(GATE_STATE_PATH, "w") as f:

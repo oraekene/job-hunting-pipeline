@@ -96,6 +96,10 @@ WATCHED_TOOLS = {
     # unlisted tools. That is the one failure mode here that costs an
     # unreviewed application.
     "computer", "computer_use", "computer-use",
+    # OpenCode / desktop browser MCP toolset (dotted names). Exact-match
+    # means "browser" alone does NOT cover "browser.click", so add each.
+    "browser.click", "browser.press", "browser.fill", "browser.fill_form",
+    "browser.files.upload", "browser.evaluate", "browse.execute",
 }
 
 # Tool names whose calls this hook has verified it can see. 10-approval-

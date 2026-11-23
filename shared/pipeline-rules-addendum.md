@@ -1,4 +1,4 @@
-# Pipeline Rules — Addendum (Rules 6-10)
+# Pipeline Rules — Addendum (Rules 6-18)
 
 These sit alongside `shared/pipeline-rules.md`'s Rules 1-5, unchanged and
 unmodified by anything below — additive only, same authority level.
@@ -236,3 +236,24 @@ This also does not override the honesty rules. Where a brief has to say
 "three likely questions have no story on file", it says that. Plain
 delivery of unwelcome information is the opposite of AI-speak, not an
 instance of it.
+
+## Rule 17 — Scoring does not assume a role family
+
+Once a posting enters the queue, stages 2 through 9 score it against that
+posting's own requirements and Kenechukwu's verified evidence. The evidence
+includes the base resume, portfolio, live question bank, STAR story bank, and
+answer facts. `target-profile.yaml`'s `title_variants` controls discovery
+only. It must not lower or raise a score because a role is in the product,
+engineering, research, operations, or another role family. A posting found
+by another source must still receive the same role-neutral scoring process.
+
+## Rule 18 — Location excludes only strictly on-site roles
+
+Remote and hybrid postings are eligible for normal scoring. The location
+filter may exclude a posting only when the posting is strictly on-site and
+`target-profile.yaml` has `onsite_ok: false`. If sponsorship is unstated,
+the pipeline must surface that fact for human review and continue. It may
+reject a posting for sponsorship only when the live posting explicitly says
+that sponsorship is unavailable. An unknown location stays queued for live
+verification. This rule replaces the earlier practice of rejecting
+region-limited remote and hybrid postings as automatic visa failures.

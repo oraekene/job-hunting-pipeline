@@ -1,0 +1,156 @@
+# Working seed list for the question-bank crawl.
+# Copied from 07-context-architect/templates/seed_companies.yaml and expanded
+# on 2026-11-17. A 404 means the company moved off that ATS; the crawler skips
+# it and continues.
+#
+# Verified working on 2026-11-17: stripe, doximity.
+# Dead on 2026-11-17: netflix (lever), andela (greenhouse),
+# flutterwave (lever), paystack (greenhouse). Kept as a record; harmless.
+
+companies:
+  - slug: stripe
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: doximity
+    platform: greenhouse
+    industry_tags: [healthcare]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering]
+    geo_tags: [us]
+
+  - slug: figma
+    platform: greenhouse
+    industry_tags: [tech, design]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [design, engineering, product]
+    geo_tags: [us]
+
+  - slug: notion
+    platform: greenhouse
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [product, engineering, marketing]
+    geo_tags: [us]
+
+  - slug: airbnb
+    platform: greenhouse
+    industry_tags: [hospitality, travel]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, product, operations]
+    geo_tags: [us, global]
+
+  - slug: flexport
+    platform: greenhouse
+    industry_tags: [logistics]
+    seniority_tags: [ic_mid]
+    function_tags: [operations, engineering, sales]
+    geo_tags: [us, global]
+
+  - slug: coursera
+    platform: greenhouse
+    industry_tags: [education]
+    seniority_tags: [ic_mid]
+    function_tags: [product, engineering, marketing]
+    geo_tags: [us, remote]
+
+  - slug: sunrun
+    platform: greenhouse
+    industry_tags: [energy, solar]
+    seniority_tags: [ic_mid]
+    function_tags: [operations, sales, engineering]
+    geo_tags: [us]
+
+  - slug: benchling
+    platform: greenhouse
+    industry_tags: [biotech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: datadog
+    platform: greenhouse
+    industry_tags: [tech]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, sales]
+    geo_tags: [us, global]
+
+  - slug: hubspot
+    platform: greenhouse
+    industry_tags: [tech, marketing]
+    seniority_tags: [ic_mid]
+    function_tags: [marketing, sales, product]
+    geo_tags: [us, global]
+
+  - slug: brex
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, operations]
+    geo_tags: [us]
+
+  - slug: plaid
+    platform: lever
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: openai
+    platform: ashby
+    industry_tags: [ai]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [research, engineering, operations]
+    geo_tags: [us]
+
+  - slug: anthropic
+    platform: ashby
+    industry_tags: [ai]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [research, engineering, operations]
+    geo_tags: [us]
+
+  - slug: vercel
+    platform: ashby
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, marketing]
+    geo_tags: [us, remote]
+
+  - slug: posthog
+    platform: ashby
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, marketing]
+    geo_tags: [remote]
+
+  - slug: netflix
+    platform: lever
+    industry_tags: [media]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [engineering, marketing]
+    geo_tags: [us]
+
+  - slug: andela
+    platform: greenhouse
+    industry_tags: [tech, staffing]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering]
+    geo_tags: [nigeria, africa, remote]
+
+  - slug: flutterwave
+    platform: lever
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, manager]
+    function_tags: [engineering, product, operations]
+    geo_tags: [nigeria, africa]
+
+  - slug: paystack
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [entry, ic_mid]
+    function_tags: [engineering, customer_support]
+    geo_tags: [nigeria, africa]

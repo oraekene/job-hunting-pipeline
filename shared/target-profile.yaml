@@ -1,6 +1,11 @@
 # shared/target-profile.yaml — structured, machine-readable target profile.
 # Owned by 07-context-architect. Written together with USER.md from the
 # same confirmed interview. Do not hand-edit; re-run context-architect to update.
+#
+# Pending reconfirmation since 2026-11-19: last_confirmed_at below still reads
+# 2026-08-06, so the salary floor, sponsorship requirement and title list are
+# three months old. 07-context-architect must confirm them with Kenechukwu
+# before this file changes.
 
 seniority_band: "mid"
 # Targeting mid-level openings but open to junior and entry-level as well.
@@ -9,7 +14,9 @@ seniority_band: "mid"
 locations:
   remote_ok: true
   hybrid_ok: true
-  onsite_ok: true
+  onsite_ok: false
+  # Remote and hybrid roles enter normal scoring. Only strictly on-site roles
+  # are excluded by location. Unstated sponsorship is surfaced, not rejected.
   countries: ["Worldwide"]
   cities: []
 

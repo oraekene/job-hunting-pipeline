@@ -120,7 +120,8 @@ real signal it is worth over-preparing for.
 
 **Never lift a reported "preferred answer" verbatim from the scrub into
 the brief.** Suggested answers map to an existing
-`memory/star-story-bank.md` entry or they are marked as missing — see the
+`memory/star-story-bank.md` entry, or for a factual question to a row in
+`memory/answer-facts.md`, or they are marked as missing — see the
 reference file's own rule. If no STAR entry fits a likely question, say
 so plainly rather than papering over the gap; the same
 flag-it-for-the-human principle Rule 2 applies elsewhere.

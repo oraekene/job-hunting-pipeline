@@ -20,6 +20,16 @@ __pycache__/
 *.pem
 *.key
 
+# Tier 1 personal memory bank — local only, never staged or pushed
+memory/
+
+# Local scratch files are ignored, while the tracked issue-tracker folders
+# stay visible. Audit dumps and dated personal packet folders stay local.
+.scratch/*
+!.scratch/*/
+.scratch/audit/
+.scratch/nous-*/
+
 # Runtime state and generated application data (regenerable, personal)
 shared/build_artifacts/
 shared/.outbox/
