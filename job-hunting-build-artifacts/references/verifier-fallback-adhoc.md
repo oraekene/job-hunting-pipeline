@@ -21,7 +21,7 @@ clean it up. One-shot pattern that worked from `execute_code`:
    non-empty context_note); recompute possible/earned from the file's OWN keyword
    list; `raw == round(earned/possible*100)` (Python banker's rounding);
    rating band (Excellent >80 / Good 60-79 / Needs Work <60); if "25%" in
-   `penalty_applied` then penalized == `int(raw*0.75)` else penalized == raw;
+   `penalty_applied` then penalized == `round(raw*0.75)` else penalized == raw;
    `seniority_penalty_applied` flag present.
    (b) `resume_match.md` — `## Overall Match Score: N% raw / M%` two-number header
    (or single-number form) must match the JSON raw/penalized.

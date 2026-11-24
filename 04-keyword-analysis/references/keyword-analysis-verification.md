@@ -30,14 +30,14 @@ assert a["penalized_score_percentage"] == a["match_score_percentage"] or a["pena
 Per-keyword sanity: `category` in {Hard Skill, Domain Concept, Soft Skill},
 `priority_weight` in {1,2,3}, `found_in_resume` is bool, `context_note` non-empty.
 
-### Rounding/truncation convention (app_17 — hand-math drift caught by script)
+### Rounding convention (app_17 — hand-math drift caught by script)
 
 - `round()` in the check above is Python's banker's rounding: `round(62.5) == 62`,
   NOT the half-up 63 you will naturally hand-write. app_17 first pass wrote
   `match_score_percentage: 63` from 25/40 = 62.5%; the scripted recompute said 62.
-- The 25% seniority penalty **truncates**: `int(raw * 0.75)` — 62×0.75=46.5 → 46
-  (app_15: 46×0.75=34.5 → 34). Do not `round()` the penalized value.
-- When the penalty applies, `penalized_score_percentage == int(match_score_percentage * 0.75)`;
+- The 25% seniority penalty uses the same Python rounding: `round(raw * 0.75)` —
+  62×0.75=46.5 → 46 (app_15: 46×0.75=34.5 → 34). Do not truncate the penalized value.
+- When the penalty applies, `penalized_score_percentage == round(match_score_percentage * 0.75)`;
   when no penalty applies (app_16 style "NO seniority penalty"), `penalized == raw`.
 - After a correction, the new numbers must land in ALL of: `keyword_analysis.json`
   (analysis block + recommendation text), `resume_match.md` header + verdict line,

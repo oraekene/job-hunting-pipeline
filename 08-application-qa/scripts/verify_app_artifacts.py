@@ -9,7 +9,7 @@ Checks (each prints PASS/FAIL; exit 0 only if all pass):
      math self-consistency recomputed from the file's OWN keyword list
      (match_score_percentage == round(earned/possible*100), Python banker's
      rounding — round(62.5)=62), rating band, penalized_score_percentage
-     (== int(raw*0.75) when a 25% penalty is declared, == raw when not).
+     (== round(raw*0.75) when a 25% penalty is declared, == raw when not).
   2. resume_match.md — "## Overall Match Score" header matches the JSON's raw and
      penalized numbers (accepts "N%" single-number form when no penalty applies).
   3. generate_resume.py — runs clean (exit 0) and tailored_resume.docx exists,
@@ -70,8 +70,8 @@ def main():
     check(a["match_rating"] == rating, f"match_rating consistent with raw {raw}")
     penalized = a["penalized_score_percentage"]
     if "25%" in a["penalty_applied"] or "25 %" in a["penalty_applied"]:
-        expect_pen = int(raw * 0.75)  # truncation: 62*0.75=46.5 -> 46
-        check(penalized == expect_pen, f"penalized_score_percentage == int(raw*0.75) == {expect_pen}")
+        expect_pen = round(raw * 0.75)  # Python banker's rounding: 62*0.75=46.5 -> 46
+        check(penalized == expect_pen, f"penalized_score_percentage == round(raw*0.75) == {expect_pen}")
     else:
         check(penalized == raw, f"no penalty declared -> penalized == raw == {raw}")
     check(isinstance(kw.get("recommendation"), str) and len(kw["recommendation"]) > 20,
