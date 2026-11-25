@@ -344,6 +344,7 @@ sqlite3 applications.db < applications_db_schema_addendum_19.sql  # outreach sen
 sqlite3 applications.db < applications_db_schema_addendum_20.sql  # cron execution ledger
 sqlite3 applications.db < applications_db_schema_addendum_21.sql  # rotation_week staggered proposal release
 sqlite3 applications.db < applications_db_schema_addendum_22.sql  # application priority for recency-first queues
+sqlite3 applications.db < applications_db_schema_addendum_23.sql  # rename automated gate rejections to rejected_by_gate
 
 # Concurrency. NOT optional if you ever enable the parallel sweep — see
 # shared/db-concurrency.md. journal_mode is a property of the FILE, so

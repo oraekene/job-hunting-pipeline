@@ -127,7 +127,8 @@ one thing this system doesn't do, by design.
 "What's pending?" / "How many staged today?" → read
 `shared/applications_db_schema.sql`-backed DB (see `11-analytics-and-learning`)
 and report counts by status: `discovered`, `building`, `staged`,
-`awaiting_approval`, `approved_sent`, `rejected_by_kene`. Don't guess —
+`awaiting_approval`, `approved_sent`, `rejected_by_gate`,
+`rejected_by_kene`. Don't guess —
 query the DB. Approval backlog: `python 00-orchestrator/scripts/
 pipeline_processor.py --approval-queue`.
 

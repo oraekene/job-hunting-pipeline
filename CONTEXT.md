@@ -23,7 +23,9 @@ base repository and the only tree Hermes runs the pipeline from.**
 - **Application** — one job posting discovered and tracked in
   `shared/applications.db`.
 - **Status** — an application's lifecycle state: `discovered`, `building`,
-  `staged`, `awaiting_approval`, `approved_sent`, `rejected_by_kene`.
+  `staged`, `awaiting_approval`, `approved_sent`, `rejected_by_gate`,
+  `rejected_by_kene`. `rejected_by_gate` is an automated gate decision;
+  `rejected_by_kene` is an explicit human rejection.
 - **Sweep** — a scheduled pass of the pipeline: reconcile, then claim at
   most 3 applications to build.
 - **Stage / staging** — a completed build ready for approval. Nothing is

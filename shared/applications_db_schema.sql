@@ -38,7 +38,9 @@ CREATE TABLE IF NOT EXISTS applications (
     -- Pipeline status
     status                  TEXT NOT NULL DEFAULT 'discovered',
         -- discovered | building | staged | awaiting_approval | approved_sent |
-        -- edited_then_sent | rejected_by_kene
+        -- edited_then_sent | rejected_by_gate | rejected_by_kene
+        -- rejected_by_gate is an automated gate decision; rejected_by_kene is
+        -- an explicit human rejection.
         --
         -- 'building' and 'staged' were both already anticipated by earlier
         -- versions of this comment but never precisely wired up until the

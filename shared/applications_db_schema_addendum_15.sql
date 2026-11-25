@@ -28,7 +28,9 @@
 
 -- 'failed' joins the status vocabulary:
 --   discovered -> building -> staged -> awaiting_approval ->
---       approved_sent | edited_then_sent | rejected_by_kene
+--       approved_sent | edited_then_sent | rejected_by_gate | rejected_by_kene
+--   rejected_by_gate is an automated gate decision; rejected_by_kene is an
+--   explicit human rejection.
 --   building -> failed  (set by the PARENT, during reconciliation)
 --   failed -> discovered (a retry, under the three-attempt cap)
 --

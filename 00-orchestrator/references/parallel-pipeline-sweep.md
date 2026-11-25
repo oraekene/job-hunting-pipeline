@@ -73,8 +73,12 @@ four stages instead of jumping straight from `discovered` to
 `awaiting_approval`:
 
 ```
-discovered -> building -> staged -> awaiting_approval -> approved_sent / edited_then_sent / rejected_by_kene
+discovered -> building -> staged -> awaiting_approval -> approved_sent / edited_then_sent / rejected_by_gate / rejected_by_kene
 ```
+
+- **`rejected_by_gate`** is written by automated gates such as Rule 18,
+  the keyword floor and posting liveness. **`rejected_by_kene`** is
+  reserved for an explicit human rejection.
 
 - **`building`** is set by the **parent**, immediately at dispatch —
   before the delegated child has done any actual work. This is

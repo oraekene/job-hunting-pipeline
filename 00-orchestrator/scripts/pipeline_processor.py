@@ -15,7 +15,7 @@ db-concurrency.md:
                shared/build_artifacts/app_{id}/, then atomically advance
                the row to 'staged' (all-or-nothing). Runs only on rows the
                caller claimed (status='building').
-   3. reject  — mark an unavailable posting rejected_by_kene with a reason.
+   3. reject  — mark an unavailable posting rejected_by_gate with a reason.
    4. reconcile — run FIRST on every sweep tick: ingest any shared/.outbox/
                 *.json files (the ONLY ingest outbox — root-level .outbox
                 folders are debug litter and never read; one transaction
@@ -143,7 +143,7 @@ def get_discovered_apps(con, limit=None):
 
 
 def record_rejection(con, app_id, reason, sub_reason):
-    """Mark an application as rejected_by_kene with a reason."""
+    """Mark an application as rejected_by_gate with a reason."""
     now = utcnow()
     c = con.cursor()
     is_visa = "visa" in reason.lower()
@@ -152,7 +152,7 @@ def record_rejection(con, app_id, reason, sub_reason):
     try:
         con.execute("BEGIN IMMEDIATE")
         c.execute(
-            "UPDATE applications SET status='rejected_by_kene', "
+            "UPDATE applications SET status='rejected_by_gate', "
             "outcome=?, outcome_updated_at=?, last_failure_stage=?, "
             "last_failure_reason=?, last_failure_at=? WHERE id=?",
             (outcome_val, now, failure_stage, sub_reason, now, app_id)

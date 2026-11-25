@@ -28,6 +28,8 @@ table, risk-gate FAIL lines), so each case exercises a real bug pattern:
                                a non-NULL DB gate                        (T05)
   honest_title_persisted       customizer's displayed title lands in
                                title_displayed                           (T05)
+  reject_uses_gate_label       automated rejection uses rejected_by_gate,
+                               never rejected_by_kene                    (T10)
   restore_rescues_terminal     --restore recovers a terminal failed row
                                with a complete build                     (T04)
   restore_refuses_incomplete   --restore refuses a partial build         (T04)
@@ -455,6 +457,15 @@ def c_title(sb):
     td = sb.q("SELECT title_displayed FROM applications WHERE id=2")[0][0]
     ok = td == "Product Manager"
     return ok, f"title_displayed={td!r} (want honest 'Product Manager')"
+
+
+@case("reject_uses_gate_label")
+def c_reject_gate(sb):
+    sb.seed_row(2, status="discovered")
+    r = sb.run("--reject", "2", "visa")
+    st = staged(sb, 2)
+    ok = r.returncode == 0 and st == "rejected_by_gate"
+    return ok, f"exit={r.returncode} status={st} (want rejected_by_gate)"
 
 
 @case("restore_rescues_terminal")
