@@ -1,0 +1,27 @@
+{
+  "run_at": "2026-09-19T13:22:10.949460+00:00",
+  "sources": {
+    "indeed-global": "BLOCKED (HTTP 403)"
+  },
+  "postings": [
+    {
+      "company": "unknown",
+      "role_title": "Product Manager - Reactors",
+      "posting_url": "https://wellfound.com/jobs/4735289-product-manager-reactors",
+      "source": "wellfound"
+    },
+    {
+      "company": "unknown",
+      "role_title": "Product Manager II",
+      "posting_url": "https://wellfound.com/jobs/4735287-product-manager-ii",
+      "source": "wellfound"
+    },
+    {
+      "company": "unknown",
+      "role_title": "Junior Product Manager",
+      "posting_url": "https://wellfound.com/jobs/4618116-junior-product-manager",
+      "source": "wellfound"
+    }
+  ],
+  "count": 3
+}

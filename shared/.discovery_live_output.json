@@ -1,0 +1,249 @@
+{
+  "sources_checked": [
+    "remotive-api",
+    "hnrss-who-is-hiring"
+  ],
+  "sources_blocked": [
+    {
+      "wellfound": "BLOCKED \u2014 HTTP 200, no job links extracted"
+    },
+    {
+      "linkedin-global": "BLOCKED \u2014 sign-in wall (per memory/env config)"
+    },
+    {
+      "indeed-global": "BLOCKED \u2014 sign-in wall / ATS wall (per memory/env config)"
+    },
+    {
+      "remote-ok": "BLOCKED \u2014 anti-bot/redirect (per memory/env config)"
+    }
+  ],
+  "total_found_raw": 12,
+  "total_unique": 12,
+  "duplicates": 4,
+  "filtered_out": 0,
+  "queued": 12,
+  "overflow": 0,
+  "remaining_slots": 3,
+  "candidates": [
+    {
+      "posting_url": "https://remotive.com/remote-jobs/marketing/remote-office-assistant-1680495",
+      "company": "Coalition Technologies ",
+      "role_title": "Remote Office Assistant",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$31,2k- $52k",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "coalition technologies|ss s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/artificial-intelligence/ai-response-evaluator-2091126",
+      "company": "iMerit Technology",
+      "role_title": "AI Response Evaluator",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$10K-$20K",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "imerit technology|s s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/sales/inside-sales-contractor-2086540",
+      "company": "Credit Wellness, LLC",
+      "role_title": "Inside Sales Contractor",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "OTE $25k - $35k",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "credit wellness, llc|s s s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/information-technology/tier-iii-service-desk-engineer-2091045",
+      "company": "Unio Digital",
+      "role_title": "Tier III Service Desk Engineer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": false,
+      "salary_range": null,
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "unio digital|s s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/writing/freelance-writer-1185979",
+      "company": "IAPWE",
+      "role_title": "Freelance Writer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$50-$75 /hour",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "iapwe|w|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/writing/freelance-copywriter-1749306",
+      "company": "Coalition Technologies ",
+      "role_title": "Freelance Copywriter",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$20k -$35k",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "coalition technologies|w|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/software-development/senior-react-full-stack-developer-2091101",
+      "company": "Lemon.io",
+      "role_title": "Senior React Full-stack Developer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": false,
+      "salary_range": null,
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "lemon.io|s s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/qa/senior-qa-engineer-2091100",
+      "company": "Lemon.io",
+      "role_title": "Senior QA Engineer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": false,
+      "salary_range": null,
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "lemon.io|s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/all-others/content-reviewer-english-us-2091105",
+      "company": "TELUS Digital",
+      "role_title": "Content Reviewer - English US",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$14/hour",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "telus digital|w s s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/software-development/senior-independent-software-developer-1919265",
+      "company": "A.Team",
+      "role_title": "Senior Independent Software Developer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$90 - $150 /hour",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "a.team|s s w|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/marketing/head-of-marketing-communications-2091068",
+      "company": "garden3d",
+      "role_title": "Head of Marketing & Communications",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$150k - $230k",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "garden3d|s|remote"
+    },
+    {
+      "posting_url": "https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746",
+      "company": "Mitre Media",
+      "role_title": "Tech Lead Full-Stack Rails Engineer",
+      "location": "Remote",
+      "posted_at": null,
+      "posted_at_raw": "2026-09-15T09:12:59Z",
+      "salary_disclosed": true,
+      "salary_range": "$170k - $200k",
+      "source_board": "Remotive",
+      "remote_type": "remote",
+      "discovered_at": "2026-09-15T09:12:59Z",
+      "priority": "high",
+      "posting_fingerprint": "mitre media|s s|remote"
+    }
+  ],
+  "skipped_samples": [
+    {
+      "company": "Lemon.io",
+      "role_title": "Senior DevOps Engineer",
+      "url": "https://remotive.com/remote-jobs/devops/senior-devops-engineer-2091099",
+      "reason": "SKIP (Fingerprint dup: lemon.io|s s|remote)"
+    },
+    {
+      "company": "Lemon.io",
+      "role_title": "Senior Golang Developer",
+      "url": "https://remotive.com/remote-jobs/software-development/senior-golang-developer-2091098",
+      "reason": "SKIP (Fingerprint dup: lemon.io|s|remote)"
+    },
+    {
+      "company": "Lemon.io",
+      "role_title": "Senior Data Engineer",
+      "url": "https://remotive.com/remote-jobs/software-development/senior-data-engineer-2091097",
+      "reason": "SKIP (Fingerprint dup: lemon.io|s|remote)"
+    },
+    {
+      "company": "A.Team",
+      "role_title": "Senior Independent AI Engineer / Architect",
+      "url": "https://remotive.com/remote-jobs/software-development/senior-independent-ai-engineer-architect-1919266",
+      "reason": "SKIP (URL dup)"
+    }
+  ],
+  "debug": [
+    "MATCH: Coalition Technologies  | Remote Office Assistant | priority=high",
+    "MATCH: iMerit Technology | AI Response Evaluator | priority=high",
+    "MATCH: Credit Wellness, LLC | Inside Sales Contractor | priority=high",
+    "MATCH: Unio Digital | Tier III Service Desk Engineer | priority=high",
+    "MATCH: IAPWE | Freelance Writer | priority=high",
+    "MATCH: Coalition Technologies  | Freelance Copywriter | priority=high",
+    "MATCH: Lemon.io | Senior React Full-stack Developer | priority=high",
+    "MATCH: Lemon.io | Senior QA Engineer | priority=high",
+    "MATCH: TELUS Digital | Content Reviewer - English US | priority=high",
+    "MATCH: A.Team | Senior Independent Software Developer | priority=high",
+    "MATCH: garden3d | Head of Marketing & Communications | priority=high",
+    "MATCH: Mitre Media | Tech Lead Full-Stack Rails Engineer | priority=high"
+  ]
+}

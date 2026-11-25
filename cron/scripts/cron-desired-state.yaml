@@ -4,10 +4,12 @@
 # Match is by name prefix: hermes job ids are unstable across re-creates,
 # names are not. {{hermes_home}} and {{skill_dir}} are resolved at check time.
 #
-# Model/provider pins (layer-1): mechanical pipeline jobs run on the fast
-# poolside/laguna-xs-2.1:free model via nous — pipeline work needs no deep
-# reasoning. The weekly self-improvement review keeps the main model
-# (laguna-s-2.1:free) because it drafts skill-edit proposals.
+# Model/provider pins (layer-1): mechanical pipeline jobs run on the local
+# FreeLLMAPI router (base_url http://127.0.0.1:3001/v1) under provider "custom"
+# with model "auto", which is the same model the main agent resolves to. The
+# previous pins, poolside/laguna-xs-2.1:free and laguna-s-2.1:free via nous,
+# could never run here: that provider has no credential in this Hermes home,
+# so every pinned job died with "provider credential missing".
 jobs:
   # Job 1 — discovery scan (blueprint: job-hunting-discovery)
   - id: discovery-scan
@@ -16,8 +18,8 @@ jobs:
     workdir: "{{skill_dir}}"
     script: discovery-wake-gate.py
     skills: [job-hunting-discovery]
-    model: "poolside/laguna-xs-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -27,8 +29,8 @@ jobs:
     schedule: "30 7,10,13,16,19,22 * * 1-6"
     workdir: "{{skill_dir}}"
     skills: [job-hunting-orchestrator]
-    model: "poolside/laguna-xs-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -38,8 +40,8 @@ jobs:
     schedule: "0 8 * * 1"
     workdir: "{{skill_dir}}"
     skills: [job-hunting-analytics]
-    model: "poolside/laguna-s-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -50,8 +52,8 @@ jobs:
     workdir: "{{skill_dir}}"
     script: interview-prep-wake-gate.py
     skills: [job-hunting-interview-prep]
-    model: "poolside/laguna-xs-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -61,8 +63,8 @@ jobs:
     schedule: "0 9 * * 1-6"
     workdir: "{{skill_dir}}"
     skills: [job-hunting-discovery]
-    model: "poolside/laguna-xs-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -74,14 +76,15 @@ jobs:
     no_agent: true
     deliver: telegram
 
-  # Job 16 — bi-monthly config drift check
+  # Job 16 — bi-monthly config drift check. The live job's name is the short
+  # "Config drift check"; the old long prefix never matched it.
   - id: config-drift-check
-    match_name: "Bi-monthly configuration drift check. Re-read care"
+    match_name: "Config drift check"
     schedule: "0 9 1 */2 *"
     workdir: "{{skill_dir}}"
     skills: [job-hunting-interests-profile]
-    model: "poolside/laguna-xs-2.1:free"
-    provider: nous
+    model: "auto"
+    provider: custom
     no_agent: false
     deliver: local
 
@@ -110,3 +113,139 @@ jobs:
     script: verify-cron-config.py
     no_agent: true
     deliver: telegram
+
+# Tracked from the live job list by control-plane/track-cron-jobs.py on
+# 2026-11-24. Matching is by exact job name, so a renamed job shows up
+# in the drift report instead of silently disappearing from this file.
+  - id: ghost-check-outcome-nudge
+    match_name: "Ghost-check outcome nudge"
+    schedule: 0 18 * * *
+    skills: [job-hunting-analytics]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: question-bank-refresh
+    match_name: "Question-bank refresh"
+    schedule: 0 5 1 * *
+    skills: [job-hunting-context-architect]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: title-taxonomy-refresh
+    match_name: "Title-taxonomy refresh"
+    schedule: 0 6 1 * *
+    skills: [job-hunting-context-architect]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: quarterly-restore-verification
+    match_name: "Quarterly restore verification"
+    schedule: 0 4 1 1,4,7,10 *
+    script: verify-restore.sh
+    no_agent: true
+    deliver: telegram
+  - id: weekly-tier-2-backup
+    match_name: "Weekly Tier 2 backup"
+    schedule: 0 4 * * 0
+    script: backup-tier2.sh
+    no_agent: true
+    deliver: telegram
+  - id: social-listening-scan
+    match_name: "Social listening scan"
+    schedule: 15 7,10,13,16,19,22 * * 1-6
+    skills: [job-hunting-social-discovery-outreach, job-hunting-orchestrator]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: career-pulse-journal-check-in
+    match_name: "Career-pulse journal check-in"
+    schedule: 0 20 * * 1,3,5
+    skills: [job-hunting-career-pulse]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: profile-monitor-weekly
+    match_name: "Profile monitor weekly"
+    schedule: 0 9 * * 6
+    skills: [job-hunting-career-pulse]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: linkedin-check-monthly
+    match_name: "LinkedIn check monthly"
+    schedule: 0 9 1 * *
+    skills: [job-hunting-career-pulse]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: cold-prospecting-target-finding
+    match_name: "Cold prospecting target-finding"
+    schedule: 0 8 * * 1
+    skills: [job-hunting-cold-prospecting]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: career-path-re-evaluation
+    match_name: "Career path re-evaluation"
+    schedule: 0 9 * * 1
+    skills: [job-hunting-career-path-planner]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: enrichment-cycle-reset
+    match_name: "Enrichment cycle reset"
+    schedule: 0 6 * * *
+    skills: [job-hunting-contact-enrichment]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: pause-expiry-check
+    match_name: "Pause-expiry check"
+    schedule: 0 8 * * *
+    skills: [job-hunting-orchestrator]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: linkedin-connection-flow-maintenance
+    match_name: "LinkedIn connection-flow maintenance"
+    schedule: 0 8 * * 3
+    skills: [job-hunting-social-discovery-outreach]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: x-follow-state-check
+    match_name: "X follow-state check"
+    schedule: 0 8 * * 3
+    skills: [job-hunting-social-discovery-outreach]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: ig-fb-window-cleanup
+    match_name: "IG/FB window cleanup"
+    schedule: 0 8 * * 3
+    skills: [job-hunting-social-discovery-outreach]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom
+  - id: cron-health-check
+    match_name: "Cron health check"
+    schedule: 0 9 * * 1
+    skills: [job-hunting-analytics]
+    no_agent: false
+    deliver: local
+    model: auto
+    provider: custom

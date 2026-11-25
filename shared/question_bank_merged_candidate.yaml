@@ -1,0 +1,4269 @@
+generated_at: '2026-11-17T00:00:00Z'
+source: 'merged candidate: 10 live seeds + crawled canonical questions'
+questions:
+- id: qb_001
+  question: Tell me about a time you had to influence a stakeholder who didn't report
+    to you.
+  canonical_text: Tell me about a time you had to influence a stakeholder who didn't
+    report to you.
+  category: behavioral
+  subcategory: stakeholder_management
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: enterprise
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: Managing Expectations During Savecoins Product Pivot.'
+  - variant: startup
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: Managing Expectations During Savecoins Product Pivot.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_002
+  question: Describe a time when you had to make a product decision with incomplete
+    information.
+  canonical_text: Describe a time when you had to make a product decision with incomplete
+    information.
+  category: behavioral
+  subcategory: decision_making
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: Redesigning Credit Assessment at Bank of Agriculture.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_003
+  question: How do you prioritize features when you can't build them all?
+  canonical_text: How do you prioritize features when you can't build them all?
+  category: behavioral
+  subcategory: prioritization
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: MVP Delivery at Savecoins — Peer-to-Peer Product.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_004
+  question: Give me an example of a time you shipped a product under a tight deadline.
+  canonical_text: Give me an example of a time you shipped a product under a tight
+    deadline.
+  category: behavioral
+  subcategory: execution
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: MVP Delivery at Savecoins — Peer-to-Peer Product.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_005
+  question: Tell me about a time you received critical feedback and how you acted
+    on it.
+  canonical_text: Tell me about a time you received critical feedback and how you
+    acted on it.
+  category: behavioral
+  subcategory: feedback
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview.
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_006
+  question: Describe a situation where you had to work with a team that was resistant
+    to change.
+  canonical_text: Describe a situation where you had to work with a team that was
+    resistant to change.
+  category: behavioral
+  subcategory: team_leadership
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: Managing Expectations During Savecoins Product Pivot.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_007
+  question: What's the most difficult tradeoff you've had to make in product management?
+  canonical_text: What's the most difficult tradeoff you've had to make in product
+    management?
+  category: behavioral
+  subcategory: tradeoffs
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview.
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_008
+  question: How do you measure the success of a product feature?
+  canonical_text: How do you measure the success of a product feature?
+  category: behavioral
+  subcategory: metrics
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: PLACEHOLDER — connected to quantified outcomes in STAR bank stories.
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_009
+  question: Tell me about a product you built that failed. What did you learn?
+  canonical_text: Tell me about a product you built that failed. What did you learn?
+  category: behavioral
+  subcategory: failure_recovery
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: PLACEHOLDER — needs to be populated via 07-context-architect Phase 3 interview.
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_010
+  question: How do you approach understanding user needs when entering a new domain?
+  canonical_text: How do you approach understanding user needs when entering a new
+    domain?
+  category: behavioral
+  subcategory: user_research
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants:
+  - variant: default
+    answer: 'PLACEHOLDER — will be populated via 07-context-architect Phase 3 interview
+      from STAR bank story: Optimizing PrepClass Pricing.'
+  variants_seen: []
+  tags: {}
+  source_count: 1
+  origin: live_seed
+  needs_review: false
+- id: qb_011
+  question: How did you hear about us?
+  canonical_text: How did you hear about us?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - How did you hear about this job?
+  - How did you hear about this opportunity?
+  - How did your hear about this position?
+  tags:
+    industry:
+    - fintech
+    - healthcare
+    - hospitality
+    - tech
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 81
+  origin: crawled
+  needs_review: true
+- id: qb_012
+  question: Who is your current or previous employer?
+  canonical_text: Who is your current or previous employer?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - What is your current or previous job title?
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 50
+  origin: crawled
+  needs_review: true
+- id: qb_013
+  question: Why do you want to join Figma?
+  canonical_text: Why do you want to join Figma?
+  category: motivation
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - design
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_014
+  question: From where do you intend to work?
+  canonical_text: From where do you intend to work?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - design
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_015
+  question: Are you authorized to work in the country for which you applied?
+  canonical_text: Are you authorized to work in the country for which you applied?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - design
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_016
+  question: Have you ever worked for Figma before, as an employee or a contractor/consultant?
+  canonical_text: Have you ever worked for Figma before, as an employee or a contractor/consultant?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - design
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_017
+  question: Are you legally entitled to work in Canada?
+  canonical_text: Are you legally entitled to work in Canada?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen:
+  - Are you legally authorized to work for any employer in the United States?
+  - Are you legally authorized to work for any employer in this country?
+  - Are you legally authorized to work in the US?
+  - Are you legally authorized to work in the country where the job is located?
+  tags:
+    industry:
+    - education
+    - healthcare
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - marketing
+    - operations
+    - product
+    geo:
+    - global
+    - remote
+    - us
+  source_count: 58
+  origin: crawled
+  needs_review: true
+- id: qb_018
+  question: Will you now or in the future require sponsorship of an employment visa?
+  canonical_text: Will you now or in the future require sponsorship of an employment
+    visa?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_019
+  question: How many years of experience do you have?
+  canonical_text: How many years of experience do you have?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - How many total years of professional work experience do you have?
+  - How many years of post-graduate work experience do you have?
+  - How many years of work experience do you have?
+  tags:
+    industry:
+    - education
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - marketing
+    - operations
+    - product
+    geo:
+    - global
+    - remote
+    - us
+  source_count: 5
+  origin: crawled
+  needs_review: true
+- id: qb_020
+  question: Will you now or in the future require company sponsorship to retain or
+    extend your work authorization in the country where the job is located?
+  canonical_text: Will you now or in the future require company sponsorship to retain
+    or extend your work authorization in the country where the job is located?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 23
+  origin: crawled
+  needs_review: true
+- id: qb_021
+  question: Are you currently subject to any non-compete or non-solicitation agreement
+    that would impact your ability to work at Airbnb or prevent you from accepting
+    a job offer from Airbnb?
+  canonical_text: Are you currently subject to any non-compete or non-solicitation
+    agreement that would impact your ability to work at Airbnb or prevent you from
+    accepting a job offer from Airbnb?
+  category: legal_screen
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_022
+  question: Are you currently or have you ever worked for Airbnb in any capacity?
+    This could include, but is not limited to, a full-time employee, intern, apprentice,
+    or contingent worker.
+  canonical_text: Are you currently or have you ever worked for Airbnb in any capacity?
+    This could include, but is not limited to, a full-time employee, intern, apprentice,
+    or contingent worker.
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_023
+  question: 'Candidate AI Usage Attestation:'
+  canonical_text: 'Candidate AI Usage Attestation:'
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 20
+  origin: crawled
+  needs_review: true
+- id: qb_024
+  question: Have you previously been employed by Flexport or any of its entities;
+    or by an agency representing Flexport?
+  canonical_text: Have you previously been employed by Flexport or any of its entities;
+    or by an agency representing Flexport?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 20
+  origin: crawled
+  needs_review: true
+- id: qb_025
+  question: When are you available to start with Flexport?
+  canonical_text: When are you available to start with Flexport?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - When are you available to start an internship?
+  tags:
+    industry:
+    - logistics
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 5
+  origin: crawled
+  needs_review: true
+- id: qb_026
+  question: If you currently work, or have previously worked, at Capital One or a
+    company acquired by Capital One, please provide your Employee ID (EID). This information
+    is required for former/current employees.
+  canonical_text: If you currently work, or have previously worked, at Capital One
+    or a company acquired by Capital One, please provide your Employee ID (EID). This
+    information is required for former/current employees.
+  category: legal_screen
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 34
+  origin: crawled
+  needs_review: true
+- id: qb_027
+  question: Please select the country where you currently reside.
+  canonical_text: Please select the country where you currently reside.
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Please inidicate the country where you currently reside.
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_028
+  question: Are you fluent in German?
+  canonical_text: Are you fluent in German?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you fluent in English?
+  - Are you fluent in Mandarin?
+  tags:
+    industry:
+    - design
+    - fintech
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_029
+  question: Please share a link to your portfolio or examples of your work.
+  canonical_text: Please share a link to your portfolio or examples of your work.
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - design
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - design
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_030
+  question: I certify that the information provided in this application is true and
+    correct to the best of my knowledge. I understand that any false statements or
+    omissions may result in disqualification from employment consideration or, if
+    employed, in termination.
+  canonical_text: I certify that the information provided in this application is true
+    and correct to the best of my knowledge. I understand that any false statements
+    or omissions may result in disqualification from employment consideration or,
+    if employed, in termination.
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_031
+  question: I understand my application will be processed in accordance with Datadog’s
+    Candidate Privacy Policy
+  canonical_text: I understand my application will be processed in accordance with
+    Datadog’s Candidate Privacy Policy
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - I understand my application will be processed in accordance with Datadog’s Candidate
+    Privacy Policy.
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_032
+  question: What location are you planning to work from?
+  canonical_text: What location are you planning to work from?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 13
+  origin: crawled
+  needs_review: true
+- id: qb_033
+  question: Are you currently residing in the US?
+  canonical_text: Are you currently residing in the US?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you currently living in South Korea?
+  - Are you currently residing in this country?
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_034
+  question: Are you based in Japan?
+  canonical_text: Are you based in Japan?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you based in Singapore?
+  - Are you currently based in Pune?
+  tags:
+    industry:
+    - education
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - marketing
+    - operations
+    - product
+    geo:
+    - global
+    - remote
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_035
+  question: Airbnb Candidate Privacy Policy
+  canonical_text: Airbnb Candidate Privacy Policy
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 14
+  origin: crawled
+  needs_review: true
+- id: qb_036
+  question: U.S. Equal Opportunity Employment Information (Completion is voluntary)
+  canonical_text: U.S. Equal Opportunity Employment Information (Completion is voluntary)
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 12
+  origin: crawled
+  needs_review: true
+- id: qb_037
+  question: 'Before submitting your application please review the note below:'
+  canonical_text: 'Before submitting your application please review the note below:'
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - 'Before submitting your application please review the points below:'
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 5
+  origin: crawled
+  needs_review: true
+- id: qb_038
+  question: Why have you chosen to apply to Airbnb?
+  canonical_text: Why have you chosen to apply to Airbnb?
+  category: motivation
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_039
+  question: How did you first hear about Flexport?
+  canonical_text: How did you first hear about Flexport?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 18
+  origin: crawled
+  needs_review: true
+- id: qb_040
+  question: If you heard about us through a referral, please state the Brex employee's
+    name.
+  canonical_text: If you heard about us through a referral, please state the Brex
+    employee's name.
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_041
+  question: Will you require Stripe to sponsor you for a work permit now or in the
+    future to work in Singapore?
+  canonical_text: Will you require Stripe to sponsor you for a work permit now or
+    in the future to work in Singapore?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen:
+  - Will you require Stripe to sponsor you for a work permit now or in the future
+    for the location(s) you selected in in your previous response?
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 24
+  origin: crawled
+  needs_review: true
+- id: qb_042
+  question: In what cities are you available to work?
+  canonical_text: In what cities are you available to work?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 24
+  origin: crawled
+  needs_review: true
+- id: qb_043
+  question: Please select all the languages you speak fluently.
+  canonical_text: Please select all the languages you speak fluently.
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 24
+  origin: crawled
+  needs_review: true
+- id: qb_044
+  question: Which work authorization best describes you?
+  canonical_text: Which work authorization best describes you?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 12
+  origin: crawled
+  needs_review: true
+- id: qb_045
+  question: Have you ever been employed by Coursera or Udemy?
+  canonical_text: Have you ever been employed by Coursera or Udemy?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_046
+  question: Are you a Singapore Citizen or Permanent Resident?
+  canonical_text: Are you a Singapore Citizen or Permanent Resident?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you Singaporean or a Permanent Resident of Singapore?
+  tags:
+    industry:
+    - education
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - marketing
+    - product
+    - sales
+    geo:
+    - global
+    - remote
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_047
+  question: Consent to Privacy Notice (Japan)
+  canonical_text: Consent to Privacy Notice (Japan)
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Consent to Privacy Notice (Singapore)
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_048
+  question: Aviso de Privacidad de Airbnb (Airbnb Data Privacy Notice) - Mexico
+  canonical_text: Aviso de Privacidad de Airbnb (Airbnb Data Privacy Notice) - Mexico
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Aviso de Privacidad de Airbnb (Airbnb Data Privacy Notice) - Argentina
+  - Aviso de Privacidade de Dados do Airbnb (Airbnb Data Privacy Notice) - Brazil
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_049
+  question: What is your fluency in French?
+  canonical_text: What is your fluency in French?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - What is your fluency in English?
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_050
+  question: Are you available for a 6-month internship?
+  canonical_text: Are you available for a 6-month internship?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you able to commit to a 6-month internship?
+  tags:
+    industry:
+    - hospitality
+    - tech
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_051
+  question: 'Let us know which specific channel/event/medium/etc you heard about us:'
+  canonical_text: 'Let us know which specific channel/event/medium/etc you heard about
+    us:'
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 14
+  origin: crawled
+  needs_review: true
+- id: qb_052
+  question: What country are you based in?
+  canonical_text: What country are you based in?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_053
+  question: Are you authorized to work in the location(s) you selected in your previous
+    response?
+  canonical_text: Are you authorized to work in the location(s) you selected in your
+    previous response?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 23
+  origin: crawled
+  needs_review: true
+- id: qb_054
+  question: Are you legally authorised to work full-time in the country where this
+    job is based?
+  canonical_text: Are you legally authorised to work full-time in the country where
+    this job is based?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 23
+  origin: crawled
+  needs_review: true
+- id: qb_055
+  question: Please share the full name of your major/final year specialization(s)
+    as it would appear on your diploma.
+  canonical_text: Please share the full name of your major/final year specialization(s)
+    as it would appear on your diploma.
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_056
+  question: What is your preferred name?
+  canonical_text: What is your preferred name?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - What is your preferred first name?
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 5
+  origin: crawled
+  needs_review: true
+- id: qb_057
+  question: COURSERA IS A U.S. GOVERNMENT CONTRACTOR AND WE ARE REQUIRED TO INQUIRE
+    ABOUT CONFLICTS BEFORE WE CAN RECRUIT CURRENT OR FORMER GOVERNMENT EMPLOYEES.
+    IF THIS APPLIES TO YOU, WE REQUEST A LETTER FROM YOUR SUPERVISOR THAT THEY HAVE
+    BEEN INFORMED ABOUT YOUR CONTACT WITH COURSERA (OR AS A FORMER EMPLOYEE, A LETTER
+    STATING AN ETHICS OPINION WHICH IDENTIFIES ANY LIMITATIONS WHICH APPLY TO YOUR
+    WORK IN THE PRIVATE SECTOR). THE LETTER SHOULD IDENTIFY ANY CONFLICTS OR POTENTIAL
+    CONFLICTS, IF ANY EXIST.
+  canonical_text: COURSERA IS A U.S. GOVERNMENT CONTRACTOR AND WE ARE REQUIRED TO
+    INQUIRE ABOUT CONFLICTS BEFORE WE CAN RECRUIT CURRENT OR FORMER GOVERNMENT EMPLOYEES.
+    IF THIS APPLIES TO YOU, WE REQUEST A LETTER FROM YOUR SUPERVISOR THAT THEY HAVE
+    BEEN INFORMED ABOUT YOUR CONTACT WITH COURSERA (OR AS A FORMER EMPLOYEE, A LETTER
+    STATING AN ETHICS OPINION WHICH IDENTIFIES ANY LIMITATIONS WHICH APPLY TO YOUR
+    WORK IN THE PRIVATE SECTOR). THE LETTER SHOULD IDENTIFY ANY CONFLICTS OR POTENTIAL
+    CONFLICTS, IF ANY EXIST.
+  category: legal_screen
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_058
+  question: What city are you based? Are you willing to come to the office 2 x a week
+    in Barcelona at your own cost?
+  canonical_text: What city are you based? Are you willing to come to the office 2
+    x a week in Barcelona at your own cost?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_059
+  question: Are you fluent in both Spanish & English (oral and written)?
+  canonical_text: Are you fluent in both Spanish & English (oral and written)?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_060
+  question: Select your degree level you are pursuing.
+  canonical_text: Select your degree level you are pursuing.
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_061
+  question: When are you expected to graduate?
+  canonical_text: When are you expected to graduate?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_062
+  question: Will you now or in the future require Flexport to commence ("sponsor")
+    an immigration case in order to employ you (for example, H-1B or other employment-based
+    immigration case)? This is sometimes called "sponsorship" for an employment-based
+    visa status.
+  canonical_text: Will you now or in the future require Flexport to commence ("sponsor")
+    an immigration case in order to employ you (for example, H-1B or other employment-based
+    immigration case)? This is sometimes called "sponsorship" for an employment-based
+    visa status.
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 8
+  origin: crawled
+  needs_review: true
+- id: qb_063
+  question: Are you authorized to work in the stated location of this role?
+  canonical_text: Are you authorized to work in the stated location of this role?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_064
+  question: Please select the country or countries you anticipate working in for the
+    role in which you are applying.
+  canonical_text: Please select the country or countries you anticipate working in
+    for the role in which you are applying.
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 21
+  origin: crawled
+  needs_review: true
+- id: qb_065
+  question: Do you have any specific academic requirements for your internship?
+  canonical_text: Do you have any specific academic requirements for your internship?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_066
+  question: Are you in your final year of study and applying for an end-of-study internship?
+  canonical_text: Are you in your final year of study and applying for an end-of-study
+    internship?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_067
+  question: Do you have experience in DevOps?
+  canonical_text: Do you have experience in DevOps?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Do you have experience in a client facing role?
+  tags:
+    industry:
+    - education
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_068
+  question: Do you consent to your application information being shared between Coursera
+    and Udemy for recruitment purposes?
+  canonical_text: Do you consent to your application information being shared between
+    Coursera and Udemy for recruitment purposes?
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 22
+  origin: crawled
+  needs_review: true
+- id: qb_069
+  question: What are the dates for your summer break?
+  canonical_text: What are the dates for your summer break?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_070
+  question: This role requires advanced fluency in English and Japanese language,
+    both spoken and written. Please select your level of proficiency for both language.
+  canonical_text: This role requires advanced fluency in English and Japanese language,
+    both spoken and written. Please select your level of proficiency for both language.
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_071
+  question: 'Are you classified by the Singaporean Government as a:'
+  canonical_text: 'Are you classified by the Singaporean Government as a:'
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_072
+  question: Por favor identifique su origen étnico (Please identify your ethnic origin)
+    - Mexico
+  canonical_text: Por favor identifique su origen étnico (Please identify your ethnic
+    origin) - Mexico
+  category: demographic
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_073
+  question: Are you authorized to work lawfully in Mexico for Flexport?
+  canonical_text: Are you authorized to work lawfully in Mexico for Flexport?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - Are you authorized to work lawfully in the United States for Flexport?
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 8
+  origin: crawled
+  needs_review: true
+- id: qb_074
+  question: If you're not authorized to work at the stated location, what sponsorship
+    would you require for the role?
+  canonical_text: If you're not authorized to work at the stated location, what sponsorship
+    would you require for the role?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_075
+  question: Have you ever been employed by Stripe or a Stripe affiliate?
+  canonical_text: Have you ever been employed by Stripe or a Stripe affiliate?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 21
+  origin: crawled
+  needs_review: true
+- id: qb_076
+  question: If you were offered full-time employment with Datadog, when would you
+    be able to start?
+  canonical_text: If you were offered full-time employment with Datadog, when would
+    you be able to start?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_077
+  question: Are you available to relocate for this internship position and full-time
+    if you are offered a permanent contract?
+  canonical_text: Are you available to relocate for this internship position and full-time
+    if you are offered a permanent contract?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_078
+  question: Do you require a visa sponsorship to work in the UK?
+  canonical_text: Do you require a visa sponsorship to work in the UK?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen:
+  - Do you require a visa sponsorship to work in Ireland?
+  - Do you require a visa sponsorship to work in the Netherlands?
+  - Will you require visa sponsorship now or in the future?
+  tags:
+    industry:
+    - healthcare
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_079
+  question: What city and state do you reside in?
+  canonical_text: What city and state do you reside in?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 13
+  origin: crawled
+  needs_review: true
+- id: qb_080
+  question: Por favor indique su número CURP - Clave Única de Registro de Población
+    (Please note your CURP number) - México
+  canonical_text: Por favor indique su número CURP - Clave Única de Registro de Población
+    (Please note your CURP number) - México
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_081
+  question: ¿Cuenta usted con una discapacidad? (Do you have any disabilities?) -
+    Argentina
+  canonical_text: ¿Cuenta usted con una discapacidad? (Do you have any disabilities?)
+    - Argentina
+  category: demographic
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_082
+  question: 'O grupo étnico-racial com o qual você se identifica. Você se declara
+    uma pessoa: (The ethnic-racial group you identify with. You declare yourself as:)
+    - Brazil'
+  canonical_text: 'O grupo étnico-racial com o qual você se identifica. Você se declara
+    uma pessoa: (The ethnic-racial group you identify with. You declare yourself as:)
+    - Brazil'
+  category: demographic
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_083
+  question: Why are you interested in joining Airbnb and specifically this internship?
+    How does your educational background and work experience align with the role?
+  canonical_text: Why are you interested in joining Airbnb and specifically this internship?
+    How does your educational background and work experience align with the role?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_084
+  question: Application consent for Flexport
+  canonical_text: Application consent for Flexport
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 8
+  origin: crawled
+  needs_review: true
+- id: qb_085
+  question: Do you currently live in, or plan to relocate to, the specified location
+    to meet this in-office requirement?
+  canonical_text: Do you currently live in, or plan to relocate to, the specified
+    location to meet this in-office requirement?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_086
+  question: Do you opt-in to receive WhatsApp messages from Stripe Recruiting?
+  canonical_text: Do you opt-in to receive WhatsApp messages from Stripe Recruiting?
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 19
+  origin: crawled
+  needs_review: true
+- id: qb_087
+  question: Which scripting / programming languages do you have experience with?
+  canonical_text: Which scripting / programming languages do you have experience with?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_088
+  question: Tell us why you are interested in building an applied AI career at Datadog.
+  canonical_text: Tell us why you are interested in building an applied AI career
+    at Datadog.
+  category: motivation
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_089
+  question: Do you have experience supporting a sales team?
+  canonical_text: Do you have experience supporting a sales team?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_090
+  question: 'Would you like to be considered for future job opportunities? If you
+    accept: You allow Coursera to retain and use your application data (i.e. the data
+    that you submit in the course of your application) to consider and contact you
+    for other job opportunities in the future. If you provide your consent, your data
+    will be retained and used for these purposes for up to 3 years from your last
+    application.'
+  canonical_text: 'Would you like to be considered for future job opportunities? If
+    you accept: You allow Coursera to retain and use your application data (i.e. the
+    data that you submit in the course of your application) to consider and contact
+    you for other job opportunities in the future. If you provide your consent, your
+    data will be retained and used for these purposes for up to 3 years from your
+    last application.'
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 13
+  origin: crawled
+  needs_review: true
+- id: qb_091
+  question: Confirm you will provide Airbnb an Internship Agreement from your university.
+  canonical_text: Confirm you will provide Airbnb an Internship Agreement from your
+    university.
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_092
+  question: Portfolio Password, if applicable
+  canonical_text: Portfolio Password, if applicable
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_093
+  question: Consent to Privacy Notice (Airbnb Global Capability Center Private Limited)
+  canonical_text: Consent to Privacy Notice (Airbnb Global Capability Center Private
+    Limited)
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_094
+  question: Have you been employed by Airbnb/Airbnb Global Capability Center/Airseva
+    (previously)?
+  canonical_text: Have you been employed by Airbnb/Airbnb Global Capability Center/Airseva
+    (previously)?
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_095
+  question: Are you eligible to work in France?
+  canonical_text: Are you eligible to work in France?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen:
+  - Are you eligible to work in Germany?
+  - Are you eligible to work in Switzerland?
+  - Are you eligible to work in the Netherlands?
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_096
+  question: Do you consent to Brex processing your personal information for the purpose
+    of assessing your candidacy for this position in accordance with Brex’s Applicant
+    Privacy Policy?
+  canonical_text: Do you consent to Brex processing your personal information for
+    the purpose of assessing your candidacy for this position in accordance with Brex’s
+    Applicant Privacy Policy?
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_097
+  question: If this role offers the option to work from a remote location, do you
+    plan to work remotely?
+  canonical_text: If this role offers the option to work from a remote location, do
+    you plan to work remotely?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 13
+  origin: crawled
+  needs_review: true
+- id: qb_098
+  question: When considering an internship at Datadog, what are the most important
+    factors to you?
+  canonical_text: When considering an internship at Datadog, what are the most important
+    factors to you?
+  category: early_career
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_099
+  question: Are you currently in process with other companies that would require us
+    to be time sensitive?
+  canonical_text: Are you currently in process with other companies that would require
+    us to be time sensitive?
+  category: legal_screen
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_100
+  question: Do you have experience working with Prescription (Rx) and Medical Claims
+    (Dx) data?
+  canonical_text: Do you have experience working with Prescription (Rx) and Medical
+    Claims (Dx) data?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_101
+  question: How many years of experience do you have in air freight operations?
+  canonical_text: How many years of experience do you have in air freight operations?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - How many years of experience do you have forecasting ARR and revenue at a SaaS
+    company?
+  tags:
+    industry:
+    - education
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - operations
+    - product
+    - sales
+    geo:
+    - global
+    - remote
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_102
+  question: Do you have any immediate blood relatives (parents/siblings/spouse/offspring)
+    working or under consideration for employment at Airbnb?
+  canonical_text: Do you have any immediate blood relatives (parents/siblings/spouse/offspring)
+    working or under consideration for employment at Airbnb?
+  category: legal_screen
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_103
+  question: We have posted the compensation range for this role. Please let us know
+    if it aligns with your expectations.
+  canonical_text: We have posted the compensation range for this role. Please let
+    us know if it aligns with your expectations.
+  category: compensation
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_104
+  question: What is your current fixed pay , bonus / variable pay and stocks (if applicable)
+    ?
+  canonical_text: What is your current fixed pay , bonus / variable pay and stocks
+    (if applicable) ?
+  category: compensation
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_105
+  question: List the countries and disaster types you have worked on in emergency
+    response (for example, floods, earthquakes, cyclones, displacement). For each,
+    briefly note your role.
+  canonical_text: List the countries and disaster types you have worked on in emergency
+    response (for example, floods, earthquakes, cyclones, displacement). For each,
+    briefly note your role.
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_106
+  question: What languages do you speak and how proficient are you?
+  canonical_text: What languages do you speak and how proficient are you?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 4
+  origin: crawled
+  needs_review: true
+- id: qb_107
+  question: This role requires in-office work three days per week (Mon, Wed, Thurs).
+    Do you acknowledge and agree to this requirement?
+  canonical_text: This role requires in-office work three days per week (Mon, Wed,
+    Thurs). Do you acknowledge and agree to this requirement?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_108
+  question: If located in the US, in what city and state do you reside?
+  canonical_text: If located in the US, in what city and state do you reside?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 11
+  origin: crawled
+  needs_review: true
+- id: qb_109
+  question: If you selected Datadog employee in the question above, please add their
+    name below.
+  canonical_text: If you selected Datadog employee in the question above, please add
+    their name below.
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - tech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_110
+  question: How long have you worked in healthcare?
+  canonical_text: How long have you worked in healthcare?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_111
+  question: Do you have experience in B2B sales, business development, or sales development,
+    including at least 1 year of hands-on outbound prospecting?
+  canonical_text: Do you have experience in B2B sales, business development, or sales
+    development, including at least 1 year of hands-on outbound prospecting?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_112
+  question: Describe any disaster response you managed. What was the scope (people
+    served, number of NGO partners involved across APAC etc), and what was your role?
+  canonical_text: Describe any disaster response you managed. What was the scope (people
+    served, number of NGO partners involved across APAC etc), and what was your role?
+  category: behavioral
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_113
+  question: What makes you interested to work at Airbnb ?
+  canonical_text: What makes you interested to work at Airbnb ?
+  category: motivation
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_114
+  question: How many years of relevant experience do you have in emergency or disaster
+    response operations (for example, humanitarian response, disaster relief programs,
+    or emergency management)?
+  canonical_text: How many years of relevant experience do you have in emergency or
+    disaster response operations (for example, humanitarian response, disaster relief
+    programs, or emergency management)?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_115
+  question: Have you previously completed coding assessments involving data structures
+    and algorithms (e.g., HackerRank/LeetCode-style questions)?
+  canonical_text: Have you previously completed coding assessments involving data
+    structures and algorithms (e.g., HackerRank/LeetCode-style questions)?
+  category: technical
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_116
+  question: What level are your German language skills?
+  canonical_text: What level are your German language skills?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - What level are your English language skills?
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_117
+  question: Do you currently, or have you previously, worked at Capital One or a company
+    acquired by Capital One as an employee, contractor, consultant, or temp? (For
+    example Capital One Bank, N.A., Capital One Services, Inc., Chevy Chase Bank,
+    Discover, Hibernia, ING Direct, North Fork Bank)
+  canonical_text: Do you currently, or have you previously, worked at Capital One
+    or a company acquired by Capital One as an employee, contractor, consultant, or
+    temp? (For example Capital One Bank, N.A., Capital One Services, Inc., Chevy Chase
+    Bank, Discover, Hibernia, ING Direct, North Fork Bank)
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - us
+  source_count: 25
+  origin: crawled
+  needs_review: true
+- id: qb_118
+  question: To ensure we can focus fully on our conversation, we use BrightHire to
+    record and transcribe interviews. This helps us get to know you better without
+    the distraction of note-taking. We also use BrightHire to help us analyze interview
+    notes and for internal Stripe interview quality training and assurance purposes.
+    After the recruitment process ends, recordings may be shared internally for recruiter
+    and interviewer training to help us improve our interview processes. Please confirm
+    if you consent to BrightHire being enabled for this interview and for your personal
+    data to be collected and processed for the purposes mentioned above, by responding
+    below
+  canonical_text: To ensure we can focus fully on our conversation, we use BrightHire
+    to record and transcribe interviews. This helps us get to know you better without
+    the distraction of note-taking. We also use BrightHire to help us analyze interview
+    notes and for internal Stripe interview quality training and assurance purposes.
+    After the recruitment process ends, recordings may be shared internally for recruiter
+    and interviewer training to help us improve our interview processes. Please confirm
+    if you consent to BrightHire being enabled for this interview and for your personal
+    data to be collected and processed for the purposes mentioned above, by responding
+    below
+  category: consent
+  subcategory: null
+  bank_role: form_only
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 7
+  origin: crawled
+  needs_review: true
+- id: qb_119
+  question: Number of years working remotely?
+  canonical_text: Number of years working remotely?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_120
+  question: This role is based in Singapore and focuses primarily on Australia and
+    New Zealand. Have you sold or prospected into these markets before
+  canonical_text: This role is based in Singapore and focuses primarily on Australia
+    and New Zealand. Have you sold or prospected into these markets before
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_121
+  question: Are you currently in a manager-level role, or have you previously held
+    a Manager or Staff-equivalent position?
+  canonical_text: Are you currently in a manager-level role, or have you previously
+    held a Manager or Staff-equivalent position?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_122
+  question: Êtes-vous légalement autorisé à travailler dans le pays où se situe le
+    poste ?
+  canonical_text: Êtes-vous légalement autorisé à travailler dans le pays où se situe
+    le poste ?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_123
+  question: Aurez-vous besoin, maintenant ou à l’avenir, du parrainage d’une entreprise
+    pour conserver ou prolonger votre autorisation de travail dans le pays où se situe
+    le poste ?
+  canonical_text: Aurez-vous besoin, maintenant ou à l’avenir, du parrainage d’une
+    entreprise pour conserver ou prolonger votre autorisation de travail dans le pays
+    où se situe le poste ?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_124
+  question: Le poste exige une disponibilité du dimanche au jeudi OU du mardi au samedi,
+    entre 6 h et 21 h, heure locale. Avez-vous des restrictions ou des conflits d'horaire
+    par rapport à cet horaire de travail?
+  canonical_text: Le poste exige une disponibilité du dimanche au jeudi OU du mardi
+    au samedi, entre 6 h et 21 h, heure locale. Avez-vous des restrictions ou des
+    conflits d'horaire par rapport à cet horaire de travail?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_125
+  question: What is your current monthly salary (THB )?
+  canonical_text: What is your current monthly salary (THB )?
+  category: compensation
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - How much is your current monthly gross salary (VND)?
+  - How much is your expected monthly gross salary (VND)?
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_126
+  question: This role requires you to be in the Chicago office at least 50% of the
+    month. Is this something you can commit to?
+  canonical_text: This role requires you to be in the Chicago office at least 50%
+    of the month. Is this something you can commit to?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 3
+  origin: crawled
+  needs_review: true
+- id: qb_127
+  question: Please indicate what you have experience with.
+  canonical_text: Please indicate what you have experience with.
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_128
+  question: Is there any other relevant experience or project that you have worked
+    on that you would like our team to know about?
+  canonical_text: Is there any other relevant experience or project that you have
+    worked on that you would like our team to know about?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_129
+  question: Do you have experience in managing the end-to-end P2P, T&E, corporate
+    cards, and month-end close?
+  canonical_text: Do you have experience in managing the end-to-end P2P, T&E, corporate
+    cards, and month-end close?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_130
+  question: Si vous avez répondu « oui » à la question précédente, veuillez fournir
+    des précisions sur vos restrictions d'horaire.
+  canonical_text: Si vous avez répondu « oui » à la question précédente, veuillez
+    fournir des précisions sur vos restrictions d'horaire.
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - hospitality
+    - travel
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - operations
+    - product
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_131
+  question: What is your Dutch language level proficiency?
+  canonical_text: What is your Dutch language level proficiency?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen:
+  - What is your English language level proficiency?
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_132
+  question: Which sales motions have you owned
+  canonical_text: Which sales motions have you owned
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_133
+  question: In your most recent sales role, what size companies did you primarily
+    sell to?
+  canonical_text: In your most recent sales role, what size companies did you primarily
+    sell to?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_134
+  question: Why do you want to work at Doximity?
+  canonical_text: Why do you want to work at Doximity?
+  category: motivation
+  subcategory: null
+  bank_role: star
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_135
+  question: Have you used tool like NetSuite, Coupa, ZIP, Navan, and Workday Expenses
+    or similar softwares?
+  canonical_text: Have you used tool like NetSuite, Coupa, ZIP, Navan, and Workday
+    Expenses or similar softwares?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_136
+  question: Is your Italian language at native or fluent level of proficiency?
+  canonical_text: Is your Italian language at native or fluent level of proficiency?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_137
+  question: For enterprise deals you personally closed in the past 24 months, what
+    were your typical annual contract value and sales-cycle length?
+  canonical_text: For enterprise deals you personally closed in the past 24 months,
+    what were your typical annual contract value and sales-cycle length?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_138
+  question: How many accounts do you currently manage?
+  canonical_text: How many accounts do you currently manage?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 2
+  origin: crawled
+  needs_review: true
+- id: qb_139
+  question: How many years of experience do you have in the locum tenens staffing
+    industry (temporary placement of MD/DO/APP/CRNA/NP/PA providers)?
+  canonical_text: How many years of experience do you have in the locum tenens staffing
+    industry (temporary placement of MD/DO/APP/CRNA/NP/PA providers)?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_140
+  question: Are you fluent in Arabic and comfortable conducting sales calls and business
+    conversations entirely in Arabic?
+  canonical_text: Are you fluent in Arabic and comfortable conducting sales calls
+    and business conversations entirely in Arabic?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_141
+  question: Do you require visa sponsorship in order to legally work in Italy?
+  canonical_text: Do you require visa sponsorship in order to legally work in Italy?
+  category: work_authorization
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: true
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_142
+  question: Are you open to working from the South San Francisco office at least 2-3
+    days per week?
+  canonical_text: Are you open to working from the South San Francisco office at least
+    2-3 days per week?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_143
+  question: Do you have 5+ years of sales experience at a technology company?
+  canonical_text: Do you have 5+ years of sales experience at a technology company?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_144
+  question: How many years of experience do you have in the locum tenens (MD/DO/APP/CRNA)
+    staffing industry?
+  canonical_text: How many years of experience do you have in the locum tenens (MD/DO/APP/CRNA)
+    staffing industry?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_145
+  question: Do you speak Korean at a native proficiency?
+  canonical_text: Do you speak Korean at a native proficiency?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_146
+  question: This full-time role requires you to work in our Guadalajara office 5 days
+    per week. Are you currently local or willing to relocate to meet this requirement?
+  canonical_text: This full-time role requires you to work in our Guadalajara office
+    5 days per week. Are you currently local or willing to relocate to meet this requirement?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_147
+  question: Do you have 3+ years of full sales cycle experience, building an outbound
+    pipeline by self hunting and prospecting net new logos through close and implementation?
+  canonical_text: Do you have 3+ years of full sales cycle experience, building an
+    outbound pipeline by self hunting and prospecting net new logos through close
+    and implementation?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_148
+  question: This role will be on 50% hybrid work arrangement. Will you be comfortable
+    with this arrangement?
+  canonical_text: This role will be on 50% hybrid work arrangement. Will you be comfortable
+    with this arrangement?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_149
+  question: What are your salary expectations?
+  canonical_text: What are your salary expectations?
+  category: compensation
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - healthcare
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_150
+  question: Do you have experience working with GTM and RevOps teams on capacity models?
+  canonical_text: Do you have experience working with GTM and RevOps teams on capacity
+    models?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_151
+  question: This role requires frequent interaction with Dutch-speaking clients. What
+    is your level of proficiency in the Dutch language?
+  canonical_text: This role requires frequent interaction with Dutch-speaking clients.
+    What is your level of proficiency in the Dutch language?
+  category: language
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_152
+  question: If you are currently based in another country, are you agreeable to relocate
+    to Singapore?
+  canonical_text: If you are currently based in another country, are you agreeable
+    to relocate to Singapore?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_153
+  question: This role is based in Singapore, Stripe works on a hybrid model with 50%
+    of the month attendance in the office, are you comfortable with the work arrangement?
+  canonical_text: This role is based in Singapore, Stripe works on a hybrid model
+    with 50% of the month attendance in the office, are you comfortable with the work
+    arrangement?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_154
+  question: The working hours for this role are 5:30 pm to 2:30 am IST. Are you okay
+    working these hours?
+  canonical_text: The working hours for this role are 5:30 pm to 2:30 am IST. Are
+    you okay working these hours?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_155
+  question: 'Let us know specifically how you heard about us:'
+  canonical_text: 'Let us know specifically how you heard about us:'
+  category: factual_profile
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_156
+  question: What is your total years of work experience?
+  canonical_text: What is your total years of work experience?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_157
+  question: Which markets do you have experience selling into?
+  canonical_text: Which markets do you have experience selling into?
+  category: experience_screen
+  subcategory: null
+  bank_role: experience
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - fintech
+    seniority:
+    - ic_mid
+    - ic_senior
+    function:
+    - engineering
+    - product
+    geo:
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_158
+  question: Are you currently located in Bangalore?
+  canonical_text: Are you currently located in Bangalore?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_159
+  question: Are you authorized to travel to the US for work purposes?
+  canonical_text: Are you authorized to travel to the US for work purposes?
+  category: logistics
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - logistics
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - operations
+    - sales
+    geo:
+    - global
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+- id: qb_160
+  question: What is your current annual compensation?
+  canonical_text: What is your current annual compensation?
+  category: compensation
+  subcategory: null
+  bank_role: profile
+  variant_dimensions: []
+  jurisdiction_dependent: false
+  variants: []
+  variants_seen: []
+  tags:
+    industry:
+    - education
+    seniority:
+    - ic_mid
+    function:
+    - engineering
+    - marketing
+    - product
+    geo:
+    - remote
+    - us
+  source_count: 1
+  origin: crawled
+  needs_review: true
+metrics:
+  total_questions: 160
+  live_seeds: 10
+  crawled: 150
+  categories:
+    behavioral: 11
+    factual_profile: 18
+    motivation: 5
+    logistics: 31
+    work_authorization: 18
+    experience_screen: 25
+    legal_screen: 5
+    consent: 15
+    language: 12
+    early_career: 11
+    demographic: 3
+    compensation: 5
+    technical: 1
+  bank_roles:
+    star: 16
+    profile: 89
+    experience: 26
+    form_only: 29
+  raw_rows: 1333
+  clusters: 163
+  status: "promoted to live 2026-11-17"

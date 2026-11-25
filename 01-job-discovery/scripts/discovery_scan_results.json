@@ -1,0 +1,56 @@
+{
+  "scan_time": "2026-09-19T13:22:10.949460+00:00",
+  "queued": [
+    {
+      "company": "unknown",
+      "role_title": "Product Manager - Reactors",
+      "posting_url": "https://wellfound.com/jobs/4735289-product-manager-reactors",
+      "source": "wellfound",
+      "posted_at": null,
+      "is_recent": false,
+      "matched_variant": "Product Manager"
+    },
+    {
+      "company": "unknown",
+      "role_title": "Product Manager II",
+      "posting_url": "https://wellfound.com/jobs/4735287-product-manager-ii",
+      "source": "wellfound",
+      "posted_at": null,
+      "is_recent": false,
+      "matched_variant": "Product Manager"
+    },
+    {
+      "company": "unknown",
+      "role_title": "Junior Product Manager",
+      "posting_url": "https://wellfound.com/jobs/4618116-junior-product-manager",
+      "source": "wellfound",
+      "posted_at": null,
+      "is_recent": false,
+      "matched_variant": "Product Manager"
+    }
+  ],
+  "skipped_duplicates": [
+    {
+      "company": "A.Team",
+      "role_title": "Senior Independent AI Engineer / Architect",
+      "posting_url": "https://remotive.com/remote-jobs/software-development/senior-independent-ai-engineer-architect-1919266",
+      "source": "remotive-api"
+    }
+  ],
+  "skipped_filter": [],
+  "blocked_sources": [
+    {
+      "source": "indeed-global",
+      "type": "indeed_search_url",
+      "reason": "BLOCKED (HTTP 403)"
+    }
+  ],
+  "sources_status": {
+    "indeed-global": "BLOCKED (HTTP 403)"
+  },
+  "daily_cap": 15,
+  "discovered_today": 0,
+  "staged_today": 0,
+  "remaining_slots_before_queue": 15,
+  "queued_count": 3
+}

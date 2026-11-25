@@ -1,0 +1,9 @@
+Approval needed — App #90 · Stedi · Product Manager
+
+Honest match score: 69% (live posting). Gate 1 PASSED. Gate 2 PASSED on overqualification axis BUT posting lists no salary range — comp unverifiable against your $36k floor, flagged not waived. Risk gate: 4 PASS / 0 FAIL.
+Gaps flagged honestly: healthcare RCM, EDI/X12 HIPAA, eligibility-verification workflows.
+FLAG FOR YOUR CALL: posting says "Remote in the USA" — you're in Asaba needing sponsorship. Recommend do-not-submit unless you confirm US-hiring eligibility or explicitly override.
+
+Reply APPROVE to submit, EDIT to change anything, or SKIP to drop this one.
+
+MEDIA:C:\Users\rotim\AppData\Local\hermes\skills\job-hunting\shared\build_artifacts\app_90\risk_tactics_change_log.md

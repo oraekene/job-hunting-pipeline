@@ -1,0 +1,45 @@
+{
+  "scan_at": "2026-09-08T18:23:42Z",
+  "queries_scanned": [
+    {
+      "id": "reddit-pm-hiring-dm",
+      "platform": "reddit",
+      "query_text": "site:reddit.com \\"
+    },
+    {
+      "id": "reddit-forhire-techjobs-hiring",
+      "platform": "reddit",
+      "query_text": "site:reddit.com r/forhire r/jobbit r/techjobs r/remotework \\"
+    },
+    {
+      "id": "n8n-community-hiring",
+      "platform": "n8n_community",
+      "query_text": "site:community.n8n.io \\"
+    },
+    {
+      "id": "x-twitter-hiring-pm-ai",
+      "platform": "x",
+      "query_text": "site:x.com OR site:twitter.com \\"
+    },
+    {
+      "id": "reddit-aiproductmanagers-hiring",
+      "platform": "reddit",
+      "query_text": "site:reddit.com r/AIProductManagers r/AIJobs \\"
+    }
+  ],
+  "total_posts_found": 0,
+  "classified": {
+    "apply_link": 0,
+    "dm_instructions": 0,
+    "email_instructions": 0,
+    "reply_instructions": 0,
+    "unclear": 0
+  },
+  "posts": {
+    "apply_link": [],
+    "dm_instructions": [],
+    "email_instructions": [],
+    "reply_instructions": [],
+    "unclear": []
+  }
+}

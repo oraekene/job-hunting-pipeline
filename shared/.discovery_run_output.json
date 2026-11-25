@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-09-23T06:21:29Z",
+  "sources_checked": [
+    "wellfound",
+    "remotive-api",
+    "hnrss-who-is-hiring",
+    "open_web_bing_site:boards.greenhouse.io \"pro",
+    "open_web_bing_site:jobs.lever.co \"product ma",
+    "open_web_bing_site:jobs.ashbyhq.com \"product",
+    "open_web_bing_site:careers.workday.com \"prod",
+    "open_web_bing_site:jobs.smartrecruit.co \"pro",
+    "open_web_bing_\"product manager\" \"AI\" remote ",
+    "open_web_bing_\"AI product manager\" remote re",
+    "open_web_bing_\"AI engineer\" remote remote OK",
+    "open_web_bing_\"automation engineer\" remote r",
+    "open_web_bing_\"technical product manager\" re"
+  ],
+  "sources_blocked": [
+    {
+      "linkedin-global": "BLOCKED \u2014 sign-in wall / anti-bot (per env config)"
+    },
+    {
+      "indeed-global": "BLOCKED \u2014 sign-in wall / ATS wall (per env config)"
+    },
+    {
+      "remote-ok": "BLOCKED \u2014 anti-bot/redirect (per env config)"
+    }
+  ],
+  "total_found_raw": 0,
+  "total_unique": 0,
+  "duplicates": 19,
+  "filtered_out": 0,
+  "queued": 0,
+  "overflow": 0,
+  "remaining_slots": 15,
+  "daily_cap": 15,
+  "today_queued": 0,
+  "high_priority": 0,
+  "normal_priority": 0,
+  "all_candidates": []
+}

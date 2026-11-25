@@ -1,0 +1,498 @@
+{
+  "scan_at": "2026-09-14T15:34:10Z",
+  "total_posts_found": 52,
+  "classified": {
+    "apply_link": 6,
+    "dm_instructions": 5,
+    "email_instructions": 3,
+    "reply_instructions": 4,
+    "unclear": 34
+  },
+  "posts": {
+    "apply_link": [
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-ai-and-crm-implementation-consultant-partner-coach-remote-6-000-mo",
+        "title": "[Hiring] AI and CRM Implementation Consultant + Partner Coach | Remote | $6,000/mo",
+        "body": "AI Scaling is hiring five full-time AI Implementation Consultants and Partner Coaches. This is primarily a one-on-one coaching role for agency owners, but it requires real implementation experience. You will teach new partners how their agency systems work and occasionally help configure workspaces, CRM pipelines, automated workflows, AI agents, and client solutions. What you will do Coach assigned agency owners through a structured three-month ramp Teach nontechnical partners how to use AI Scaling’s platform and agent copilots Explain CRM pipelines, workflows, automation, AI agents, and B2B sales processes Provide asynchronous support through Slack Help troubleshoot or configure partner and client workspaces when needed Track partner competency, time to first sale, and client satisfaction What we are looking for At least two years of hands-on experience implementing CRM, automation, or AI systems Experience as a freelancer, agency owner, agency operator, or implementation specialist Working knowledge of tools such as n8n, Make, Zapier, GoHighLevel, HubSpot, Airtable, Notion, or Monday.com Experience building automated workflows or AI agents Strong understanding of B2B sales and the ability to explain processes clearly Clear, professional spoken and written English Comfortable teaching clients on camera and working independently Course creation, SOP writing, or educational content experience is a plus Cold email marketing experience is helpful but not required Role details Full-time, Monday through Friday Remote and open worldwide Flexible eight-hour shift within our operating window Starting compensation: $6,000 per month Performance bonus: up to 20% Reports directly to the COO Hiring five people and starting as soon as possible Apply here: AI Scaling AI Implementation Consultant and Partner Coach | AI Scaling Careers Apply for a full-time remote role coaching AI Scaling licensee partners on AI implementation, CRM systems, automation, sales, and agency operations. ",
+        "cta_type": "apply_link",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": "Apply link referenced in post"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-sales-tech-automation-specialist-ongoing-remote-work-crm-databases",
+        "title": "Hiring: Sales Tech & Automation Specialist (Ongoing Remote Work, CRM + Databases)",
+        "body": "Hey everyone, we’re hiring a hands-on Sales Tech & Automation Specialist for ongoing remote work. We run a sales agency and need someone technically talented who can help us debug, maintain, and improve our systems. Sales experience is not required. We’re mainly looking for someone who enjoys building systems and solving technical problems. Experience in sales operations would be a plus. This is not a one-off project. We are scaling and want to bring in someone who can become a long-term part of the team. If the culture and skillset fit is strong, this role can grow into broader technical ownership and potentially leading a small tech operations team down the line. Stack: Close CRM or other sales CRMs n8n / Make / Zapier Airtable / SQL databases Calendly Typeform ClickFunnels Webhooks / APIs JavaScript or code steps are a strong bonus Typical work: Debug broken automations Maintain CRM fields, pipelines, statuses, smart views, and workflows Build and improve systems Optimize databases Connect tools through n8n, webhooks, and APIs Document recurring issues and suggest system improvements Communicate clearly with our team in Slack Good fit: Strong technical problem solver Detail-oriented and calm when something breaks Comfortable debugging messy client workflows step by step Good written English Some overlap with European working hours; our clients are mostly based in the US Looking for ongoing work, not just one-off projects Apply here: Airtable Airtable | Everyone's app platform Airtable is a low-code platform for building collaborative apps. Customize your workflow, collaborate, and achieve ambitious outcomes. Get started for free. Looking forward to hearing from you. Nicolas",
+        "cta_type": "apply_link",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": "Apply link referenced in post"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-an-automation-engineer-in-karachi",
+        "title": "Hiring an automation engineer in Karachi",
+        "body": "Automation Engineer (Karachi, Hybrid) Office: BRR Tower, I.I. Chundrigar Road (3 days/week) Salary: 200k–250k PKR + performance bonus (up to 50k) Hours: 6pm–2am PKT Education budget: 250k PKR/year We’re Scaletopia, a high-volume outbound lead gen agency (cold email + SMS). We’re hiring an Automation Engineer to build internal systems that remove bottlenecks, reduce manual work, and keep operations running clean at scale. What we need: Strong n8n + make.com experience Strong API/webhook integration skills Comfortable building with Cursor / Claude Code (LLM-assisted) Strong English communication + documentation (Loom/SOP/flowcharts) Based in Karachi and available hybrid Apply here: https://www.linkedin.com/jobs/view/4362271818/ If you know someone great, tag/share with them",
+        "cta_type": "apply_link",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Apply link found: https://www.linkedin.com/jobs/view/4362271818/"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-freelance-ai-automation-engineer-remote",
+        "title": "🚀 Hiring: Freelance AI Automation Engineer (Remote)",
+        "body": "I’m looking for an elite AI Automation Engineer / AI Systems Builder to join the team at TargetPatientsMD.com. We are looking for an expert to help design, implement, and manage AI-powered workflows to scale our online lead generation. If you know how to build and optimize systems that turn traffic and scraped data into qualified leads, we want to talk to you. The Non-Negotiables: - Claude Expertise: Minimum 2 years of hands-on experience working specifically with Claude (Anthropic) APIs and prompt engineering. - Lead Gen Mastery: Proven track record of building and running AI systems specifically for online lead generation and outbound outreach. - Perfect Communication: Fluent/excellent spoken and written English. - Time Zone: Must be available to work and communicate during USA EST (New York) business hours. Projects You Will Work On: - Scale our existing outbound engine: Take over our custom-built system that scrapes Google Maps data, generates lead spreadsheets for our cold callers, and sends automated emails via Instantly. Our IPs are already warmed up—we just need you to run it at full speed, troubleshoot issues, and improve the workflow. - Build AI lead qualification chatbots for our websites and landing pages. - Design AI-powered outbound and inbound email marketing automations. - Create AI-generated SEO and content systems to drive traffic. - Develop automated CRM routing and intelligent follow-up sequences. Required Tech Stack & Experience: - Claude (Anthropic) APIs (Core requirement) and N8N workflows expertise - Instantly & Web Scraping Tools (Managing cold email infrastructure and Google Maps scraping) - OpenAI / ChatGPT APIs - Zapier / Make / n8n - CRM integrations (GoHighLevel) - Advanced prompt engineering & workflow architecture Bonus if you have experience building: - Autonomous AI outbound lead agents - RAG (Retrieval-Augmented Generation) / custom knowledge bases - Systems specifically tailored for medical/patient lead generation Role Details: - ",
+        "cta_type": "apply_link",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Apply link referenced in post"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-we-are-looking-for-a-n8n-automation-expert-to-build-ai-agent-workflows-freelance",
+        "title": "HIRING: we are looking for a n8n Automation Expert to Build AI Agent Workflows (Freelance)",
+        "body": "Dear Candidates, We are seeking a seasoned n8n Cloud Automation Developer to architect and build a cutting-edge, multi-agent AI workflow. You will be responsible for designing an n8n flow in which: AI Agent #1 ingests and analyzes multiple incoming documents. Based on that analysis, Agent #1 dynamically generates a tailored prompt. AI Agent #2 receives the Agent #1 prompt, executes further domain-specific logic, and issues instructions to downstream AI nodes. Your work will turn these document reviews into fully automated, intelligent pipelines—streamlining our process and enabling rapid, reliable reports. How to Apply Please email your application to mohammed.k@gc-ti.com with the subject line: Application: n8n AI Agent Workflow Developer Include the following in your message: Required (please include): A brief cover letter outlining your n8n and AI orchestration experience. Your résumé/CV. A short sample (2–3 paragraphs) describing a past n8n project where you chained multiple Function or Agent nodes. Your availability and expected weekly hours. Optional (will give your application a boost): Links to any public n8n workflows or repositories you’ve created. Testimonials or references from previous clients or colleagues. A one-page architecture sketch of how you’d structure a multi-agent AI flow in n8n. We review applications on a rolling basis and aim to schedule technical interviews within five business days. Thank you for considering this opportunity to help us blend time-honored precision with tomorrow’s AI-powered automation. Sincerely, Mohammed K GCS",
+        "cta_type": "apply_link",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Apply link referenced in post"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/we-are-hiring-check-out-our-open-positions",
+        "title": "We are hiring - check out our open positions! 👋",
+        "body": "Open positions at n8n (auto-updated weekly): Join our Talent Community | Berlin or Europe remote Head of Marketing | Berlin or Europe remote Senior/Lead Growth Marketing Manager | Berlin or Europe remote Team Assistant Check out our careers page to learn more: n8n - Current Openings",
+        "cta_type": "apply_link",
+        "search_query": "\"we are hiring\" remote",
+        "cta_context": "Apply link referenced in post"
+      }
+    ],
+    "dm_instructions": [
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-senior-n8n-developer-latam-remote-estamos-contratando",
+        "title": "Hiring: Senior n8n Developer (LATAM – Remote) / Estamos contratando",
+        "body": "# Hiring: Senior n8n Developer (LATAM – Remote) | Interview with our AI Agent Hi everyone, At Inallmedia.com , we are looking for a Senior n8n Developer based in LATAM to join an automation and integration project.What we are looking for / Lo que buscamos: Proven experience designing and optimizing complex n8n workflows Ability to build custom nodes and integrate APIs (CRM, ERP, Marketing, AI, etc.) Knowledge of self-hosted and cloud deployments Best practices in security, scalability, and monitoring Location / Ubicación: 100% remote from LATAM Type / Modalidad: Full-time, working with an international team Ready to apply in a different way? Instead of a traditional form, you can start your interview directly with our AI Agent here: Start Interview with AI Agent – link Feel free to DM me directly as well if you’d like to connect / También puedes escribirme directo para conversar.",
+        "cta_type": "dm_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "dm me"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-business-automation-manager-remote-eu-perm-contract",
+        "title": "[HIRING] Business Automation Manager - Remote EU - Perm Contract",
+        "body": "The Mission: We are a fast-growing, AI-first Cybersecurity scale-up, and we’re done with manual processes. We are looking for our first Business Automation Manager —our internal “Czar”—to hunt down operational bottlenecks and build the automated engine that runs our Finance, Sales, and Ops teams. The Role: 70-80% Building: This is not a “Strategy & Slides” role. You’ll be in the canvas every day. Total Ownership: You’ll have the autonomy to identify friction points and ship n8n workflows that eliminate them. AI-First: We are heavily focused on integrating LLMs and Agentic workflows into our internal stack. The Stack: Primary Orchestration: n8n (Self-hosted/Cloud). Code: Mandatory Python (for when standard nodes aren’t enough). Integrations: Salesforce, HubSpot, Slack, Greenhouse, and custom APIs. Who You Are: You’ve built complex, production-grade workflows in n8n (we’d love to see your favorite “crazy” canvas). You are a “Problem Hunter”—you get a dopamine hit from deleting a spreadsheet. Location: Fully Remote (must be based in the EU or UK ). How to Apply: DM me",
+        "cta_type": "dm_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "dm me"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-ai-automation-specialist-mexico-based-remote",
+        "title": "[HIRING] n8n & AI Automation Specialist – Mexico Based 🇲🇽 (Remote)",
+        "body": "Subject: [HIRING] n8n & AI Specialist - Mexico Based (Remote) FlowTech Studio is looking for an n8n expert based in Mexico for a long-term partnership (Contractor). The Stack: n8n (Self-hosted / Docker) OpenAI API & WhatsApp Business API Advanced JSON & JavaScript (Function nodes) Requirements: Location: Must live in Mexico (Mandatory). Tax: Must be able to issue invoices ( CFDI ). Skills: Expert in Error Handling and VPS management. Compensation (MXN): Fixed Setup Fee per project + Monthly Recurring Commission per active account. Apply: Send me a DM with a screenshot of your most complex workflow",
+        "cta_type": "dm_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "DM requested"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/need-someone-to-build-an-ai-automation-workflow-just-starting-out-willing-to-pay-flat-fee",
+        "title": "Need someone to build an AI automation workflow — just starting out, willing to pay flat fee",
+        "body": "Hey, I’m just starting out and looking to build a small agency in the UK music space and I need help setting up some automation infrastructure before I launch. Specifically I need someone to connect Tally, Airtable and n8n into a basic lead capture pipeline, with two manual approval checkpoints built in so nothing fires without me signing off first. Also need a payment status toggle in Airtable that pauses or deactivates a workflow depending on how long a client hasn’t paid. There is a little more I’m looking to have within it too, but this is the basic gist. Nothing crazy, just clean, modular and well documented so I can manage it myself after handover. I’m not technical but I know what I want it to do. Looking for a flat fee quote, not hourly. Happy to share a full brief with anyone interested. DM me if this is something you can help with.",
+        "cta_type": "dm_instructions",
+        "search_query": "\"need someone\" \"AI automation\"",
+        "cta_context": "dm me"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/looking-for-a-technical-co-founder-n8n-supabase-architecture-michigan-toledo-area-preferred",
+        "title": "Looking for a Technical Co‑Founder (n8n + Supabase Architecture) — Michigan / Toledo Area Preferred",
+        "body": "Hey everyone, I’m building a new automation‑driven SaaS product and I’m looking for a technical co‑founder who is strong in n8n architecture , workflow design, and modern backend patterns. I’m specifically looking for someone who can help architect and scale a system built around: n8n (workflow orchestration, modular pipelines, webhook handling, cron logic) Supabase (auth, Postgres, RLS, storage, edge functions) API integrations (scraping, structured data extraction, multi‑step logic) AI model orchestration (prompt pipelines, multi‑model routing, cost‑efficient design) Scalable backend patterns (queueing, rate‑limiting, error‑handling, retries, logging) Ideal experience includes: Designing multi‑workflow systems in n8n Building Supabase‑backed applications with clean schema design Familiarity with AI integrations (OpenAI, Anthropic, etc.) Understanding of secure architecture , API auth, and data isolation Ability to think in terms of systems , not just scripts Bonus: experience with Typescript , Next.js , or serverless patterns Location preference: I’m based in Ann Arbor, MI , and would strongly prefer someone within ~1 hour driving distance (Detroit metro, Novi, Plymouth, South Lyon, Lansing, Toledo, etc.). Remote is possible for the right person, but local is ideal for collaboration. About the project (high‑level): It’s an automation‑heavy platform that processes structured data, runs multi‑step logic, and interacts with external APIs. More details shared privately after a brief intro call and MNDA . If you’re interested in joining early, shaping the architecture, and building something real from the ground up, send me a message — I’d love to talk. Thanks!",
+        "cta_type": "dm_instructions",
+        "search_query": "\"need someone\" \"AI automation\"",
+        "cta_context": "send me a message"
+      }
+    ],
+    "email_instructions": [
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/ai-automation-engineer-n8n-developer-looking-for-remote-opportunities",
+        "title": "AI Automation Engineer | n8n Developer Looking for Remote Opportunities",
+        "body": "Hi n8n community! I’m Bisma Nawaz , an AI automation engineer with 1.5+ years of experience building production n8n workflows, AI agents, and LLM-powered automation systems. I’m currently looking for a remote full-time or long-term contract opportunity and am available to start immediately. What I build Production n8n workflows CRM & business process automation ETL pipelines and webhook orchestration AI agents with OpenAI, Claude & LangChain RAG applications with ChromaDB FastAPI, Django, NestJS Docker, GitHub Actions & CI/CD Projects I’ve built Lead Enrichment API: https://bisma225-lead-enrichment-api.hf.space/docs Document Q&A RAG API: Document Q&A API - Swagger UI GitHub: BismaNwaz · GitHub I’m not hiring —I’m looking for a job . A few people misunderstood my previous post and emailed asking for jobs, so I wanted to clarify. If your company is hiring an AI Automation Engineer, n8n Developer, AI Engineer, or Backend AI Developer, I’d really appreciate a referral or an opportunity to interview. I’m looking for remote roles and can work in the PKT timezone with overlap for UK/EU teams. Feel free to DM me or email me at bismanawaz043@gmail.com . Thank you so much for your support!",
+        "cta_type": "email_instructions",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": "email me"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/intern-posting-alert",
+        "title": "Intern Posting Alert",
+        "body": "We’re hiring interns at Interactly.ai across AI, GTM, Research, and Growth functions. Remote | India Duration: 6+ Months PPO opportunity for top performers Stipend: Negotiable Open Roles: • GTM Automation & AI Engineer • Outbound Research & Sequencing Intern • Brand Builder — Content, Growth & Analytics You’ll work on real projects involving AI workflows, outbound systems, content growth, automation, and enterprise sales operations. We’re looking for candidates who are: • Curious and proactive • Comfortable learning fast • Interested in AI, startups, and building real systems • Strong in communication, research, content, or automation Degree/branch does not matter. Skills and execution do. Apply with a 2-min pitch video, 1-page objections doc, demo outline, portfolio. To apply, send your work/tasks to: careers@interactly.ai ( mailto:careers@interactly.ai ) #AIInternship #BuildWithAI #InternshipOpportunity #Startups #AIAutomation #GrowthMarketing",
+        "cta_type": "email_instructions",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": "mailto:"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/for-hire-ai-automation-engineer-n8n-docker-ai-agents-20-shipped-workflows",
+        "title": "[For Hire] AI & Automation Engineer | n8n + Docker + AI Agents (20+ Shipped Workflows)",
+        "body": "Hi everyone, I am a Computer Engineering graduate and AI Automation Engineer specializing in building robust, production-ready backend workflows and multi-agent systems using n8n. I focus on translating complex business processes into highly stable automations. Whether you need self-hosted infrastructure or advanced LLM logic pipelines, I can build and deploy them cleanly. My Core Technical Stack: Orchestration: n8n (Advanced workflow design, custom error handling, sub-workflows) AI & Frameworks: Gemini 2.5 Flash, OpenAI APIs, Claude, RAG, Supabase Vector Store, Prompt Engineering Infrastructure & Backend: Docker (Advanced self-hosting), C#, JavaScript (Basic), SQL, Git/GitHub Integrations: Google Workspace, Telegram API, Lovable, CRM systems, webhooks, and custom REST APIs Proven Track Record (20+ Shipped Workflows): AI Hiring Pipeline: Built a 4-stage automated hiring workflow using Gemini 2.5 Flash with progressive candidate difficulty scoring (50–90%). Healthcare Automation: Shipped an AI medical document processor that automatically parses referrals, lab results, and prescriptions, saving clinics 15–20 hours weekly. Memory-Driven Agents: Developed a persistent customer support agent using Supabase Vector Store (RAG) for continuous user context and history. Infrastructure Management: Experienced with self-hosting complex environments. I deploy and manage n8n instances, Zulip team platforms, and Ejabberd XMPP servers using Docker. What I’m Looking For: I am available for long-term remote roles, contract development, or targeted workflow debugging/optimization sprints. I ensure an up to 90% reduction in manual workloads and 80% faster operational response times for the teams I work with. Feel free to DM me here or reach out directly via email at chukwudubemnwokocha@gmail.com . You can also view my professional background on LinkedIn: linkedin.com/in/johnpaul-nwokocha67 Let’s build something incredible together!",
+        "cta_type": "email_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "email at"
+      }
+    ],
+    "reply_instructions": [
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-freelance-agency-ai-automation-engineer-n8n-make-apis-remote",
+        "title": "📣 HIRING: Freelance/Agency AI Automation Engineer (n8n / Make / APIs) — Remote",
+        "body": "Hey everyone, We’re a recruitment (marketing) company based in the Netherlands. We’re looking for a freelance AI Automation Engineer to help us build and maintain automation systems across our operations. What you’ll be building: Meta Ads ops automation (ad copy, creatives, campaign setup) LinkedIn & Indeed scraper for sales outreach Sales & outbound automation workflows Automated dashboards and reporting pipelines Image & creative design automation Stack: n8n, Make, OpenAI/Claude, Meta Graph API, WhatsApp API, Notion, Lemlist (and we want to be on top of the game in with new stuff) The role is a bit more than just building , you’d also be the product owner of our automation systems. That means triaging bugs, evaluating feature requests from the team and owning the weekly alignment with me (founder). Freelance / project-based. Remote, worldwide. must be fluent in English. Rate negotiable. If you’ve built real workflows with n8n and APIs and want interesting projects, reply here or DM me. Tell me what you’ve built.",
+        "cta_type": "reply_instructions",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": "reply"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-expert-for-1-on-1-coaching-whatsapp-evolution-api-telegram",
+        "title": "Hiring: n8n Expert for 1-on-1 Coaching (WhatsApp Evolution API & Telegram",
+        "body": "Hello n8n Community, My name is Khaled Alkhater. I have a VPS (8 vCPU / 32GB RAM / 400GB SSD) running n8n Community Edition, and I am looking for practical 1-on-1 coaching focused on building WhatsApp and Telegram integrations at a professional level for an automation agency. Training Scope: Full WhatsApp Integration: specifically using Evolution API, WhatsApp Cloud API, and Webhooks. Anti-ban Protection: Best practices and structured guidelines for safe operations. Telegram Bot Integration: Sending, receiving, auto-replies, and workflow design. Expectations: Building complete n8n flows for messaging, funnels, and customer interactions. Ready-to-use n8n templates for multi-client use. Clear documentation. Language: Preferred: Arabic. Acceptable: English (Recorded or written material is fine). If you can provide this coaching, please reply with: Your experience with Evolution API/WhatsApp. Your hourly or package pricing. Examples of flows/systems you’ve built. Thank you.",
+        "cta_type": "reply_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Public reply requested"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-automation-expert-ai-video-clip-detection-editing-auto-publishing",
+        "title": "Hiring n8n Automation Expert — AI Video Clip Detection, Editing & Auto-Publishing",
+        "body": "looking for an experienced n8n automation developer to build a complete, end-to-end workflow that will: Workflow Requirements: Ingest long-form published videos from YouTube (via yt-dlp or similar). Detect and extract clips featuring a specific person using AI face recognition (Twelve Labs, Sieve, or similar). Auto-cut highlights based on timestamps, keeping the most engaging moments (positive interactions, key moments, etc.). Reframe to vertical 9:16 format with intelligent cropping to keep the person centered in frame. Add captions automatically (AssemblyAI, Whisper, or similar). Overlay watermark/logo and style captions for social media. Generate thumbnails automatically (Bannerbear, Canva API, or similar). Auto-publish clips to Instagram Reels (Meta Graph API) and optionally TikTok and YouTube Shorts. Log analytics (likes, comments, shares) into Google Sheets. Tech Stack (Preferred): n8n (self-hosted on Railway/Docker) ffmpeg & yt-dlp AI APIs: Twelve Labs or Sieve (face detection), AssemblyAI or Whisper (captions), Bannerbear or Canva API (thumbnails) Publishing APIs: Meta Graph API (Instagram), TikTok API, YouTube Data API Google Sheets API for analytics logging What I Have Ready: Starter n8n workflow kit (JSON workflows, Dockerfile with ffmpeg/yt-dlp, .env sample, placeholder watermark) Hosting environment Reference image for face detection What I Need From You: Connect APIs and credentials Configure all nodes for smooth end-to-end automation Ensure error handling and logging Optional: Set up scheduled posting times in specific time zones Deliverables: Fully working n8n workflow chain from YouTube → AI clip detection → edit → publish → analytics Documentation for setup & maintenance Short test run with a sample video Budget: Open to offers based on experience and delivery speed Location: Remote – global applicants welcome If interested, please reply with: Examples of similar n8n or automation projects you’ve built Your proposed approach for AI detection & clip",
+        "cta_type": "reply_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Public reply requested"
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/jobs-hiring",
+        "title": "Jobs / Hiring",
+        "body": "Deutsche Version Hallo zusammen, ich suche kurzfristig Unterstützung durch einen erfahrenen n8n Automation Expert / Coach, idealerweise über Live-Coaching (per Call/Remote-Session) bei: - Hilfe bei der Registrierung und ersten Einrichtung von n8n - Aufbau eines ersten Agenten (Architektur-Use Case) mit Fokus auf: Terminplanung (Kalender-Anbindung) E-Mail-Handling (sichten, gewichten, priorisieren) Erste Automatisierungen für den Arbeitsalltag in einem Architekturbüro Perspektive: Das Coaching soll den Grundstein legen – anschließend möchte ich das Ganze zu einem KI-basierten Agenten-Framework im Bereich Architektur und Wohnungswirtschaft ausbauen. Wenn jemand Erfahrung und Zeit hat, freue ich mich sehr über eine Rückmeldung mit: - Euren Erfahrungen mit n8n (gern Use Cases/Referenzen) - Honorar nach Absprache – bitte teilt mir euren bevorzugten Stundensatz mit - Eurer Verfügbarkeit für eine erste Session Vielen Dank vorab! Herwig Strobl www.strobl-architekten.de / strobl@strobl-architekten.de / mobil +49 151 50620811 English Version Hello everyone, I am looking for short-term support from an experienced n8n Automation Expert / Coach, ideally via live coaching (call/remote session) for: - Assistance with registration and initial setup of n8n - Building a first agent (architecture use case) focused on: Appointment scheduling (calendar integration) Email handling (sorting, prioritizing, weighting) First automations for daily workflows in an architecture office Perspective: This coaching should lay the foundation – afterwards, I would like to expand it into an AI-based agent framework in the field of architecture and housing management. If you have experience and availability, I would greatly appreciate your reply with: Your experience with n8n (use cases/references) Your preferred hourly rate Your availability for a first session Thank you in advance! Herwig Strobl www.strobl-architekten.de / strobl@strobl-architekten.de / mobil +49 151 50620811",
+        "cta_type": "reply_instructions",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": "Public reply requested"
+      }
+    ],
+    "unclear": [
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-applied-ai-engineer-n8n",
+        "title": "Hiring: Applied AI Engineer (N8N)",
+        "body": "Applied AI Engineer PLEASE NOTE: At this time, we are placing a preference on candidates in the US and Canada. JOIN OUR TEAM! Bitovi helps companies create better web applications. We are seeking candidates to help build production-ready Intelligent Automations and Agentic AI solutions for our diverse portfolio of enterprise clients. We guide our clients to build things the “right way”: maintainable, scalable, tested, documented, etc. Our developers are consultants who are knowledgeable and proficient communicators and can help enterprise clients make the right decisions for their applications. Hello Potential Bitovian sums it up well (short read!) WHO YOU ARE We are looking for a candidate with the following attributes: Passion for using and building AI tools and solutions Proven ability to deliver real-world solutions and platforms Ability to lead and be an integral part of a team Strongly motivated and able to work autonomously Accepting of suggestions and constructive feedback Driven to continuously learn and improve Enjoys solving complex problems Specific experience: Developing automation tools at the enterprise level Building workflow automation using tools such as n8n or Rivet Strong working knowledge of TypeScript or Python, and LangChain Practical use of multiple AI models and content modalities Leveraging vector databases and advanced RAG techniques Utilizing tool calling and other advanced model features Working directly with clients or other stakeholders Other Skills we value: Some exposure to cloud deployments and management, including AWS, Docker, and Kubernetes Deep understanding of CI/CD pipelines, including GitHub actions, TravisCI, and CodeBuild Observability techniques, including logging, metrics, and tracing. Automated testing, including unit and integration testing, performance testing, and benchmarking Fine-tuning models or building custom models Deploying open-source models to production environments Designing and building robust feedback sys",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-project-based-automation-and-ai-engineer-egypt-based",
+        "title": "Hiring project based Automation and AI engineer (Egypt based)",
+        "body": "Hello, Looking to hire a project-based automation and AI expert to think, plan, and deploy several use-cases (some are pure automation, others require AI) for a distribution business. Looking for someone based in Egypt for proximity and face to face meetings if needed.",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-experts-for-ongoing-collaboration-remote",
+        "title": "Hiring n8n experts for ongoing collaboration - remote",
+        "body": "FETCH_ERROR: HTTP Error 404: Not Found",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-technical-ai-automation-specialist-long-term-team-collaboration",
+        "title": "[HIRING] Technical AI Automation Specialist — Long-Term Team Collaboration",
+        "body": "FETCH_ERROR: HTTP Error 404: Not Found",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-ai-automation-developer-remote",
+        "title": "[HIRING] N8N AI Automation Developer (Remote)",
+        "body": "Compensation: • $1,500 USD per month • Payments are made exclusively via Wise We are looking for an experienced n8n developer to build and maintain AI-powered automation workflows. Requirements: • Strong experience with n8n • Experience building AI automation systems and workflows • Knowledge of LLMs such as ChatGPT, Claude, Gemini, etc. • Strong prompt engineering skills • Experience creating automations for tasks such as script generation, content creation, research, and AI-assisted workflows • Ability to integrate APIs and third-party tools • Strong problem-solving skills and attention to detail • Good written and spoken English Nice to Have: • Experience with Python or JavaScript • Experience with vector databases, RAG systems, or AI agents • Familiarity with video, content, or social media automation workflows Responsibilities: • Design and build AI-powered workflows in n8n • Create and optimize prompts for reliable AI outputs • Integrate AI models and external services • Improve workflow performance, scalability, and reliability • Troubleshoot and maintain existing automations To Apply: Please send: • A 5–7 minute Loom video covering: 1–3 relevant projects you have built The most complex system or automation you have ever developed Why you believe you are the right fit for this role • Your portfolio • Your contact information • Examples of AI automation workflows you have built",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"AI engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-automation-engineer-wanted-n8n-core-role-restaurant-tech-startup",
+        "title": "(HIRING)Automation Engineer Wanted — n8n Core Role — Restaurant Tech Startup",
+        "body": "RestaurantFlow OS is a revenue automation platform for independent restaurants. We intercept booking data from OpenTable and SevenRooms, run it through a workflow n8n automation layer, and personalise every guest interaction based on visit history. The system architecture is complete. We have a full technical master spec covering every workflow, every data flow, every edge case and every error state. We are not asking someone to design this — we need someone to build it precisely, with clean error handling, idempotency on every inbound webhook, and a Loom walkthrough per workflow group. The Stack You Connect Supabase GHL Printnode openweatherapp The Architecture Principle Every workflow validates restaurant_id as step one. Scheduled workflows loop through active restaurants one at a time — no state bleeding between clients. Idempotency checks on every inbound webhook using unique_event_id logged to Supabase event_log. HMAC-SHA256 signature validation on every inbound webhook. Error handler WF-20 catches all failures, logs full context, sends admin alert. This is not MVP code — it is production architecture from day one. WHAT WE ARE OFFERING Paid build fee for the initial workflow implementation — scoped and agreed upfront Ongoing paid retainer — every new workflow, integration and optimisation as the platform scales Equity stake for the right long-term partner Your architecture credited in technical documentation and investor materials A product that is genuinely novel — no existing platform does what RestaurantFlow does Who We Are Looking For → Proven n8n experience with complex multi-branch logic, webhook handling, API integrations and error handler patterns. → Comfort building against a precise written spec — this is a defined architecture, not a creative brief. → Ability to deliver Loom walkthroughs explaining every workflow decision. → Ideally: experience with Supabase or PostgreSQL APIs, GHL API calls, or hospitality/restaurant technology. Reply or DM — tell u",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-automation-engineer",
+        "title": "Hiring n8n automation engineer",
+        "body": "We are urgently looking for an experienced n8n automation expert to build and maintain complex automation workflows across multiple systems. This is a hands-on role focused on real production workflows, not demos or experiments. Responsibilities: Build, maintain, and improve advanced workflows in n8n Integrate email services (SMTP, Gmail, Outlook, SendGrid, Brevo) Connect and manage databases (PostgreSQL, MySQL, MongoDB, Airtable, Supabase) Integrate messaging tools such as Slack and WhatsApp (Twilio / WhatsApp Business API) Work with webhooks and external REST APIs Handle authentication (API keys, OAuth2, tokens) Add error handling, retries, and basic monitoring Document workflows clearly and simply Requirements: Strong hands-on experience with n8n Good understanding of REST APIs, HTTP, and JSON Experience integrating multiple third-party tools Ability to debug and maintain production workflows Able to work independently and take ownership Nice to Have: Experience with AI / OpenAI integrations Experience with self-hosted n8n (Docker, VPS, cloud) CRM integrations (HubSpot, Salesforce, Pipedrive) Please share your experience with n8n, examples of workflows you’ve built, and your availability and rate.",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-a-automations-and-systems-engineer",
+        "title": "Hiring a Automations and Systems Engineer",
+        "body": "Hey we are looking for an intermediate level engineer with n8n, and programming experience. The job will entail building simple automations to eliminate tedious tasks and drive operational efficiency. We are a smaller company looking for someone to build and grow with us. However we will pay you well, minimum starting salary of 4k.",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-spain-based-workflow-ai-automation-engineer-holiday-pirates-mid-levels",
+        "title": "[Hiring] Spain based Workflow & AI Automation Engineer-Holiday Pirates Mid Levels",
+        "body": "At HolidayPirates, we believe everyone’s an explorer at heart — and we’re here to turn that spirit into action. Every day, we help millions of users discover Too-Good-But-True travel deals from all over the globe. Whether it’s a spontaneous weekend escape or a once-in-a-lifetime adventure, we use tech, creativity, and curiosity to make travel dreams come true. To keep that magic sailing smoothly, we’re looking for a Workflow & AI Automation Engineer to join our crew. This role is all about building the behind-the-scenes systems that power our content engine — using automation, AI, and a love for clever problem-solving. Imagine designing smart workflows that fetch the latest flight and hotel deals, building AI agents that scan the web for emerging travel trends, and crafting tools that help our editors deliver inspiration at lightning speed. Build smart automation workflows with n8n and custom scripts. Create AI agents to track travel trends and automate deal discovery. Develop crawlers for dynamic websites and real-time content processing. Connect external APIs to enhance and automate deal flows. Work with Content and ML teams to structure data in Contentful (CMS) . Support and improve React-based internal tools used by content creators. Maintain and evolve workflows to keep up with fast-paced content changes. Your First Mission Build an AI-powered Deal Research Agent to: Detect seasonal travel trends. Crawl websites for deals. Format and push data to Google Sheets or CMS. What You Bring Experience with n8n (or similar tools). Strong skills in JavaScript , React , API integration, and real-time data. Solid web scraping knowledge. Hands-on with AI prompt engineering or LLM tools. End-to-end workflow ownership mindset. Bonus Points Experience with Contentful or headless CMSs. Built AI agents or LLM-based tools in production. Background in content-heavy industries (travel, publishing, e-commerce) If you’re passionate about AI automation and content systems, we’d love t",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/ai-automation-engineer",
+        "title": "AI Automation Engineer",
+        "body": "Hiring: AI Automation Engineer Work from anywhere | Flexible hours | USD pay AI Automation Engineer 1002×1170 79.8 KB",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/full-time-fully-remote-role-ai-automation-engineer-digital-marketing-agency",
+        "title": "Full Time, Fully Remote role - AI Automation Engineer - Digital Marketing Agency",
+        "body": "I’m working with a London-headquarted digital marketing agency who are looking to bring on their first AI Automation Engineer. Fully Remote, GMT +/- 3 £40,000 - £45,000 Interviews are happening now Requirements: Python, JavaScript, exposure to building LLM agents & AI integrations, familiar with building automation tools in Zapier/ Make/ n8n or similar Full details can be found here and happy to answer any questions. hire|py - Connect with me on LinkedIn: https://www.linkedin.com/in/arsema-fessehazion/",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/wanted-senior-solutions-engineer",
+        "title": "Wanted: Senior Solutions Engineer",
+        "body": "We build AI integrations and workflow automations for financial markets, healthcare, HR, and other data-intensive industries. To scale delivery, we is hiring a Senior Solutions Engineer with deep hands-on experience in n8n and workflow automation. We are looking for someone to join a temporary project in January/February and if the project work is successful, are looking to hire the person full time. What you will do Design, build, and maintain complex n8n workflows across multiple industries, with a focus on financial markets (commodities, rates, FX, equities). Translate client requirements into robust technical architectures and implement end-to-end automations (APIs, data pipelines, integrations, error handling, monitoring). Work directly with clients as a technical lead: run workshops, gather requirements, clarify edge cases, and propose pragmatic solutions. Own projects from scoping to deployment, managing multiple concurrent implementations under tight timelines. Collaborate with our founder to productize repeatable solutions and improve internal standards, templates, and best practices. Troubleshoot production issues, optimize performance, and ensure reliability, security, and data integrity. Maintain strict confidentiality of client data, systems, and trade-sensitive information; follow security and compliance procedures for data handling. What you bring 4+ years of experience in solutions engineering, automation engineering, or similar client-facing technical roles. Strong, demonstrable experience building advanced workflows in n8n (or very similar tools such as Make/Integromat, Zapier, Airflow, etc.), ideally including custom JavaScript/TypeScript functions. Experience integrating APIs, webhooks, databases, SaaS tools, and third-party data providers; comfortable reading and using API documentation. Track record of working independently and owning technical delivery for multiple client projects in parallel. Strong client orientation: able to simplify techni",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/what-profile-should-we-hire-to-build-enterprise-grade-internal-tools-on-airtable-and-n8n",
+        "title": "What profile should we hire to build enterprise-grade internal tools on Airtable and n8n?",
+        "body": "We’re trying to hire someone to level up our Airtable + n8n setup and would love advice from people here who’ve scaled this kind of stack. Our setup today: multiple Airtable bases 500k+ records frequent archival work ~50 daily users integrations with Zapier, Stacker, Make, n8n, Supabase, and Polytomic At this point, our challenge is less about building fast and more about building a solid architecture that scales and stays maintainable. We’re debating between profiles like: low-code builders backend/systems-minded engineers implementation consultants For those who’ve seen this done well, what type of person would you hire? What titles/backgrounds tend to work best? And what mistakes should we avoid?",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-claude-api-n8n-engineer-31-agent-business-intelligence-system-remote",
+        "title": "[HIRING] Claude API + n8n Engineer — 31-Agent Business Intelligence System | Remote",
+        "body": "Looking for an experienced Claude API + n8n engineer for a serious production build. THE PROJECT 31-agent intelligence system for a multi-entity portfolio: hotels, jewelry, wine and spirits retail. Caribbean-based. Mac Studio M4 Max 128GB dedicated machine. All agents via Claude API key. AGENT EXAMPLES Weekly sales brief pulling from QuickBooks Hotel rate monitor via Duetto API Source verification filter between search and strategic analysis layers Multi-source intelligence synthesis at L3 STACK n8n self-hosted on macOS Python scheduled via cron Claude API (Sonnet for L1/L2, Opus for L3 with extended thinking) QuickBooks, Duetto, Sage Intacct, Gmail WHAT MATTERS Production Claude API experience — not demos n8n self-hosted workflows shipped to production QuickBooks integration experience Clean credential management Async, documented, operator-friendly handoff Comfortable working with wine and spirits data ENGAGEMENT Phase 1: 4 agents, $",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-remote-n8n-experts-for-ai-automation-solutions",
+        "title": "Hiring Remote n8n Experts for AI Automation Solutions",
+        "body": "Hello everyone, My company is expanding into AI automation solutions and we are hiring remote n8n experts. We’re looking for people with skills in: Building workflows and automations in n8n Creating AI agents for calls, emails, and chat Marketing automations and CRM integrations Workflow optimization for businesses This is a paid remote opportunity",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-automation-expert-to-build-ai-agent-workflows-freelance",
+        "title": "🚀 HIRING: n8n Automation Expert to Build AI Agent Workflows (Freelance)",
+        "body": "We’re Reno , a fast-growing renovation tech startup in the UAE, and we’re looking for an n8n automation expert to help us build AI-powered sales and marketing workflows. What We Need: Build multi-step workflows in n8n for: Lead enrichment (e.g., Clearbit, LinkedIn scraping) GPT-based message personalization Email & WhatsApp automation Appointment scheduling via Calendly/HubSpot Integrate with our backend via REST API (push/pull) Handle custom triggers from new lead submissions Optional: voice/WhatsApp automation using Twilio or WATI Stack: n8n (cloud or self-hosted) Our internal backend (RESTful API) Email + calendar tools + whatsapp CRM (HubSpot or custom)",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-ai-automation-workflow-builder-n8n-expert-long-term-potential",
+        "title": "🚀 HIRING: AI & Automation Workflow Builder (n8n Expert) — Long-term Potential",
+        "body": "We’re looking for a highly skilled, committed, and fast-moving n8n expert with strong knowledge and a builder’s mindset. This is a freelance position to start (hourly or project-based), but we’re seeking someone who could become a core team member in the coming months as we scale. Speed and efficiency are non-negotiable. We work fast, and we need someone who can deliver high-quality work in short timeframes without losing focus or momentum. What you’ll be doing: -Designing and building advanced automations and workflows using n8n -Integrating external tools, APIs, and third-party services -Collaborating closely with our team -Proposing smarter, faster solutions powered by AI tools and API integrations -Continuously improving systems and experimenting with new tools and architectures What we’re looking for: -Deep experience with n8n (self-hosted setups, production-level workflows, error handling, etc.) -Solid understanding of APIs, webhooks, JSON, and authentication protocols (OAuth2, API keys, etc.) -Experience integrating AI tools (ChatGPT, Claude, Langchain, vector DBs, etc.) -Clean, modular approach to workflow design -Proactive, fast, and reliable, we love people who solve problems before we ask -Excellent communication, with availability for async work and occasional live syncs -Passion for automation, growth, and working with early-stage teams Bonus points if you: -Know how to document and hand off workflows cleanly -Have built or contributed to internal tooling or early product MVPs -Are eager to grow with a project long-term This is the perfect role for someone who’s ready to be the technical right hand in a fast-moving, automation-first operation. You’ll be trusted to make decisions, build creatively, and see your work directly impact businesses from day one. We’re not just looking for a freelancer, we’re looking for a builder who’s fast, efficient, and ready to go all in.",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-ai-workflow-builder-remote-freelance",
+        "title": "🔈 Hiring: N8N+ AI Workflow Builder [Remote/Freelance]",
+        "body": "FETCH_ERROR: HTTP Error 404: Not Found",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/we-re-hiring-n8n-automation-developer",
+        "title": "We’re Hiring: n8n Automation Developer 🚀",
+        "body": "We’re SaaScend , a growing RevOps agency , helping businesses optimize their revenue operations through strategy, technology, and execution. What We Need: We’re looking for an n8n automation specialist to take ownership of our internal n8n workflows and collaborate closely with our operations and leadership teams. Current use cases range from automated invoice chasing and sales outreach workflows to partner relationship management in Slack, lightweight system integrations, and a growing list of custom automations as we scale. Stack & Skills: n8n (cloud or self-hosted) AI agents API integrations Data Scraping CRM (HubSpot, Salesforce), email, and Slack automations Ability to design, build, and maintain multi-step workflows Business acumen to align automation with strategic objectives",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-for-integration-engineers-architect-with-n8n-experience-in-india-full-time-job",
+        "title": "Hiring for integration engineers/ architect with n8n experience in India- Full time Job",
+        "body": "Reach out to discuss more",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-node-typescript-dev",
+        "title": "Hiring: Node/Typescript Dev",
+        "body": "I’d like to create a workflow for mass production of ads that are Ai generated that connect ChatGPT image generation to my Canva. Other programs involved would be vercel, and supabase",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-specialist-postgresql-email-automation-project",
+        "title": "Hiring n8n specialist — PostgreSQL + email automation project",
+        "body": "We are a small professional collective looking for an experienced n8n developer to build two automated weekly email workflows against an existing PostgreSQL database. What already exists: A self-hosted n8n instance A working data ingestion workflow that writes session records to PostgreSQL Azure Communication Services connected to n8n for outbound email What needs to be built: A weekly workflow that queries the database, groups records into pairs, and sends formatted email statements to two parties with a third in copy A second weekly workflow that queries the same database, groups records by recipient, and sends formatted email statements to external recipients with two parties in copy A month-end summary version of both Skills required: Comfortable writing JavaScript in n8n’s Code node Experience with PostgreSQL queries inside n8n Experience sending formatted email via a third-party mail service from n8n Project size: Small. Estimated 5 to 9 hours of work. Budget: Fixed price preferred. Please share relevant examples of similar work when you apply.",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-one-time-jobe-easy",
+        "title": "Hiring one time jobe (easy)",
+        "body": "in need to get an automation to scan document/ image extract data return this data and input this data into a website and return the the location from website",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hi-i-need-a-vapi-n8n-twilio-integration-built-paid-project",
+        "title": "Hi, I need a Vapi + n8n + Twilio integration built. Paid project",
+        "body": "[HIRING] Vapi + n8n + Twilio Developer for Full AI Voice Agent Build (Paid Project) Hi everyone, I’m looking for an experienced automation engineer who can help me build a full AI voice agent system using n8n + Vapi + Twilio + CRM integrations. This is a paid freelance project with clear requirements and a defined scope. I’ll keep this as concise and technical as possible so you know exactly what’s involved. Project Overview I need to build an outbound AI voice agent (“Morgan”) that will: Call prospects from a lead list Qualify them using structured criteria Book meetings into a scheduling system Score the lead in real-time Trigger alerts for high-intent leads (Optional add-on) Live human handoff using Twilio conference All of this needs to run through n8n workflows acting as the backend glue layer. Core Requirements Vapi Voice Agent Setup Natural, robust conversation design Interrupt handling Memory state management Event/webhook routing into n8n ElevenLabs voice integration Structured prompting for qualification logic Lead Management + Scheduling CSV upload (Name, Company, Phone, Context) Controlled calling times (e.g., 09:00–17:00 weekdays) Auto-dial through list Meeting booking via API (Calendly/Google Calendar/etc.) Real-Time Lead Scoring Engine Scoring based on: • Budget mentioned • Timeline urgency • Office size requirements Confidence score output (0–100%) Hot lead detection (90%+) Alerts & Notifications SMS/email alerts Optional Slack or Teams webhook Structured JSON payloads CRM Integration HubSpot, Salesforce, or Pipedrive Log call outcome, transcript, recording URL Update lead stages automatically Optional Premium Feature — Live Handoff If you have experience with Twilio conference flows, please mention it. This feature includes: Creating a conference room Moving caller → conference Dialling in a human agent AI steps back once handoff completes Latency target 8–15 seconds Tech Stack You must be comfortable with: n8n (webhooks, conditional logic, CRM modu",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-developer-advocate",
+        "title": "[HIRING] Developer Advocate",
+        "body": "About PostPulse PostPulse is the “API-first” social media engine. We empower SaaS founders, agencies, and creators to break free from manual scheduling by turning social media into a programmable workflow. With our official n8n nodes and robust API, we allow users to build sophisticated AI content pipelines—from RSS-to-social to fully automated video distributions. The Role We are looking for a Developer Advocate who lives at the intersection of Low-Code and High-AI. You won’t just talk about PostPulse; you will build the “blueprints” that show the world what’s possible when you combine PostPulse with n8n, Make, and LLMs. You are a builder first. You enjoy the challenge of connecting disparate APIs to create a “magic” workflow, and you have the communication skills to teach others how to do the same. Core Responsibilities Build Technical “Blueprints”: Create and maintain high-value workflow templates for n8n and Make.com . Examples: “Auto-generate LinkedIn carousels from blog posts” or “AI-driven news curation to X/Threads.” Content Creation: Produce “Build-in-Public” style content. This includes technical tutorials, YouTube “how-to” videos, and deep-dive blog posts on our developer portal. Community Leadership: Act as the primary technical voice in our Discord/Slack and represent PostPulse in the n8n community forums and AI automation circles. Product Advocacy: Act as the “Internal Customer.” You will use our API daily, find the friction points, and work directly with our engineering team to improve our nodes and documentation. Speaking & Demos: Conduct live webinars and represent PostPulse at virtual (and occasionally physical) automation and AI conferences. What We’re Looking For Automation Mastery: You are a “Power User” of n8n and/or Make . You understand JSON structures, Webhooks, HTTP Requests, and how to handle API rate limits. AI Enthusiast: You don’t just use ChatGPT; you understand how to use LLMs (OpenAI, Anthropic, Mistral) via API to transform data, su",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-n8n-whatsapp-automation-developer-chat-mitra-razorpay-fixed-project",
+        "title": "Hiring n8n & WhatsApp Automation Developer (Chat Mitra + Razorpay) – Fixed Project",
+        "body": "Headline: Hiring n8n & WhatsApp Automation Developer (Chat Mitra + Razorpay) – Fixed Project About the Project I am looking for an experienced automation expert to build an end-to-end WhatsApp file delivery system. I need you to build a dynamic conversational flow connected to Chat Mitra, use an n8n backend (installed and configured on my plain Hostinger KVM2 VPS) to generate menus directly from a database, process payments via Razorpay, and automate digital file delivery via email. Tech Stack You Will Work With (Strictly Limited To):  WhatsApp API: Chat Mitra  Automation: n8n (To be installed via Docker on a plain Hostinger Ubuntu VPS)  Payments: Razorpay  Delivery: SMTP Email (via custom domain) Scope of Work 1. Server & n8n Setup  Install and configure Docker, n8n, and any necessary reverse proxy (e.g., Nginx/Traefik) on a fresh Hostinger Ubuntu 24.04 VPS.  Configure secure local directories on the server for hosting the PDF files. 2. Email & SMTP Setup  Create the official business email via my Hostinger account for our custom domain.  Configure all necessary DNS records (SPF, DKIM, DMARC) so the n8n automated delivery emails do not land in spam. 3. 100% Dynamic Menus (n8n Driven) & Navigation  The entire WhatsApp menu flow must be dynamically generated by n8n.  Dual Source Database Architecture: n8n must be configured to read from two separate master Excel/CSV databases: one dedicated exclusively to Technical courses and one dedicated exclusively to Non-Technical courses.  When the user sends “Hi”, Chat Mitra must instantly webhook n8n to generate the first menu.  GLOBAL UI REQUIREMENT: Every single interactive message or menu window generated by n8n must include a “Back” button, allowing the user to seamlessly return to the previous step at any point in the flow.  Initial Category Selection: The first menu must ask the user to select between two main categories: 1. Technical or 2. Non-Technical.  Branching Flow Sequences: o If Technical (Reads fr",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-ai-agent-workflow-engineer-to-help-build-an-open-source-self-hosted-voice-agent-os",
+        "title": "Hiring: AI Agent Workflow Engineer to help build an open-source self-hosted Voice Agent OS",
+        "body": "We’re building Feros: an open-source, self-hosted Voice Agent OS for production voice AI. The stack already includes: a Rust real-time voice runtime an AI-powered builder that turns natural language into agent graphs integrations, OAuth/credential management, and custom webhook support text debugging, auto-testing, versioning, and deployment We’re now looking for an engineer who is strong in n8n and AI agent workflow design to help us make n8n a first-class What you’d work on: n8n-based workflow orchestration for voice agents webhook/API/OAuth integrations between agents and business systems reusable workflow templates for CRM, scheduling, lead capture, and support use cases improving agent flow across prompts, tool calls, external actions, and evaluation loops helping shape the open-source integration layer around the project What we’re looking for: strong hands-on n8n experience solid understanding of AI agent workflows, tool calling, and automation design comfortable with Python able to work across APIs, auth, integrations, and product logic TypeScript/React is a plus Rust is a plus, but not required This is a good fit if you like building at the boundary of AI agents, workflow automation, and production infrastructure. Repo: GitHub - ferosai/feros: Open-source voice agent OS. Rust runtime, AI-driven builder, sub second latency. Self-host everything. · GitHub Interested? Join our team Discord: feros - Open Voice Agent OS and DM admin",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-building-a-sovereign-ai-agentic-platform-on-bare-metal-n8n-ollama-qdrant-looking-for-someone-to-own-the-tech",
+        "title": "[Hiring] Building a sovereign AI agentic platform on bare metal — N8N + Ollama + Qdrant, looking for someone to own the tech",
+        "body": "Hey all — we’re a small AI consulting firm in Spain running inference on our own GPU server (RTX 5090 on the way, currently on RunPod A40). No OpenAI in production, everything local: Llama 3.1 / Qwen 2.5 via Ollama, Qdrant for RAG, N8N for orchestration. We need someone to take technical ownership. The business side is covered — we know exactly what each agent needs to do and have a full technical spec and manual ready to hand over on day one. We just need a dev who’s actually done this stack before and can run with it. What we’re building: Customer support agent (text + WhatsApp) PDF quotation generator CV screener with scoring Full RAG virtual assistant with ticketing Inbound voice agent (faster-whisper + Kokoro TTS) Part-time, remote, ongoing. Fixed milestone to start, monthly retainer after that. If you’ve built N8N workflows calling local LLMs and set up RAG pipelines with a vector DB, drop a reply or DM. Bonus if you’ve touched Twilio or WhatsApp Business API. Before reaching out, three quick questions: 1. Have you built N8N + Ollama pipelines before? One example is enough. 2. Which vector DB have you used for RAG, and which embedding model? 3. Difference between /api/chat and /api/generate in Ollama?",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/looking-to-hire-n8n-developers-for-ongoing-automation-projects-what-should-i-look-for",
+        "title": "Looking to hire n8n developers for ongoing automation projects - what should I look for?",
+        "body": "We’ve been scaling up our internal automation stack pretty heavily over the past few months mostly around CRM syncs, lead routing, and some light AI agent workflows. We’ve hit a point where the complexity is beyond what our team can handle part-time. I’ve started exploring options to hire n8n developers, either freelance or on a contract basis, but I’m honestly not sure what the right bar is when vetting candidates. Most people can say they “know n8n” but that can mean anything from dragging a few nodes around to building robust sub-workflow architectures with proper error handling. A few things I’m curious about from folks here who’ve either hired or been hired for n8n work: What would you consider a strong signal of n8n proficiency? Portfolio workflows? Contributions to the community? Custom node development? How do you scope projects? We have some well-defined needs but also some that are more exploratory, wondering if a discovery/audit phase is standard practice. Freelance platforms vs. direct hire? We tried Upwork briefly but it felt like a lottery. Has anyone had better luck posting directly here in the Jobs category or through referrals?",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/hiring-long-term-n8n-postgres-build-for-a-50-state-medical-consulting-practice-multi-tenant-self-hosted-runs-for-years",
+        "title": "[Hiring] Long-term n8n + Postgres build for a 50-state medical consulting practice. Multi-tenant, self-hosted, runs for years",
+        "body": "Hi all, I’m a physician who owns a small medical consulting practice licensed across all 50 states. I’m hiring an n8n developer (or small team) to build the foundation of an agentic operations platform that I expect to run for years, not weeks. I had AI help me write the mockup just so things were explained clearly. I also had it create a longer PDF to outline all phases, but i cannot upload it at this time as I am a new user. About the work, in plain terms I currently run my business out of a fragmented stack: Notion trackers, Google Sheets, Zapier flows, a few one-off Node.js scripts. I want a single self-hosted system that: Replaces Notion as the system of record (Postgres) Catches state-by-state regulatory changes affecting NP/PA collaboration, IV hydration, med spa, GLP-1, and aesthetics Finds new collaboration candidates from job boards and groups, with a human-in-the-loop approval step Sends welcome packets and standing orders consistently when a new collaboration goes active, pulling live documents from Google Drive Scales to a second physician without doubling my operational load No PHI, no patient data. This is operations, compliance, and contract data only. Phased build Phase 0, Platform foundation: Self-hosted n8n on a Hetzner VPS, Postgres as system of record, multi-tenant from day one with row-level security, low-code dashboard (Appsmith or Tooljet, I’m open), Drive document index, OpenRouter for LLM routing, Browserbase for authenticated web sessions, pgvector for memory. Phase 1, NP/PA lead-gen pipeline: Daily scrape of a few public sources, scoring agent, intake analyzer, button-click approvals (never auto-send). Phase 2, Email-only digests: Weekly compliance digest, 503B pharmacy monitor, legislative monitor, FMV refresh, fee-schedule companion, portfolio digest. Phase 3, Dashboard workflows: Intake analyzer, contract review, standing-order updater, onboarding-document generator v2, capacity tracker, transcript-to-candidate pipeline, welcome-packet",
+        "cta_type": "unclear",
+        "search_query": "\"hiring\" \"automation engineer\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/ai-automation-builder-paid-per-project-london-kent-uk-only",
+        "title": "AI Automation Builder — paid per project (London / Kent, UK only)",
+        "body": "Read first: this is UK-only. You must be in Greater London or Kent — occasional in-person is part of the role. If you’re elsewhere, this isn’t the one. Most AI roles want a polished CV, corporate experience and three rounds of interviews. This isn’t one of them. GenAgentik is a new AI implementation practice in Bexley, working face-to-face with small business owners across South London and Kent. I’m Stuart Shaw — 25 years running businesses across the UK and Asia, including eight years as COO of a 108-unit serviced apartment operation in Cebu. I sit with owners, find the messy operational problem, then build the simplest AI or automation workflow that earns its place — using tools like n8n, Make, Claude, ChatGPT and Gemini. Business first, AI second. I need a builder. Someone who can take a brief and turn it into a working automation that doesn’t fall over the first time real client data hits it. Let me be straight about what this is, because it will suit a specific person and waste everyone else’s time. This is paid project-by-project, as paying clients land. No salary. No monthly retainer. No guaranteed volume in the first 90 days. I’m pre-revenue and I won’t pretend otherwise. If you have steady work or other options, this won’t stack up for you. I’m not asking you to take a risk I’m dodging myself. I take no salary out of GenAgentik — my own costs are covered separately, which is exactly why I can build this properly without pulling money out before the business earns it. The risk is real and it’s shared. When client money comes in, your share is agreed in writing before you touch the work. How the money works: you get a share of the project fee for each build. 40% on the early, smaller builds, settling to 30–35% as projects get larger — the early premium is yours for getting in when it’s hardest. Worked example: a Bespoke AI Implementation sold at £750, your build share at 40%, is £300. A larger £2,500 build at 35% is £875. Exact scope and figure agreed in writ",
+        "cta_type": "unclear",
+        "search_query": "\"need someone\" \"AI automation\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/posting-again-were-hiring-need-a-killer-n8n-expert-to-join-our-team",
+        "title": "Posting again: We're Hiring: Need a killer n8n expert to join our team!",
+        "body": "We’re Hiring: Need a killer n8n expert to join our team! Now Hiring We’re an AI Automation Agency based in India ( https://grrbaow.com/ ), serving clients globally, and we’re one month away from $100K MRR. We’re scaling fast, and we need someone who doesn’t just “know” n8n, you breathe it. What you’ll get: Fully remote, flexible hours, results over time tracking High-impact projects with enterprise clients Competitive pay that scales with us Real ownership and autonomy Apply if: n8n is your playground (APIs, webhooks, complex workflows—you’ve done it all) You solve problems before they become problems You’re self-driven, reliable, and don’t need hand-holding You want to be part of something that’s actually going somewhere Pay: 800 - 1500$/m Apply if you’re outside the US and want to join a fast-growing team where you can learn, build, and make an impact. If you have a strong portfolio showcasing your project experience, please email bhuvan@grrbaow.com or send a dm to +917448669203",
+        "cta_type": "unclear",
+        "search_query": "\"need someone\" \"AI automation\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/were-hiring-need-a-killer-n8n-expert-to-join-our-team",
+        "title": "We're Hiring: Need a killer n8n expert to join our team!",
+        "body": "We’re an AI Automation Agency based in India ( https://grrbaow.com/ ), serving clients globally, and we’re one month away from $100K MRR. We’re scaling fast, and we need someone who doesn’t just “know” n8n, you breathe it. What you’ll get: Fully remote, flexible hours, results over time tracking High-impact projects with enterprise clients Competitive pay that scales with us Real ownership and autonomy Apply if: n8n is your playground (APIs, webhooks, complex workflows—you’ve done it all) You solve problems before they become problems You’re self-driven, reliable, and don’t need hand-holding You want to be part of something that’s actually going somewhere Pay: 800$ - 1500$/m Apply if you’re outside the US and want to join a fast-growing team where you can learn, build, and make an impact. If you have a strong portfolio showcasing your project experience, workflows, and automations, please email bhuvan@grrbaow.com",
+        "cta_type": "unclear",
+        "search_query": "\"need someone\" \"AI automation\"",
+        "cta_context": ""
+      },
+      {
+        "source_platform": "n8n_community",
+        "source_url": "https://community.n8n.io/t/we-are-hiring-join-our-n8n-journey-public-sector-nrw-germany",
+        "title": "We Are Hiring: Join Our n8n Journey – Public Sector, NRW (Germany)",
+        "body": "Because the role requires proficiency in German as the official working language, the rest of the description is provided in German. Hallo zusammen, wir befinden uns aktuell in der Evaluationsphase für ein neues Automatisierungssystem und planen ein Workflow-Automatisierungstool wie n8n einzusetzen. Dieses Automatisierungstool soll zukünftig als Kern unserer Automatisierungs-Infrastruktur eingesetzt werden. Dabei sollen End2End Prozesse in funktionsübergreifender Zusammenarbeit optimiert werden und dann in den neuen Automatisierungs-Standard überführt werden. Dazu müssen bestehende Skript-Ökosysteme (Bash, PowerShell, Python, Perl, interne Tools) in Workflows migriert bzw. eingebunden werden. Ebenso gilt es beim Aufbau eines skalierbaren und revisionssicheren Automatisierungs-Rahmes mitzuwirken. Wenn jemand hier aus der Community Interesse an dieser Transformation hat oder jemanden kennt, der/die sich in diesem Bereich entwickeln oder einbringen möchte – wir freuen uns sehr über die direkte Bewerbung über folgenden Link https://recruiting.lwl.org/r/z01p2rbj19ul92k/System+Engineer+wmd/48145/M%C3%BCnster Arbeitsumfeld Standortvorteil (Standort Deutschland / NRW / Münster – Innenstadtnähe) eigene IT-Abteilung (IT-Dienstleister mit den Vorteilen des öffentlichen Dienstes) kleines Team an motivierten und kollegialen Mitarbeitenden (aktuell 5 Personen inkl. Teamleitung) Kurze Entscheidungswege, konstruktive Arbeitsatmosphäre Moderne Arbeitsausstattung und Tools wie n8n Keine Überstundenkultur, sondern planbare Arbeitszeitmodelle Vorteil dieser Position Die Möglichkeit, Architektur & Automatisierungsstandard aktiv mitzugestalten (Wir suchen jemanden der mit aufbaut und verändert, anstatt nur zu verwalten) Moderne Transformationsprojekte statt reine Bestandspflege Public Sector – der öffentliche Dienst schafft Sicherheit in der aktuellen Zeit Sinnstiftend (Digitalisierung für Mitarbeitende, Kooperationspartner und Mandanten) Arbeitsplatzgarantie und eine klare langfristige ",
+        "cta_type": "unclear",
+        "search_query": "\"we are hiring\" remote",
+        "cta_context": ""
+      }
+    ]
+  },
+  "queries_scanned": [
+    "reddit-pm-hiring-dm",
+    "reddit-forhire-techjobs-hiring",
+    "n8n-community-hiring",
+    "x-twitter-hiring-pm-ai",
+    "reddit-aiproductmanagers-hiring"
+  ]
+}

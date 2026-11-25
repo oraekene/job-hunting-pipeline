@@ -1,0 +1,6799 @@
+===== 07-context-architect\templates\seed_companies.yaml =====
+# Copy to seed_companies.yaml and expand. This is a deliberately small,
+# deliberately varied starting set — the point of this file is the tag
+# spread, not its length. Add companies as you find their public boards:
+# a Greenhouse company's slug is the path segment in
+# boards.greenhouse.io/<slug>; a Lever company's is jobs.lever.co/<slug>.
+#
+# Keep the tag lists honest — tag by what the ROLE actually is, not by
+# what Kenechukwu would apply for. This bank has to generalize across the
+# full diversity matrix, not just his own target roles (those are
+# already covered by shared/target-profile.yaml and 01-job-discovery).
+
+companies:
+  - slug: stripe
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: doximity
+    platform: greenhouse
+    industry_tags: [healthcare]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering]
+    geo_tags: [us]
+
+  - slug: netflix
+    platform: lever
+    industry_tags: [media]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [engineering, marketing]
+    geo_tags: [us]
+
+  - slug: andela
+    platform: greenhouse
+    industry_tags: [tech, staffing]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering]
+    geo_tags: [nigeria, africa, remote]
+
+  - slug: flutterwave
+    platform: lever
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, manager]
+    function_tags: [engineering, product, operations]
+    geo_tags: [nigeria, africa]
+
+  - slug: paystack
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [entry, ic_mid]
+    function_tags: [engineering, customer_support]
+    geo_tags: [nigeria, africa]
+
+  # ... keep adding across the matrix in question-bank-pipeline.md:
+  # manufacturing, education, nonprofit, government, hospitality,
+  # logistics, energy — and director+/entry-level seniority bands,
+  # which are systematically under-sampled if you only add companies
+  # you personally recognize.
+
+===== cron\scripts\cron-desired-state.yaml =====
+# Desired state for the job-hunting cron config — verified daily by
+# verify-cron-config.py (no-agent cron job, telegram delivery on drift).
+#
+# Match is by name prefix: hermes job ids are unstable across re-creates,
+# names are not. {{hermes_home}} and {{skill_dir}} are resolved at check time.
+#
+# Model/provider pins (layer-1): mechanical pipeline jobs run on the fast
+# poolside/laguna-xs-2.1:free model via nous — pipeline work needs no deep
+# reasoning. The weekly self-improvement review keeps the main model
+# (laguna-s-2.1:free) because it drafts skill-edit proposals.
+jobs:
+  # Job 1 — discovery scan (blueprint: job-hunting-discovery)
+  - id: discovery-scan
+    match_name: "Scan configured sources in shared/sources.yaml for"
+    schedule: "0 7,10,13,16,19,22 * * 1-6"
+    workdir: "{{skill_dir}}"
+    script: discovery-wake-gate.py
+    skills: [job-hunting-discovery]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 3 — pipeline sweep (reconcile + claim at most 3)
+  - id: pipeline-sweep
+    match_name: "Pipeline sweep (reconcile + claim at most 3)"
+    schedule: "30 7,10,13,16,19,22 * * 1-6"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-orchestrator]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 5 — weekly self-improvement review (keeps the main model)
+  - id: weekly-review
+    match_name: "Run job-hunting-analytics's weekly self-improvemen"
+    schedule: "0 8 * * 1"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-analytics]
+    model: "poolside/laguna-s-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 9 — interview-prep sweep
+  - id: interview-prep
+    match_name: "For every application where interview_request_at i"
+    schedule: "0 9,15 * * 1-6"
+    workdir: "{{skill_dir}}"
+    script: interview-prep-wake-gate.py
+    skills: [job-hunting-interview-prep]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 2 — open-web discovery sweep
+  - id: open-web-sweep
+    match_name: "Check shared/target-profile.yaml's discovery_mode"
+    schedule: "0 9 * * 1-6"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-discovery]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 8 — nightly tier-1 backup (no-agent)
+  - id: nightly-backup
+    match_name: "backup.sh"
+    schedule: "0 3 * * *"
+    script: backup.sh
+    no_agent: true
+    deliver: telegram
+
+  # Job 16 — bi-monthly config drift check
+  - id: config-drift-check
+    match_name: "Bi-monthly configuration drift check. Re-read care"
+    schedule: "0 9 1 */2 *"
+    workdir: "{{skill_dir}}"
+    skills: [job-hunting-interests-profile]
+    model: "poolside/laguna-xs-2.1:free"
+    provider: nous
+    no_agent: false
+    deliver: local
+
+  # Job 17 — nightly retrieval-index refresh (no-agent)
+  - id: refresh-index
+    match_name: "refresh-index.sh"
+    schedule: "0 4 * * *"
+    script: refresh-index.sh
+    no_agent: true
+    deliver: telegram
+
+  # NEW — reconcile-only safety net (no-agent). Catches rows stuck at
+  # 'building' after a sweep job dies, without spending a model turn.
+  - id: reconcile-only
+    match_name: "Reconcile-only"
+    schedule: "0,30 * * * 1-6"
+    script: reconcile-only.py
+    no_agent: true
+    deliver: telegram
+
+  # NEW — daily cron-config verification (no-agent). Silent when the
+  # config matches; loud telegram alert on drift.
+  - id: verify-cron-config
+    match_name: "Verify cron config"
+    schedule: "0 5 * * *"
+    script: verify-cron-config.py
+    no_agent: true
+    deliver: telegram
+
+===== shared\discovery_queries.yaml =====
+# shared/discovery_queries.yaml — social_listening query tracking
+# Schema per 14-social-discovery-outreach/references/discovery-query-design.md
+# Copy of template: shared/discovery_queries.yaml.template
+
+- id: "reddit-pm-hiring-dm"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com \"hiring\" \"product manager\" OR \"AI product manager\" OR \"AI engineer\" OR \"automation engineer\" \"DM me\" OR \"message me\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 8
+    classified_relevant: 3
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "reddit-forhire-techjobs-hiring"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com r/forhire r/jobbit r/techjobs r/remotework \"we're hiring\" OR \"looking for\" \"product manager\" OR \"AI engineer\" OR \"automation\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 5
+    classified_relevant: 1
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "n8n-community-hiring"
+  source: "hermes_generated"
+  platform: "n8n_community"
+  query_text: "site:community.n8n.io \"hiring\" \"AI automation\" OR \"n8n\" OR \"AI agent\" remote"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 4
+    classified_relevant: 3
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "x-twitter-hiring-pm-ai"
+  source: "hermes_generated"
+  platform: "x"
+  query_text: "site:x.com OR site:twitter.com \"hiring\" \"product manager\" OR \"AI product manager\" OR \"AI engineer\" OR \"automation engineer\" \"DM\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 3
+    classified_relevant: 0
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+- id: "reddit-aiproductmanagers-hiring"
+  source: "hermes_generated"
+  platform: "reddit"
+  query_text: "site:reddit.com r/AIProductManagers r/AIJobs \"hiring\" \"product manager\" OR \"AI product manager\" remote 2026"
+  origin_example: ""
+  status: "active"
+  performance:
+    posts_returned: 2
+    classified_relevant: 1
+    led_to_outcome: 0
+    last_evaluated_at: "2026-08-17T16:30:00Z"
+  created_at: "2026-08-17T16:30:00Z"
+
+===== shared\dynamic-target-calibration.yaml =====
+# shared/dynamic-target-calibration.yaml — governs how strict/loose the
+# pipeline is about what counts as "worth staging," and how that
+# strictness is allowed to move over time.
+# Copy of template, seeded with confirmed values for Kenechukwu Oraelosi.
+
+calibration_mode: "hybrid"
+#   manual - only Kenechukwu's confirmed edits move anything. Nothing here changes on its own.
+#   auto   - system recalculates thresholds on schedule and applies directly, logged for audit.
+#   hybrid - (recommended) system recalculates on schedule, but every proposed
+#            change is staged into skill_self_edits — same pattern as
+#            11-analytics-and-learning's skill-edit proposals — and only takes
+#            effect once Kenechukwu approves. Auto's math, manual's control.
+
+match_score:
+  minimum: 65          # lowered from 70 because profile_stage is returning_after_gap
+                        # and Kenechukwu is targeting mid-level with openness to junior/entry.
+  stretch:
+    enabled: true
+    floor: 50           # 50-65 = stretch band, flagged [STRETCH] for review
+
+overqualification_tolerance: "balanced"
+  #   strict   - flag/avoid roles significantly below current level
+  #   balanced - allow with flag (current setting)
+  #   relaxed  - allow more freely, widened over time if search is long
+
+employment_status: "between_roles"
+  # unemployed | between_roles | returning_after_gap | freelance_between_contracts
+  # | employed | unspecified
+  # Written by 16-career-pulse's periodic check-in, confirmed by Kenechukwu.
+  # Set to returning_after_gap per onboarding.
+
+status_changed_at: "2026-08-06T00:00:00Z"
+
+auto_relax_schedule:
+  # Only consulted when calibration_mode is auto or hybrid, AND employment_status
+  # is unemployed or between_roles or returning_after_gap (a gap case).
+  # Each step is additive from baseline, not compounding on previous steps.
+  - after_weeks: 8
+    match_score_minimum_delta: -5
+    stretch_floor_delta: -5
+    overqualification_tolerance: "balanced"
+  - after_weeks: 16
+    match_score_minimum_delta: -10
+    stretch_floor_delta: -10
+    overqualification_tolerance: "relaxed"
+  - after_weeks: 26
+    match_score_minimum_delta: -15
+    stretch_floor_delta: -15
+    overqualification_tolerance: "relaxed"
+    also_widen_title_taxonomy_similarity_threshold: true
+  - after_weeks: 52    # ~12 months — longer gap case
+    match_score_minimum_delta: -15   # no further numeric delta past 26-week step
+    stretch_floor_delta: -15         # on purpose — see note below
+    overqualification_tolerance: "relaxed"
+    also_widen_title_taxonomy_similarity_threshold: true
+    note: "A year+ gap doesn't mean widen numeric gates further — it means
+      prompt Kenechukwu to re-examine profile currency (recent skills/projects,
+      updated STAR bank). The profile, not the thresholds, is what ages."
+
+recalibration_log:
+  - at: "2026-08-06T00:00:00Z"
+    reason: "Initial calibration from onboarding (profile_stage: returning_after_gap)"
+    match_score_minimum: 65
+    stretch_floor: 50
+    overqualification_tolerance: "balanced"
+
+last_recalibrated_at: "2026-08-06T00:00:00Z"
+last_confirmed_at: "2026-08-06T00:00:00Z"
+
+===== shared\enrichment-tier-usage.yaml =====
+# shared/enrichment-tier-usage.yaml — auto-updated by 22-contact-
+# enrichment, not a confirm-gated preference file the way most of this
+# package's config is (see that skill's Part B Tier 2). Resets per
+# provider on that provider's own billing-cycle date — check each
+# provider's actual reset date rather than assuming the 1st of the
+# calendar month.
+#
+# Materialized as its own file rather than left only as an inline
+# example in 22-contact-enrichment/references/free-tier-rotation.md — described-but-not-
+# shipped config files were caught as a real gap in an earlier audit
+# pass of this package; not repeating that here.
+
+providers:
+  - name: "hunter"
+    monthly_allowance: 50
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "snov"
+    monthly_allowance: 50
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "getprospect"
+    monthly_allowance: 50
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "getprospect_verify"
+    monthly_allowance: 100
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "prospeo"
+    monthly_allowance: 75
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "skrapp"
+    monthly_allowance: 100
+    used_this_cycle: 0
+    cycle_resets_at: null
+    rollover_eligible: true
+  - name: "apollo"
+    monthly_allowance: null   # set once the real account allowance is
+                                # confirmed — see enrichment-tools-
+                                # pricing.md's note on why this isn't
+                                # assumed from a comparison article
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "parallel_cli"
+    monthly_allowance: null   # Hermes-official optional skill
+                                # (research/parallel-cli) — has a free
+                                # tier, exact monthly figure not
+                                # independently confirmed; set once known
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "zerobounce"        # verification-tier tracking, same file,
+                                # separate entries — Part B's mandatory
+                                # verification pass draws from these too
+    monthly_allowance: 100
+    used_this_cycle: 0
+    cycle_resets_at: null
+  - name: "kickbox"
+    monthly_allowance: 100
+    used_this_cycle: 0
+    cycle_resets_at: null
+
+# Tier 3 (paid, last-resort) budget — see 22-contact-enrichment/
+# SKILL.md's Part B. Zero by default: Tier 3 spend is opt-in, never
+# assumed. Raising this requires Kenechukwu's explicit confirmation, same as
+# any other confirmed pipeline-behavior setting (Rule 11's spirit,
+# applied to spend rather than templates).
+tier3_monthly_budget_usd: 0
+tier3_spent_this_cycle_usd: 0
+tier3_cycle_resets_at: null
+
+last_updated_at: null
+
+===== shared\seed_all.yaml =====
+companies:
+- slug: stripe
+  platform: greenhouse
+  industry_tags:
+  - fintech
+  seniority_tags:
+  - ic_mid
+  - ic_senior
+  function_tags:
+  - engineering
+  - product
+  geo_tags:
+  - us
+- slug: doximity
+  platform: greenhouse
+  industry_tags:
+  - healthcare
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  geo_tags:
+  - us
+- slug: figma
+  platform: greenhouse
+  industry_tags:
+  - tech
+  - design
+  seniority_tags:
+  - ic_mid
+  - ic_senior
+  function_tags:
+  - design
+  - engineering
+  - product
+  geo_tags:
+  - us
+- slug: notion
+  platform: greenhouse
+  industry_tags:
+  - tech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - product
+  - engineering
+  - marketing
+  geo_tags:
+  - us
+- slug: airbnb
+  platform: greenhouse
+  industry_tags:
+  - hospitality
+  - travel
+  seniority_tags:
+  - ic_mid
+  - ic_senior
+  function_tags:
+  - engineering
+  - product
+  - operations
+  geo_tags:
+  - us
+  - global
+- slug: flexport
+  platform: greenhouse
+  industry_tags:
+  - logistics
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - operations
+  - engineering
+  - sales
+  geo_tags:
+  - us
+  - global
+- slug: coursera
+  platform: greenhouse
+  industry_tags:
+  - education
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - product
+  - engineering
+  - marketing
+  geo_tags:
+  - us
+  - remote
+- slug: sunrun
+  platform: greenhouse
+  industry_tags:
+  - energy
+  - solar
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - operations
+  - sales
+  - engineering
+  geo_tags:
+  - us
+- slug: benchling
+  platform: greenhouse
+  industry_tags:
+  - biotech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  - product
+  geo_tags:
+  - us
+- slug: datadog
+  platform: greenhouse
+  industry_tags:
+  - tech
+  seniority_tags:
+  - ic_mid
+  - ic_senior
+  function_tags:
+  - engineering
+  - sales
+  geo_tags:
+  - us
+  - global
+- slug: hubspot
+  platform: greenhouse
+  industry_tags:
+  - tech
+  - marketing
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - marketing
+  - sales
+  - product
+  geo_tags:
+  - us
+  - global
+- slug: brex
+  platform: greenhouse
+  industry_tags:
+  - fintech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  - product
+  - operations
+  geo_tags:
+  - us
+- slug: plaid
+  platform: lever
+  industry_tags:
+  - fintech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  - product
+  geo_tags:
+  - us
+- slug: openai
+  platform: ashby
+  industry_tags:
+  - ai
+  seniority_tags:
+  - ic_senior
+  - manager
+  function_tags:
+  - research
+  - engineering
+  - operations
+  geo_tags:
+  - us
+- slug: anthropic
+  platform: ashby
+  industry_tags:
+  - ai
+  seniority_tags:
+  - ic_senior
+  - manager
+  function_tags:
+  - research
+  - engineering
+  - operations
+  geo_tags:
+  - us
+- slug: vercel
+  platform: ashby
+  industry_tags:
+  - tech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  - product
+  - marketing
+  geo_tags:
+  - us
+  - remote
+- slug: posthog
+  platform: ashby
+  industry_tags:
+  - tech
+  seniority_tags:
+  - ic_mid
+  function_tags:
+  - engineering
+  - product
+  - marketing
+  geo_tags:
+  - remote
+- slug: netflix
+  platform: lever
+  industry_tags:
+  - media
+  seniority_tags:
+  - ic_senior
+  - manager
+  function_tags:
+  - engineering
+  - marketing
+  geo_tags:
+  - us
+- slug: andela
+  platform: greenhouse
+  industry_tags:
+  - tech
+  - staffing
+  seniority_tags:
+  - ic_mid
+  - ic_senior
+  function_tags:
+  - engineering
+  geo_tags:
+  - nigeria
+  - africa
+  - remote
+- slug: flutterwave
+  platform: lever
+  industry_tags:
+  - fintech
+  seniority_tags:
+  - ic_mid
+  - manager
+  function_tags:
+  - engineering
+  - product
+  - operations
+  geo_tags:
+  - nigeria
+  - africa
+- slug: paystack
+  platform: greenhouse
+  industry_tags:
+  - fintech
+  seniority_tags:
+  - entry
+  - ic_mid
+  function_tags:
+  - engineering
+  - customer_support
+  geo_tags:
+  - nigeria
+  - africa
+- slug: check-technologies
+  platform: ashby
+  company: Check
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sekai
+  platform: ashby
+  company: Sekai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: go-augment
+  platform: ashby
+  company: Augment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ready
+  platform: ashby
+  company: Ready
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: openrouter
+  platform: ashby
+  company: OpenRouter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lendbuzz
+  platform: lever
+  company: Lendbuzz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kpler
+  platform: lever
+  company: Kpler
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kindred
+  platform: ashby
+  company: Kindred
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoise-health
+  platform: ashby
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benepass
+  platform: ashby
+  company: Benepass
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ezcaterinc
+  platform: greenhouse
+  company: ezCater
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stedi
+  platform: ashby
+  company: Stedi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chime
+  platform: greenhouse
+  company: Chime
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinkingmachines
+  platform: ashby
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wayve
+  platform: ashby
+  company: Wayve
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cartesia
+  platform: ashby
+  company: Cartesia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wispr-flow
+  platform: ashby
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: exa
+  platform: ashby
+  company: Exa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anthropic
+  platform: greenhouse
+  company: Anthropic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvederetrading
+  platform: lever
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: krea
+  platform: ashby
+  company: Krea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verahealth
+  platform: ashby
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: brettonai
+  platform: ashby
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suno
+  platform: ashby
+  company: Suno
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riverai
+  platform: greenhouse
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude
+  platform: greenhouse
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ashby
+  platform: ashby
+  company: Ashby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gray%20swan%20ai
+  platform: ashby
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: monzo
+  platform: greenhouse
+  company: Monzo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: omnea
+  platform: ashby
+  company: Omnea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tracebit
+  platform: ashby
+  company: Tracebit
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n
+  platform: ashby
+  company: n8n
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trivago
+  platform: greenhouse
+  company: trivago
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paypay
+  platform: greenhouse
+  company: PayPay
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mujininc
+  platform: lever
+  company: Mujin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevanceai
+  platform: ashby
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: affirm
+  platform: greenhouse
+  company: Affirm
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: photoroom
+  platform: ashby
+  company: Photoroom
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dust
+  platform: ashby
+  company: Dust
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipsetrading
+  platform: greenhouse
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flowtraders
+  platform: greenhouse
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sentry
+  platform: ashby
+  company: Sentry
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocketlab
+  platform: greenhouse
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agoda
+  platform: greenhouse
+  company: Agoda
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygon-labs
+  platform: ashby
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amplify
+  platform: ashby
+  company: amplify
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anthelioncap
+  platform: ashby
+  company: anthelioncap
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: armadin
+  platform: ashby
+  company: armadin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astro-mechanica
+  platform: ashby
+  company: astro-mechanica
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aurora-operations-inc
+  platform: ashby
+  company: aurora-operations-inc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bedrock-robotics
+  platform: ashby
+  company: bedrock-robotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: category-labs
+  platform: ashby
+  company: category-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: circleback
+  platform: ashby
+  company: circleback
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ctgt
+  platform: ashby
+  company: ctgt
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dandy
+  platform: ashby
+  company: dandy
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drivewealth
+  platform: ashby
+  company: drivewealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: f7d8749a-72d6-407c-bf98-292ea630c73a
+  platform: ashby
+  company: f7d8749a-72d6-407c-bf98-292ea630c73a
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flint
+  platform: ashby
+  company: flint
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: formulary
+  platform: ashby
+  company: formulary
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: genesis-molecular-ai
+  platform: ashby
+  company: genesis-molecular-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: geniusai
+  platform: ashby
+  company: geniusai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: heliux
+  platform: ashby
+  company: heliux
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: horizon3ai
+  platform: ashby
+  company: horizon3ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ibotta
+  platform: ashby
+  company: ibotta
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: instil
+  platform: ashby
+  company: instil
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: integrate
+  platform: ashby
+  company: integrate
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: melius
+  platform: ashby
+  company: melius
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: metalenz
+  platform: ashby
+  company: metalenz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: metamorphic
+  platform: ashby
+  company: metamorphic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: netic
+  platform: ashby
+  company: netic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nexus-cognitive
+  platform: ashby
+  company: nexus-cognitive
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: northwoodspace
+  platform: ashby
+  company: northwoodspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: notion
+  platform: ashby
+  company: notion
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oneapp
+  platform: ashby
+  company: oneapp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pangramlabs
+  platform: ashby
+  company: pangramlabs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: patreon
+  platform: ashby
+  company: patreon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: persona
+  platform: ashby
+  company: persona
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pylon-labs
+  platform: ashby
+  company: pylon-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: quadrillion-labs
+  platform: ashby
+  company: quadrillion-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: qumulo
+  platform: ashby
+  company: qumulo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: regent
+  platform: ashby
+  company: regent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: reliable-robotics
+  platform: ashby
+  company: reliable-robotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scout-ai
+  platform: ashby
+  company: scout-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: shield
+  platform: ashby
+  company: shield
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: skyband
+  platform: ashby
+  company: skyband
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: skydio
+  platform: ashby
+  company: skydio
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: steel
+  platform: ashby
+  company: steel
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: telus-digital
+  platform: ashby
+  company: telus-digital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: uipath
+  platform: ashby
+  company: uipath
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vital-lyfe
+  platform: ashby
+  company: vital-lyfe
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voleon
+  platform: ashby
+  company: voleon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: zip
+  platform: ashby
+  company: zip
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: addepar1
+  platform: greenhouse
+  company: addepar1
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amca
+  platform: greenhouse
+  company: amca
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: andurilindustries
+  platform: greenhouse
+  company: andurilindustries
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: appian
+  platform: greenhouse
+  company: appian
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: arcboatcompany
+  platform: greenhouse
+  company: arcboatcompany
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astranis
+  platform: greenhouse
+  company: astranis
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: atoms
+  platform: greenhouse
+  company: atoms
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: axontalentcommunity
+  platform: greenhouse
+  company: axontalentcommunity
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bti36021
+  platform: greenhouse
+  company: bti36021
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: c3ascend
+  platform: greenhouse
+  company: c3ascend
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: capstoneinvestmentadvisors
+  platform: greenhouse
+  company: capstoneinvestmentadvisors
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chicagotradingcampus
+  platform: greenhouse
+  company: chicagotradingcampus
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cloudflare
+  platform: greenhouse
+  company: cloudflare
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: compeerfinancial
+  platform: greenhouse
+  company: compeerfinancial
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: courierhealth
+  platform: greenhouse
+  company: courierhealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cssmerge
+  platform: greenhouse
+  company: cssmerge
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ctccampusboard
+  platform: greenhouse
+  company: ctccampusboard
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: datacor
+  platform: greenhouse
+  company: datacor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: deeplocal
+  platform: greenhouse
+  company: deeplocal
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: divergent
+  platform: greenhouse
+  company: divergent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: doordashusa
+  platform: greenhouse
+  company: doordashusa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drivewealth
+  platform: greenhouse
+  company: drivewealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drweng
+  platform: greenhouse
+  company: drweng
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duolingounirecruitment
+  platform: greenhouse
+  company: duolingounirecruitment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dvtrading
+  platform: greenhouse
+  company: dvtrading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: embed
+  platform: greenhouse
+  company: embed
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: emergingtalent
+  platform: greenhouse
+  company: emergingtalent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: enova
+  platform: greenhouse
+  company: enova
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eqtcorporation
+  platform: greenhouse
+  company: eqtcorporation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: familyoffice
+  platform: greenhouse
+  company: familyoffice
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: fanaticscollectibles
+  platform: greenhouse
+  company: fanaticscollectibles
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: freeformfuturecorp
+  platform: greenhouse
+  company: freeformfuturecorp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gardacp
+  platform: greenhouse
+  company: gardacp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gcmgrosvenor
+  platform: greenhouse
+  company: gcmgrosvenor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: generalmatter
+  platform: greenhouse
+  company: generalmatter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: glossgenius
+  platform: greenhouse
+  company: glossgenius
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gofundme
+  platform: greenhouse
+  company: gofundme
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: graphcore
+  platform: greenhouse
+  company: graphcore
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: graphcore-early-careers
+  platform: greenhouse
+  company: graphcore-early-careers
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gravitonresearchcapital
+  platform: greenhouse
+  company: gravitonresearchcapital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hivefinancialsystems
+  platform: greenhouse
+  company: hivefinancialsystems
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hpiq
+  platform: greenhouse
+  company: hpiq
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hyannisportresearch
+  platform: greenhouse
+  company: hyannisportresearch
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: idmeuniversityrecruiting
+  platform: greenhouse
+  company: idmeuniversityrecruiting
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: inversionspace
+  platform: greenhouse
+  company: inversionspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jomboymedia
+  platform: greenhouse
+  company: jomboymedia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lightmatter
+  platform: greenhouse
+  company: lightmatter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lumbermens
+  platform: greenhouse
+  company: lumbermens
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mavensecuritiesholdingltd
+  platform: greenhouse
+  company: mavensecuritiesholdingltd
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: muonspace
+  platform: greenhouse
+  company: muonspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mwinternshipprogram
+  platform: greenhouse
+  company: mwinternshipprogram
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nex
+  platform: greenhouse
+  company: nex
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: octaura
+  platform: greenhouse
+  company: octaura
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oneethos
+  platform: greenhouse
+  company: oneethos
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: optiverprivate
+  platform: greenhouse
+  company: optiverprivate
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: parallel
+  platform: greenhouse
+  company: parallel
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paretocaptiveservicesllc
+  platform: greenhouse
+  company: paretocaptiveservicesllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pdtpartners
+  platform: greenhouse
+  company: pdtpartners
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: point72
+  platform: greenhouse
+  company: point72
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: purestorage
+  platform: greenhouse
+  company: purestorage
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: quberesearchandtechnologies
+  platform: greenhouse
+  company: quberesearchandtechnologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rothesaygraduates
+  platform: greenhouse
+  company: rothesaygraduates
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ruggedrobotics
+  platform: greenhouse
+  company: ruggedrobotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sage49
+  platform: greenhouse
+  company: sage49
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: samsungresearchamericainternship
+  platform: greenhouse
+  company: samsungresearchamericainternship
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scaleai
+  platform: greenhouse
+  company: scaleai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: schonfeld
+  platform: greenhouse
+  company: schonfeld
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scoutmotors
+  platform: greenhouse
+  company: scoutmotors
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sharkninjaoperatingllc
+  platform: greenhouse
+  company: sharkninjaoperatingllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sigmacomputing
+  platform: greenhouse
+  company: sigmacomputing
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: signifyd95
+  platform: greenhouse
+  company: signifyd95
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: spacex
+  platform: greenhouse
+  company: spacex
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stackav
+  platform: greenhouse
+  company: stackav
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stratolaunch
+  platform: greenhouse
+  company: stratolaunch
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thealleninstitute
+  platform: greenhouse
+  company: thealleninstitute
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thebrattlegroup
+  platform: greenhouse
+  company: thebrattlegroup
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thenewyorktimes
+  platform: greenhouse
+  company: thenewyorktimes
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thenuclearcompany
+  platform: greenhouse
+  company: thenuclearcompany
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thetradedesk
+  platform: greenhouse
+  company: thetradedesk
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: togetherai
+  platform: greenhouse
+  company: togetherai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vardaspace
+  platform: greenhouse
+  company: vardaspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verkada
+  platform: greenhouse
+  company: verkada
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: virtu
+  platform: greenhouse
+  company: virtu
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voloridgeinvestmentmanagement
+  platform: greenhouse
+  company: voloridgeinvestmentmanagement
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voyagertechnologiesinc
+  platform: greenhouse
+  company: voyagertechnologiesinc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: whitewatermidstream
+  platform: greenhouse
+  company: whitewatermidstream
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: woolpert
+  platform: greenhouse
+  company: woolpert
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: xai
+  platform: greenhouse
+  company: xai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: xantium
+  platform: greenhouse
+  company: xantium
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anavationllc
+  platform: lever
+  company: anavationllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bosonai
+  platform: lever
+  company: bosonai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cesiumastro
+  platform: lever
+  company: cesiumastro
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cfsenergy
+  platform: lever
+  company: cfsenergy
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duetti
+  platform: lever
+  company: duetti
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: evr
+  platform: lever
+  company: evr
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: field-ai
+  platform: lever
+  company: field-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: futo-org
+  platform: lever
+  company: futo-org
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: loftorbital
+  platform: lever
+  company: loftorbital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: matchgroup
+  platform: lever
+  company: matchgroup
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: matillion
+  platform: lever
+  company: matillion
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: neighbor
+  platform: lever
+  company: neighbor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: parallelwireless
+  platform: lever
+  company: parallelwireless
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pattern
+  platform: lever
+  company: pattern
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pivotal
+  platform: lever
+  company: pivotal
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: questanalytics
+  platform: lever
+  company: questanalytics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: saviynt
+  platform: lever
+  company: saviynt
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: simberobotics
+  platform: lever
+  company: simberobotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stradaeducation
+  platform: lever
+  company: stradaeducation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: syntax
+  platform: lever
+  company: syntax
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tri
+  platform: lever
+  company: tri
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: upscale-ai
+  platform: lever
+  company: upscale-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: viget
+  platform: lever
+  company: viget
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: waabi
+  platform: lever
+  company: waabi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: zoox
+  platform: lever
+  company: zoox
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+
+===== shared\seed_companies.yaml =====
+# Working seed list for the question-bank crawl.
+# Copied from 07-context-architect/templates/seed_companies.yaml and expanded
+# on 2026-11-17. A 404 means the company moved off that ATS; the crawler skips
+# it and continues.
+#
+# Verified working on 2026-11-17: stripe, doximity.
+# Dead on 2026-11-17: netflix (lever), andela (greenhouse),
+# flutterwave (lever), paystack (greenhouse). Kept as a record; harmless.
+
+companies:
+  - slug: stripe
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: doximity
+    platform: greenhouse
+    industry_tags: [healthcare]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering]
+    geo_tags: [us]
+
+  - slug: figma
+    platform: greenhouse
+    industry_tags: [tech, design]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [design, engineering, product]
+    geo_tags: [us]
+
+  - slug: notion
+    platform: greenhouse
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [product, engineering, marketing]
+    geo_tags: [us]
+
+  - slug: airbnb
+    platform: greenhouse
+    industry_tags: [hospitality, travel]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, product, operations]
+    geo_tags: [us, global]
+
+  - slug: flexport
+    platform: greenhouse
+    industry_tags: [logistics]
+    seniority_tags: [ic_mid]
+    function_tags: [operations, engineering, sales]
+    geo_tags: [us, global]
+
+  - slug: coursera
+    platform: greenhouse
+    industry_tags: [education]
+    seniority_tags: [ic_mid]
+    function_tags: [product, engineering, marketing]
+    geo_tags: [us, remote]
+
+  - slug: sunrun
+    platform: greenhouse
+    industry_tags: [energy, solar]
+    seniority_tags: [ic_mid]
+    function_tags: [operations, sales, engineering]
+    geo_tags: [us]
+
+  - slug: benchling
+    platform: greenhouse
+    industry_tags: [biotech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: datadog
+    platform: greenhouse
+    industry_tags: [tech]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering, sales]
+    geo_tags: [us, global]
+
+  - slug: hubspot
+    platform: greenhouse
+    industry_tags: [tech, marketing]
+    seniority_tags: [ic_mid]
+    function_tags: [marketing, sales, product]
+    geo_tags: [us, global]
+
+  - slug: brex
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, operations]
+    geo_tags: [us]
+
+  - slug: plaid
+    platform: lever
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product]
+    geo_tags: [us]
+
+  - slug: openai
+    platform: ashby
+    industry_tags: [ai]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [research, engineering, operations]
+    geo_tags: [us]
+
+  - slug: anthropic
+    platform: ashby
+    industry_tags: [ai]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [research, engineering, operations]
+    geo_tags: [us]
+
+  - slug: vercel
+    platform: ashby
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, marketing]
+    geo_tags: [us, remote]
+
+  - slug: posthog
+    platform: ashby
+    industry_tags: [tech]
+    seniority_tags: [ic_mid]
+    function_tags: [engineering, product, marketing]
+    geo_tags: [remote]
+
+  - slug: netflix
+    platform: lever
+    industry_tags: [media]
+    seniority_tags: [ic_senior, manager]
+    function_tags: [engineering, marketing]
+    geo_tags: [us]
+
+  - slug: andela
+    platform: greenhouse
+    industry_tags: [tech, staffing]
+    seniority_tags: [ic_mid, ic_senior]
+    function_tags: [engineering]
+    geo_tags: [nigeria, africa, remote]
+
+  - slug: flutterwave
+    platform: lever
+    industry_tags: [fintech]
+    seniority_tags: [ic_mid, manager]
+    function_tags: [engineering, product, operations]
+    geo_tags: [nigeria, africa]
+
+  - slug: paystack
+    platform: greenhouse
+    industry_tags: [fintech]
+    seniority_tags: [entry, ic_mid]
+    function_tags: [engineering, customer_support]
+    geo_tags: [nigeria, africa]
+===== shared\seed_from_applications.yaml =====
+companies:
+- slug: check-technologies
+  platform: ashby
+  company: Check
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sekai
+  platform: ashby
+  company: Sekai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: go-augment
+  platform: ashby
+  company: Augment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ready
+  platform: ashby
+  company: Ready
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: openrouter
+  platform: ashby
+  company: OpenRouter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lendbuzz
+  platform: lever
+  company: Lendbuzz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kpler
+  platform: lever
+  company: Kpler
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kindred
+  platform: ashby
+  company: Kindred
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoise-health
+  platform: ashby
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benepass
+  platform: ashby
+  company: Benepass
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ezcaterinc
+  platform: greenhouse
+  company: ezCater
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stedi
+  platform: ashby
+  company: Stedi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chime
+  platform: greenhouse
+  company: Chime
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinkingmachines
+  platform: ashby
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wayve
+  platform: ashby
+  company: Wayve
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cartesia
+  platform: ashby
+  company: Cartesia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wispr-flow
+  platform: ashby
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: exa
+  platform: ashby
+  company: Exa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anthropic
+  platform: greenhouse
+  company: Anthropic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvederetrading
+  platform: lever
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: krea
+  platform: ashby
+  company: Krea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verahealth
+  platform: ashby
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: brettonai
+  platform: ashby
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suno
+  platform: ashby
+  company: Suno
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riverai
+  platform: greenhouse
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude
+  platform: greenhouse
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ashby
+  platform: ashby
+  company: Ashby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gray%20swan%20ai
+  platform: ashby
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: monzo
+  platform: greenhouse
+  company: Monzo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: omnea
+  platform: ashby
+  company: Omnea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tracebit
+  platform: ashby
+  company: Tracebit
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n
+  platform: ashby
+  company: n8n
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trivago
+  platform: greenhouse
+  company: trivago
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paypay
+  platform: greenhouse
+  company: PayPay
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mujininc
+  platform: lever
+  company: Mujin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevanceai
+  platform: ashby
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: affirm
+  platform: greenhouse
+  company: Affirm
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: photoroom
+  platform: ashby
+  company: Photoroom
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dust
+  platform: ashby
+  company: Dust
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flexport
+  platform: greenhouse
+  company: Flexport
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipsetrading
+  platform: greenhouse
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flowtraders
+  platform: greenhouse
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sentry
+  platform: ashby
+  company: Sentry
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocketlab
+  platform: greenhouse
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agoda
+  platform: greenhouse
+  company: Agoda
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygon-labs
+  platform: ashby
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+
+===== shared\seed_github.yaml =====
+companies:
+- slug: amplify
+  platform: ashby
+  company: amplify
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anthelioncap
+  platform: ashby
+  company: anthelioncap
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: armadin
+  platform: ashby
+  company: armadin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astro-mechanica
+  platform: ashby
+  company: astro-mechanica
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aurora-operations-inc
+  platform: ashby
+  company: aurora-operations-inc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bedrock-robotics
+  platform: ashby
+  company: bedrock-robotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: category-labs
+  platform: ashby
+  company: category-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: circleback
+  platform: ashby
+  company: circleback
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ctgt
+  platform: ashby
+  company: ctgt
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dandy
+  platform: ashby
+  company: dandy
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drivewealth
+  platform: ashby
+  company: drivewealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: f7d8749a-72d6-407c-bf98-292ea630c73a
+  platform: ashby
+  company: f7d8749a-72d6-407c-bf98-292ea630c73a
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flint
+  platform: ashby
+  company: flint
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: formulary
+  platform: ashby
+  company: formulary
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: genesis-molecular-ai
+  platform: ashby
+  company: genesis-molecular-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: geniusai
+  platform: ashby
+  company: geniusai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: heliux
+  platform: ashby
+  company: heliux
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: horizon3ai
+  platform: ashby
+  company: horizon3ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ibotta
+  platform: ashby
+  company: ibotta
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: instil
+  platform: ashby
+  company: instil
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: integrate
+  platform: ashby
+  company: integrate
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: melius
+  platform: ashby
+  company: melius
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: metalenz
+  platform: ashby
+  company: metalenz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: metamorphic
+  platform: ashby
+  company: metamorphic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: netic
+  platform: ashby
+  company: netic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nexus-cognitive
+  platform: ashby
+  company: nexus-cognitive
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: northwoodspace
+  platform: ashby
+  company: northwoodspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: notion
+  platform: ashby
+  company: notion
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oneapp
+  platform: ashby
+  company: oneapp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pangramlabs
+  platform: ashby
+  company: pangramlabs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: patreon
+  platform: ashby
+  company: patreon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: persona
+  platform: ashby
+  company: persona
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pylon-labs
+  platform: ashby
+  company: pylon-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: quadrillion-labs
+  platform: ashby
+  company: quadrillion-labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: qumulo
+  platform: ashby
+  company: qumulo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: regent
+  platform: ashby
+  company: regent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: reliable-robotics
+  platform: ashby
+  company: reliable-robotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scout-ai
+  platform: ashby
+  company: scout-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: shield
+  platform: ashby
+  company: shield
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: skyband
+  platform: ashby
+  company: skyband
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: skydio
+  platform: ashby
+  company: skydio
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: steel
+  platform: ashby
+  company: steel
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: telus-digital
+  platform: ashby
+  company: telus-digital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: uipath
+  platform: ashby
+  company: uipath
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vital-lyfe
+  platform: ashby
+  company: vital-lyfe
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voleon
+  platform: ashby
+  company: voleon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: zip
+  platform: ashby
+  company: zip
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: addepar1
+  platform: greenhouse
+  company: addepar1
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: affirm
+  platform: greenhouse
+  company: affirm
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amca
+  platform: greenhouse
+  company: amca
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: andurilindustries
+  platform: greenhouse
+  company: andurilindustries
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: appian
+  platform: greenhouse
+  company: appian
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: arcboatcompany
+  platform: greenhouse
+  company: arcboatcompany
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astranis
+  platform: greenhouse
+  company: astranis
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: atoms
+  platform: greenhouse
+  company: atoms
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: axontalentcommunity
+  platform: greenhouse
+  company: axontalentcommunity
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bti36021
+  platform: greenhouse
+  company: bti36021
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: c3ascend
+  platform: greenhouse
+  company: c3ascend
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: capstoneinvestmentadvisors
+  platform: greenhouse
+  company: capstoneinvestmentadvisors
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chicagotradingcampus
+  platform: greenhouse
+  company: chicagotradingcampus
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cloudflare
+  platform: greenhouse
+  company: cloudflare
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: compeerfinancial
+  platform: greenhouse
+  company: compeerfinancial
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: courierhealth
+  platform: greenhouse
+  company: courierhealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cssmerge
+  platform: greenhouse
+  company: cssmerge
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ctccampusboard
+  platform: greenhouse
+  company: ctccampusboard
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: datacor
+  platform: greenhouse
+  company: datacor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: deeplocal
+  platform: greenhouse
+  company: deeplocal
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: divergent
+  platform: greenhouse
+  company: divergent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: doordashusa
+  platform: greenhouse
+  company: doordashusa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drivewealth
+  platform: greenhouse
+  company: drivewealth
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: drweng
+  platform: greenhouse
+  company: drweng
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duolingounirecruitment
+  platform: greenhouse
+  company: duolingounirecruitment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dvtrading
+  platform: greenhouse
+  company: dvtrading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: embed
+  platform: greenhouse
+  company: embed
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: emergingtalent
+  platform: greenhouse
+  company: emergingtalent
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: enova
+  platform: greenhouse
+  company: enova
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eqtcorporation
+  platform: greenhouse
+  company: eqtcorporation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: familyoffice
+  platform: greenhouse
+  company: familyoffice
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: fanaticscollectibles
+  platform: greenhouse
+  company: fanaticscollectibles
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: figma
+  platform: greenhouse
+  company: figma
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flowtraders
+  platform: greenhouse
+  company: flowtraders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: freeformfuturecorp
+  platform: greenhouse
+  company: freeformfuturecorp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gardacp
+  platform: greenhouse
+  company: gardacp
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gcmgrosvenor
+  platform: greenhouse
+  company: gcmgrosvenor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: generalmatter
+  platform: greenhouse
+  company: generalmatter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: glossgenius
+  platform: greenhouse
+  company: glossgenius
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gofundme
+  platform: greenhouse
+  company: gofundme
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: graphcore
+  platform: greenhouse
+  company: graphcore
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: graphcore-early-careers
+  platform: greenhouse
+  company: graphcore-early-careers
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gravitonresearchcapital
+  platform: greenhouse
+  company: gravitonresearchcapital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hivefinancialsystems
+  platform: greenhouse
+  company: hivefinancialsystems
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hpiq
+  platform: greenhouse
+  company: hpiq
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hyannisportresearch
+  platform: greenhouse
+  company: hyannisportresearch
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: idmeuniversityrecruiting
+  platform: greenhouse
+  company: idmeuniversityrecruiting
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: inversionspace
+  platform: greenhouse
+  company: inversionspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jomboymedia
+  platform: greenhouse
+  company: jomboymedia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lightmatter
+  platform: greenhouse
+  company: lightmatter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lumbermens
+  platform: greenhouse
+  company: lumbermens
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mavensecuritiesholdingltd
+  platform: greenhouse
+  company: mavensecuritiesholdingltd
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: muonspace
+  platform: greenhouse
+  company: muonspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mwinternshipprogram
+  platform: greenhouse
+  company: mwinternshipprogram
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nex
+  platform: greenhouse
+  company: nex
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: octaura
+  platform: greenhouse
+  company: octaura
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oneethos
+  platform: greenhouse
+  company: oneethos
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: optiverprivate
+  platform: greenhouse
+  company: optiverprivate
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: parallel
+  platform: greenhouse
+  company: parallel
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paretocaptiveservicesllc
+  platform: greenhouse
+  company: paretocaptiveservicesllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pdtpartners
+  platform: greenhouse
+  company: pdtpartners
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: point72
+  platform: greenhouse
+  company: point72
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: purestorage
+  platform: greenhouse
+  company: purestorage
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: quberesearchandtechnologies
+  platform: greenhouse
+  company: quberesearchandtechnologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rothesaygraduates
+  platform: greenhouse
+  company: rothesaygraduates
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ruggedrobotics
+  platform: greenhouse
+  company: ruggedrobotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sage49
+  platform: greenhouse
+  company: sage49
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: samsungresearchamericainternship
+  platform: greenhouse
+  company: samsungresearchamericainternship
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scaleai
+  platform: greenhouse
+  company: scaleai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: schonfeld
+  platform: greenhouse
+  company: schonfeld
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scoutmotors
+  platform: greenhouse
+  company: scoutmotors
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sharkninjaoperatingllc
+  platform: greenhouse
+  company: sharkninjaoperatingllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sigmacomputing
+  platform: greenhouse
+  company: sigmacomputing
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: signifyd95
+  platform: greenhouse
+  company: signifyd95
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: spacex
+  platform: greenhouse
+  company: spacex
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stackav
+  platform: greenhouse
+  company: stackav
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stratolaunch
+  platform: greenhouse
+  company: stratolaunch
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thealleninstitute
+  platform: greenhouse
+  company: thealleninstitute
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thebrattlegroup
+  platform: greenhouse
+  company: thebrattlegroup
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thenewyorktimes
+  platform: greenhouse
+  company: thenewyorktimes
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thenuclearcompany
+  platform: greenhouse
+  company: thenuclearcompany
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thetradedesk
+  platform: greenhouse
+  company: thetradedesk
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: togetherai
+  platform: greenhouse
+  company: togetherai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vardaspace
+  platform: greenhouse
+  company: vardaspace
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verkada
+  platform: greenhouse
+  company: verkada
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: virtu
+  platform: greenhouse
+  company: virtu
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voloridgeinvestmentmanagement
+  platform: greenhouse
+  company: voloridgeinvestmentmanagement
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: voyagertechnologiesinc
+  platform: greenhouse
+  company: voyagertechnologiesinc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: whitewatermidstream
+  platform: greenhouse
+  company: whitewatermidstream
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: woolpert
+  platform: greenhouse
+  company: woolpert
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: xai
+  platform: greenhouse
+  company: xai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: xantium
+  platform: greenhouse
+  company: xantium
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anavationllc
+  platform: lever
+  company: anavationllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvederetrading
+  platform: lever
+  company: belvederetrading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bosonai
+  platform: lever
+  company: bosonai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cesiumastro
+  platform: lever
+  company: cesiumastro
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cfsenergy
+  platform: lever
+  company: cfsenergy
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duetti
+  platform: lever
+  company: duetti
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: evr
+  platform: lever
+  company: evr
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: field-ai
+  platform: lever
+  company: field-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: futo-org
+  platform: lever
+  company: futo-org
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: loftorbital
+  platform: lever
+  company: loftorbital
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: matchgroup
+  platform: lever
+  company: matchgroup
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: matillion
+  platform: lever
+  company: matillion
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: neighbor
+  platform: lever
+  company: neighbor
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: parallelwireless
+  platform: lever
+  company: parallelwireless
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pattern
+  platform: lever
+  company: pattern
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pivotal
+  platform: lever
+  company: pivotal
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: questanalytics
+  platform: lever
+  company: questanalytics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: saviynt
+  platform: lever
+  company: saviynt
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: simberobotics
+  platform: lever
+  company: simberobotics
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stradaeducation
+  platform: lever
+  company: stradaeducation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: syntax
+  platform: lever
+  company: syntax
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tri
+  platform: lever
+  company: tri
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: upscale-ai
+  platform: lever
+  company: upscale-ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: viget
+  platform: lever
+  company: viget
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: waabi
+  platform: lever
+  company: waabi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: zoox
+  platform: lever
+  company: zoox
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+
+===== shared\seed_names.yaml =====
+companies:
+- slug: a-team
+  platform: greenhouse
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: a-team
+  platform: lever
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: a-team
+  platform: ashby
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ateam
+  platform: greenhouse
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ateam
+  platform: lever
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ateam
+  platform: ashby
+  company: A.Team
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ai-scaling
+  platform: greenhouse
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ai-scaling
+  platform: lever
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ai-scaling
+  platform: ashby
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aiscaling
+  platform: greenhouse
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aiscaling
+  platform: lever
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aiscaling
+  platform: ashby
+  company: AI Scaling
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: affirm
+  platform: lever
+  company: Affirm
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: affirm
+  platform: ashby
+  company: Affirm
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agave
+  platform: greenhouse
+  company: Agave
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agave
+  platform: lever
+  company: Agave
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agave
+  platform: ashby
+  company: Agave
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agoda
+  platform: lever
+  company: Agoda
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: agoda
+  platform: ashby
+  company: Agoda
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aimi
+  platform: greenhouse
+  company: AiMi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aimi
+  platform: lever
+  company: AiMi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: aimi
+  platform: ashby
+  company: AiMi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternative-payments
+  platform: greenhouse
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternative-payments
+  platform: lever
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternative-payments
+  platform: ashby
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternativepayments
+  platform: greenhouse
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternativepayments
+  platform: lever
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: alternativepayments
+  platform: ashby
+  company: Alternative Payments
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amazon
+  platform: greenhouse
+  company: Amazon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amazon
+  platform: lever
+  company: Amazon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: amazon
+  platform: ashby
+  company: Amazon
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: anthropic
+  platform: lever
+  company: Anthropic
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ashby
+  platform: greenhouse
+  company: Ashby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ashby
+  platform: lever
+  company: Ashby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astra
+  platform: greenhouse
+  company: Astra
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astra
+  platform: lever
+  company: Astra
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: astra
+  platform: ashby
+  company: Astra
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: augment
+  platform: greenhouse
+  company: Augment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: augment
+  platform: lever
+  company: Augment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: augment
+  platform: ashby
+  company: Augment
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: axmed
+  platform: greenhouse
+  company: Axmed
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: axmed
+  platform: lever
+  company: Axmed
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: axmed
+  platform: ashby
+  company: Axmed
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerionai
+  platform: greenhouse
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerionai
+  platform: lever
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerionai
+  platform: ashby
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerion-ai
+  platform: greenhouse
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerion-ai
+  platform: lever
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: balerion-ai
+  platform: ashby
+  company: Balerion AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvedere-trading
+  platform: greenhouse
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvedere-trading
+  platform: lever
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvedere-trading
+  platform: ashby
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvederetrading
+  platform: greenhouse
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: belvederetrading
+  platform: ashby
+  company: Belvedere Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benepass
+  platform: greenhouse
+  company: Benepass
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benepass
+  platform: lever
+  company: Benepass
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benzinga
+  platform: greenhouse
+  company: Benzinga
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benzinga
+  platform: lever
+  company: Benzinga
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: benzinga
+  platform: ashby
+  company: Benzinga
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bretton-ai
+  platform: greenhouse
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bretton-ai
+  platform: lever
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bretton-ai
+  platform: ashby
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: brettonai
+  platform: greenhouse
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: brettonai
+  platform: lever
+  company: Bretton AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridge-builders-ai-llc
+  platform: greenhouse
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridge-builders-ai-llc
+  platform: lever
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridge-builders-ai-llc
+  platform: ashby
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridgebuildersaillc
+  platform: greenhouse
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridgebuildersaillc
+  platform: lever
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: bridgebuildersaillc
+  platform: ashby
+  company: Bridge Builders AI LLC
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cartesia
+  platform: greenhouse
+  company: Cartesia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cartesia
+  platform: lever
+  company: Cartesia
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: check
+  platform: greenhouse
+  company: Check
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: check
+  platform: lever
+  company: Check
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: check
+  platform: ashby
+  company: Check
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chime
+  platform: lever
+  company: Chime
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: chime
+  platform: ashby
+  company: Chime
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coder
+  platform: greenhouse
+  company: Coder
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coder
+  platform: lever
+  company: Coder
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coder
+  platform: ashby
+  company: Coder
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coraai
+  platform: greenhouse
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coraai
+  platform: lever
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: coraai
+  platform: ashby
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cora-ai
+  platform: greenhouse
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cora-ai
+  platform: lever
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cora-ai
+  platform: ashby
+  company: Cora AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: crosby
+  platform: greenhouse
+  company: Crosby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: crosby
+  platform: lever
+  company: Crosby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: crosby
+  platform: ashby
+  company: Crosby
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cybercoders
+  platform: greenhouse
+  company: Cybercoders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cybercoders
+  platform: lever
+  company: Cybercoders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: cybercoders
+  platform: ashby
+  company: Cybercoders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duckcreektechnologies
+  platform: greenhouse
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duckcreektechnologies
+  platform: lever
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duckcreektechnologies
+  platform: ashby
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duck-creek-technologies
+  platform: greenhouse
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duck-creek-technologies
+  platform: lever
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: duck-creek-technologies
+  platform: ashby
+  company: Duck Creek Technologies
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dust
+  platform: greenhouse
+  company: Dust
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: dust
+  platform: lever
+  company: Dust
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipse-trading
+  platform: greenhouse
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipse-trading
+  platform: lever
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipse-trading
+  platform: ashby
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipsetrading
+  platform: lever
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: eclipsetrading
+  platform: ashby
+  company: Eclipse Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: exa
+  platform: greenhouse
+  company: Exa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: exa
+  platform: lever
+  company: Exa
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flexport
+  platform: lever
+  company: Flexport
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flexport
+  platform: ashby
+  company: Flexport
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flowtraders
+  platform: lever
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flowtraders
+  platform: ashby
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flow-traders
+  platform: greenhouse
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flow-traders
+  platform: lever
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: flow-traders
+  platform: ashby
+  company: Flow Traders
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garnerhealth
+  platform: greenhouse
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garnerhealth
+  platform: lever
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garnerhealth
+  platform: ashby
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garner-health
+  platform: greenhouse
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garner-health
+  platform: lever
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: garner-health
+  platform: ashby
+  company: Garner Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gray-swan-ai
+  platform: greenhouse
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gray-swan-ai
+  platform: lever
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: gray-swan-ai
+  platform: ashby
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: grayswanai
+  platform: greenhouse
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: grayswanai
+  platform: lever
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: grayswanai
+  platform: ashby
+  company: Gray Swan AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hennge
+  platform: greenhouse
+  company: HENNGE
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hennge
+  platform: lever
+  company: HENNGE
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: hennge
+  platform: ashby
+  company: HENNGE
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ir-labs
+  platform: greenhouse
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ir-labs
+  platform: lever
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ir-labs
+  platform: ashby
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: irlabs
+  platform: greenhouse
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: irlabs
+  platform: lever
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: irlabs
+  platform: ashby
+  company: IR Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interviewresources
+  platform: greenhouse
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interviewresources
+  platform: lever
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interviewresources
+  platform: ashby
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interview-resources
+  platform: greenhouse
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interview-resources
+  platform: lever
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: interview-resources
+  platform: ashby
+  company: Interview Resources
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jump-trading
+  platform: greenhouse
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jump-trading
+  platform: lever
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jump-trading
+  platform: ashby
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jumptrading
+  platform: greenhouse
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jumptrading
+  platform: lever
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: jumptrading
+  platform: ashby
+  company: Jump Trading
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kindred
+  platform: greenhouse
+  company: Kindred
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kindred
+  platform: lever
+  company: Kindred
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassif-ai
+  platform: greenhouse
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassif-ai
+  platform: lever
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassif-ai
+  platform: ashby
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassifai
+  platform: greenhouse
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassifai
+  platform: lever
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: klassifai
+  platform: ashby
+  company: Klassif.ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kpler
+  platform: greenhouse
+  company: Kpler
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kpler
+  platform: ashby
+  company: Kpler
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kraken
+  platform: greenhouse
+  company: Kraken
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kraken
+  platform: lever
+  company: Kraken
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: kraken
+  platform: ashby
+  company: Kraken
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: krea
+  platform: greenhouse
+  company: Krea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: krea
+  platform: lever
+  company: Krea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude
+  platform: lever
+  company: Latitude
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude
+  platform: ashby
+  company: Latitude
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude-ai
+  platform: greenhouse
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude-ai
+  platform: lever
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitude-ai
+  platform: ashby
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitudeai
+  platform: greenhouse
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitudeai
+  platform: lever
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: latitudeai
+  platform: ashby
+  company: Latitude AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lawnstarter
+  platform: greenhouse
+  company: LawnStarter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lawnstarter
+  platform: lever
+  company: LawnStarter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lawnstarter
+  platform: ashby
+  company: LawnStarter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lead-bank
+  platform: greenhouse
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lead-bank
+  platform: lever
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lead-bank
+  platform: ashby
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: leadbank
+  platform: greenhouse
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: leadbank
+  platform: lever
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: leadbank
+  platform: ashby
+  company: Lead Bank
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: legile
+  platform: greenhouse
+  company: Legile
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: legile
+  platform: lever
+  company: Legile
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: legile
+  platform: ashby
+  company: Legile
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemon-io
+  platform: greenhouse
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemon-io
+  platform: lever
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemon-io
+  platform: ashby
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemonio
+  platform: greenhouse
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemonio
+  platform: lever
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lemonio
+  platform: ashby
+  company: Lemon.io
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lendbuzz
+  platform: greenhouse
+  company: Lendbuzz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: lendbuzz
+  platform: ashby
+  company: Lendbuzz
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mci
+  platform: greenhouse
+  company: MCI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mci
+  platform: lever
+  company: MCI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mci
+  platform: ashby
+  company: MCI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: money-forward
+  platform: greenhouse
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: money-forward
+  platform: lever
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: money-forward
+  platform: ashby
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: moneyforward
+  platform: greenhouse
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: moneyforward
+  platform: lever
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: moneyforward
+  platform: ashby
+  company: Money Forward
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: monzo
+  platform: lever
+  company: Monzo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: monzo
+  platform: ashby
+  company: Monzo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mujin
+  platform: greenhouse
+  company: Mujin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mujin
+  platform: lever
+  company: Mujin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: mujin
+  platform: ashby
+  company: Mujin
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n26
+  platform: greenhouse
+  company: N26
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n26
+  platform: lever
+  company: N26
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n26
+  platform: ashby
+  company: N26
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversalinc
+  platform: greenhouse
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversalinc
+  platform: lever
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversalinc
+  platform: ashby
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversal-inc
+  platform: greenhouse
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversal-inc
+  platform: lever
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nbcuniversal-inc
+  platform: ashby
+  company: 'Nbcuniversal Inc '
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newoai
+  platform: greenhouse
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newoai
+  platform: lever
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newoai
+  platform: ashby
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newo-ai
+  platform: greenhouse
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newo-ai
+  platform: lever
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: newo-ai
+  platform: ashby
+  company: Newo Ai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nico-revops-sales-agency
+  platform: greenhouse
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nico-revops-sales-agency
+  platform: lever
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nico-revops-sales-agency
+  platform: ashby
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nicorevopssalesagency
+  platform: greenhouse
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nicorevopssalesagency
+  platform: lever
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: nicorevopssalesagency
+  platform: ashby
+  company: Nico RevOps / Sales Agency
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: odk
+  platform: greenhouse
+  company: ODK
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: odk
+  platform: lever
+  company: ODK
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: odk
+  platform: ashby
+  company: ODK
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oklo
+  platform: greenhouse
+  company: Oklo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oklo
+  platform: lever
+  company: Oklo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: oklo
+  platform: ashby
+  company: Oklo
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: omnea
+  platform: greenhouse
+  company: Omnea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: omnea
+  platform: lever
+  company: Omnea
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: openrouter
+  platform: greenhouse
+  company: OpenRouter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: openrouter
+  platform: lever
+  company: OpenRouter
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: optiver
+  platform: greenhouse
+  company: Optiver
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: optiver
+  platform: lever
+  company: Optiver
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: optiver
+  platform: ashby
+  company: Optiver
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathos-ai
+  platform: greenhouse
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathos-ai
+  platform: lever
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathos-ai
+  platform: ashby
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathosai
+  platform: greenhouse
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathosai
+  platform: lever
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pathosai
+  platform: ashby
+  company: Pathos AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paypay
+  platform: lever
+  company: PayPay
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: paypay
+  platform: ashby
+  company: PayPay
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: phare-health
+  platform: greenhouse
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: phare-health
+  platform: lever
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: phare-health
+  platform: ashby
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pharehealth
+  platform: greenhouse
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pharehealth
+  platform: lever
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pharehealth
+  platform: ashby
+  company: Phare Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: photoroom
+  platform: greenhouse
+  company: Photoroom
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: photoroom
+  platform: lever
+  company: Photoroom
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygon-labs
+  platform: greenhouse
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygon-labs
+  platform: lever
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygonlabs
+  platform: greenhouse
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygonlabs
+  platform: lever
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: polygonlabs
+  platform: ashby
+  company: Polygon Labs
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: python-tensorflow-pytorch-gcp-aws-azure
+  platform: greenhouse
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: python-tensorflow-pytorch-gcp-aws-azure
+  platform: lever
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: python-tensorflow-pytorch-gcp-aws-azure
+  platform: ashby
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pythontensorflowpytorchgcpawsazure
+  platform: greenhouse
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pythontensorflowpytorchgcpawsazure
+  platform: lever
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: pythontensorflowpytorchgcpawsazure
+  platform: ashby
+  company: Python, TensorFlow, PyTorch, GCP, AWS, Azure
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ready
+  platform: greenhouse
+  company: Ready
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ready
+  platform: lever
+  company: Ready
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: reka
+  platform: greenhouse
+  company: Reka
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: reka
+  platform: lever
+  company: Reka
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: reka
+  platform: ashby
+  company: Reka
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevanceai
+  platform: greenhouse
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevanceai
+  platform: lever
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevance-ai
+  platform: greenhouse
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevance-ai
+  platform: lever
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: relevance-ai
+  platform: ashby
+  company: Relevance AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riot-games
+  platform: greenhouse
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riot-games
+  platform: lever
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riot-games
+  platform: ashby
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riotgames
+  platform: greenhouse
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riotgames
+  platform: lever
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riotgames
+  platform: ashby
+  company: Riot Games
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riverai
+  platform: lever
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: riverai
+  platform: ashby
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: river-ai
+  platform: greenhouse
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: river-ai
+  platform: lever
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: river-ai
+  platform: ashby
+  company: River AI
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rkindustriesllc
+  platform: greenhouse
+  company: Rkindustriesllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rkindustriesllc
+  platform: lever
+  company: Rkindustriesllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rkindustriesllc
+  platform: ashby
+  company: Rkindustriesllc
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocket-lab
+  platform: greenhouse
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocket-lab
+  platform: lever
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocket-lab
+  platform: ashby
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocketlab
+  platform: lever
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: rocketlab
+  platform: ashby
+  company: Rocket Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sardine
+  platform: greenhouse
+  company: Sardine
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sardine
+  platform: lever
+  company: Sardine
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sardine
+  platform: ashby
+  company: Sardine
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scaleai
+  platform: lever
+  company: Scaleai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scaleai
+  platform: ashby
+  company: Scaleai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scopely
+  platform: greenhouse
+  company: Scopely
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scopely
+  platform: lever
+  company: Scopely
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: scopely
+  platform: ashby
+  company: Scopely
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sekai
+  platform: greenhouse
+  company: Sekai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sekai
+  platform: lever
+  company: Sekai
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sentry
+  platform: greenhouse
+  company: Sentry
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sentry
+  platform: lever
+  company: Sentry
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: snowflake
+  platform: greenhouse
+  company: Snowflake
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: snowflake
+  platform: lever
+  company: Snowflake
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: snowflake
+  platform: ashby
+  company: Snowflake
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sourcegraph
+  platform: greenhouse
+  company: Sourcegraph
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sourcegraph
+  platform: lever
+  company: Sourcegraph
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: sourcegraph
+  platform: ashby
+  company: Sourcegraph
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: starbridge
+  platform: greenhouse
+  company: Starbridge
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: starbridge
+  platform: lever
+  company: Starbridge
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: starbridge
+  platform: ashby
+  company: Starbridge
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stedi
+  platform: greenhouse
+  company: Stedi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stedi
+  platform: lever
+  company: Stedi
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stepful
+  platform: greenhouse
+  company: Stepful
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stepful
+  platform: lever
+  company: Stepful
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: stepful
+  platform: ashby
+  company: Stepful
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suger
+  platform: greenhouse
+  company: Suger
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suger
+  platform: lever
+  company: Suger
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suger
+  platform: ashby
+  company: Suger
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suno
+  platform: greenhouse
+  company: Suno
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: suno
+  platform: lever
+  company: Suno
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synack
+  platform: greenhouse
+  company: Synack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synack
+  platform: lever
+  company: Synack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synack
+  platform: ashby
+  company: Synack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synspective
+  platform: greenhouse
+  company: Synspective
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synspective
+  platform: lever
+  company: Synspective
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: synspective
+  platform: ashby
+  company: Synspective
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tanium
+  platform: greenhouse
+  company: Tanium
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tanium
+  platform: lever
+  company: Tanium
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tanium
+  platform: ashby
+  company: Tanium
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: teleperformance
+  platform: greenhouse
+  company: Teleperformance
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: teleperformance
+  platform: lever
+  company: Teleperformance
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: teleperformance
+  platform: ashby
+  company: Teleperformance
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinking-machines-lab
+  platform: greenhouse
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinking-machines-lab
+  platform: lever
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinking-machines-lab
+  platform: ashby
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinkingmachineslab
+  platform: greenhouse
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinkingmachineslab
+  platform: lever
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: thinkingmachineslab
+  platform: ashby
+  company: Thinking Machines Lab
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: traba-work
+  platform: greenhouse
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: traba-work
+  platform: lever
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: traba-work
+  platform: ashby
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trabawork
+  platform: greenhouse
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trabawork
+  platform: lever
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trabawork
+  platform: ashby
+  company: Traba Work
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tracebit
+  platform: greenhouse
+  company: Tracebit
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tracebit
+  platform: lever
+  company: Tracebit
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeify-co
+  platform: greenhouse
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeify-co
+  platform: lever
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeify-co
+  platform: ashby
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeifyco
+  platform: greenhouse
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeifyco
+  platform: lever
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: tradeifyco
+  platform: ashby
+  company: Tradeify.co
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoise-health
+  platform: greenhouse
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoise-health
+  platform: lever
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoisehealth
+  platform: greenhouse
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoisehealth
+  platform: lever
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: turquoisehealth
+  platform: ashby
+  company: Turquoise Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verahealth
+  platform: greenhouse
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: verahealth
+  platform: lever
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vera-health
+  platform: greenhouse
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vera-health
+  platform: lever
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vera-health
+  platform: ashby
+  company: Vera Health
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vitalize
+  platform: greenhouse
+  company: Vitalize
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vitalize
+  platform: lever
+  company: Vitalize
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: vitalize
+  platform: ashby
+  company: Vitalize
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wayve
+  platform: greenhouse
+  company: Wayve
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wayve
+  platform: lever
+  company: Wayve
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wearehaystack
+  platform: greenhouse
+  company: Wearehaystack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wearehaystack
+  platform: lever
+  company: Wearehaystack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wearehaystack
+  platform: ashby
+  company: Wearehaystack
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wellbeam
+  platform: greenhouse
+  company: WellBeam
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wellbeam
+  platform: lever
+  company: WellBeam
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wellbeam
+  platform: ashby
+  company: WellBeam
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimedia-foundation
+  platform: greenhouse
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimedia-foundation
+  platform: lever
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimedia-foundation
+  platform: ashby
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimediafoundation
+  platform: greenhouse
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimediafoundation
+  platform: lever
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wikimediafoundation
+  platform: ashby
+  company: Wikimedia Foundation
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wisprflow
+  platform: greenhouse
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wisprflow
+  platform: lever
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wisprflow
+  platform: ashby
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wispr-flow
+  platform: greenhouse
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: wispr-flow
+  platform: lever
+  company: Wispr Flow
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: writer
+  platform: greenhouse
+  company: Writer
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: writer
+  platform: lever
+  company: Writer
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: writer
+  platform: ashby
+  company: Writer
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ezcater
+  platform: greenhouse
+  company: ezCater
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ezcater
+  platform: lever
+  company: ezCater
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: ezcater
+  platform: ashby
+  company: ezCater
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n
+  platform: greenhouse
+  company: n8n
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n
+  platform: lever
+  company: n8n
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8ncommunity
+  platform: greenhouse
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8ncommunity
+  platform: lever
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8ncommunity
+  platform: ashby
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n-community
+  platform: greenhouse
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n-community
+  platform: lever
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: n8n-community
+  platform: ashby
+  company: n8n Community
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trivago
+  platform: lever
+  company: trivago
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+- slug: trivago
+  platform: ashby
+  company: trivago
+  industry_tags: []
+  seniority_tags: []
+  function_tags: []
+  geo_tags: []
+
+===== shared\sources.yaml =====
+# shared/sources.yaml — loaded by 01-job-discovery at the start of every run.
+# Grows as sources are onboarded. See "Onboarding a new source" at the bottom.
+
+exclude_domains: []
+
+sources:
+
+  # --- LinkedIn global search (poll_only + open_web both use this) ---
+  - id: linkedin-global
+    type: linkedin_search_url
+    url: "https://www.linkedin.com/jobs/search/?keywords=REPLACE&f_TPR=r86400&f_WT=1%2C2%2C3&sortBy=DD"
+    # keywords filled from title_variants; f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
+    posted_at:
+      method: relative_text_on_page
+      notes: "LinkedIn shows a relative string ('2 hours ago') on each card — resolve against fetch time, keep posted_at_raw for audit."
+
+  # --- Indeed global search ---
+  - id: indeed-global
+    type: indeed_search_url
+    url: "https://www.indeed.com/worldwide/implement?q=REPLACE&sort=date"
+    # REPLACE filled from title_variants joined with OR
+    posted_at:
+      method: relative_text_on_page
+      notes: "Indeed shows relative timestamps like 'Today', 'Just now', '2 days ago'. Resolve against fetch time."
+
+  # --- Remote OK (remote-focused board) ---
+  - id: remote-ok
+    type: scrape_and_filter
+    url: "https://remoteok.com/remote-product-manager-jobs"
+    posted_at:
+      method: fallback_chain
+      notes: "Try schema.org JobPosting JSON-LD datePosted, then relative text on page, then discovered_at."
+
+  # --- AngelList (startup jobs) ---
+  - id: wellfound
+    type: scrape_and_filter
+    url: "https://wellfound.com/jobs"
+    posted_at:
+      method: fallback_chain
+      notes: "Wellfound/AngelList — try JSON-LD datePosted, then relative text, then discovered_at."
+
+  # --- Adzuna (structured aggregator — free tier covers many countries) ---
+  # Prefer over open_web_search for any country Adzuna actually covers.
+  # Requires ADZUNA_APP_ID / ADZUNA_APP_KEY (free signup: developer.adzuna.com).
+  # Uncomment and fill credentials after setup.
+  # - id: adzuna-aggregator
+  #   type: aggregator_api
+  #   provider: adzuna
+  #   app_id: "YOUR_APP_ID_HERE"
+  #   app_key: "YOUR_APP_KEY_HERE"
+  #   countries: ["us", "gb", "ca", "au", "ie", "nz", "sg", "hk", "de", "fr", "nl", "sg", "za"]
+  #   posted_at:
+  #     method: aggregator_field
+  #     notes: "Structured and reliable — Adzuna returns a created field."
+
+  # --- Open-web sweep (runs daily when discovery_mode is open_web or open_web_excluding) ---
+  # Auto-generates platform-dork queries per ATS (Greenhouse, Lever, Ashby, Workday,
+  # SmartRecruiters, iCICS) plus a generic query, all from target-profile.yaml's title_variants.
+  # Does NOT replace the declared sources above — runs IN ADDITION to them.
+  - id: open-web-sweep
+    type: open_web_search
+    cadence: daily
+    platform_dorks: true
+    posted_at:
+      method: fallback_chain
+      notes: "Try schema.org JobPosting JSON-LD datePosted, then platform-specific field, then relative text, then discovered_at. Always keep posted_at_raw."
+
+# posted_at.method values:
+#   relative_text_on_page | rss_pubdate | json_ld_dateposted
+#   | email_receipt_time | aggregator_field | fallback_chain | none_available
+
+## Onboarding a new source
+# 1. Add an entry above with `type` + `url`/`handle`.
+# 2. If the source needs a query built from the target profile
+#    (linkedin_search_url, indeed_search_url, google_dork), only the
+#    TEMPLATE shape needs to be written here — 01-job-discovery fills it
+#    from shared/target-profile.yaml at run time.
+# 3. If the source's structure is unfamiliar, run discovery once
+#    interactively first so it can inspect the page/feed, propose the entry,
+#    and get confirmation before it's saved. One time per source.
+# 4. open_web_search and aggregator_api sources don't need step 3 — there's
+#    no single page/feed shape to inspect, since they query broadly at run time.
+
+===== shared\target-profile.yaml =====
+# shared/target-profile.yaml — structured, machine-readable target profile.
+# Owned by 07-context-architect. Written together with USER.md from the
+# same confirmed interview. Do not hand-edit; re-run context-architect to update.
+#
+# Pending reconfirmation since 2026-11-19: last_confirmed_at below still reads
+# 2026-08-06, so the salary floor, sponsorship requirement and title list are
+# three months old. 07-context-architect must confirm them with Kenechukwu
+# before this file changes.
+
+seniority_band: "mid"
+# Targeting mid-level openings but open to junior and entry-level as well.
+# Calibration auto-relax widens the net if the search runs long.
+
+locations:
+  remote_ok: true
+  hybrid_ok: true
+  onsite_ok: false
+  # Remote and hybrid roles enter normal scoring. Only strictly on-site roles
+  # are excluded by location. Unstated sponsorship is surfaced, not rejected.
+  countries: ["Worldwide"]
+  cities: []
+
+salary_floor:
+  amount: 36000
+  currency: "USD"
+  period: "year"
+  # $3,000/month minimum; user accepts $1,000–$10,000/month range,
+  # this floor keeps sub-$36k roles from being staged automatically.
+
+visa_sponsorship_required: true
+
+industries_exclude: []
+companies_exclude: []
+
+# STRICT mode: every claim in a resume/cover letter/answer must be backed
+# by a real line from your resume, portfolio, or STAR story bank. Anything
+# unverifiable is stripped or softened — nothing unverifiable reaches an employer.
+fidelity_mode: "strict"
+
+# open_web: poll declared sources + broader open-web sweep on its own daily cadence.
+discovery_mode: "open_web"
+
+# Title variants — confirmed from resume + adjacent expansion.
+# source: held = you actually held this title.
+# source: taxonomy_suggested = inferred from your skills/story bank via title-taxonomy.
+title_variants:
+  - title: "Product Manager"
+    source: "held"
+    confidence: null
+    rationale: ""
+  - title: "AI Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.85
+    rationale: "Your experience building AI product features (LLM inference, AI agent automation, memecoin strategy builder) plus your PM title at Savecoins and Product Management diploma combine to surface AI PM as a high-confidence adjacent title."
+  - title: "AI Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.78
+    rationale: "Projects include LLM inference with InternVL3, YOLO v8 model training, and automating AI agent development — evidence of hands-on AI engineering work alongside your PM and automation experience."
+  - title: "Automation Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.72
+    rationale: "Telegram bot for trading signals, web crawler MVP for dataset creation, AI agent that turns RSS feeds into LinkedIn articles — automation-focused project portfolio."
+  - title: "Associate Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.8
+    rationale: "Mid-level target with openness to junior/associate roles per your stated preference; PM experience at Savecoins fintech qualifies."
+  - title: "Junior Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.75
+    rationale: "Open to junior-level roles; your Altschool Product Management diploma + PM role at Savecoins provide relevant foundation."
+  - title: "Workflow Engineer"
+    source: "taxonomy_suggested"
+    confidence: 0.7
+    rationale: "Your AI agent project (RSS → LinkedIn automation) and web crawler MVP demonstrate workflow automation and engineering skills."
+  - title: "Product Owner"
+    source: "taxonomy_suggested"
+    confidence: 0.65
+    rationale: "Adjacent to Product Manager with emphasis on backlog management and stakeholder coordination — matches your stakeholder management experience at PrepClass and credit officer client interaction."
+  - title: "Technical Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.75
+    rationale: "Your hands-on AI/automation project portfolio (coding, model training, agent development) plus PM experience qualifies you for TPM roles."
+  - title: "Growth Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.68
+    rationale: "Your peer-to-peer product work at Savecoins and stakeholder growth experience at PrepClass align with growth PM responsibilities."
+  - title: "AI/ML Product Manager"
+    source: "taxonomy_suggested"
+    confidence: 0.82
+    rationale: "Combined AI engineering projects + product management experience; specifically your LLM inference, evals, and agent automation work."
+
+# 19-career-path-planner config — relevant when career path planning is used.
+stepping_stone:
+  max_hops: 2
+  gap_density_threshold: 8
+  min_liquidity_postings: 5
+  liquidity_probe: true
+  community_intel: true
+  allow_comp_regression: "ask"
+
+last_confirmed_at: "2026-08-06T00:00:00Z"
+
+===== shared\tier-config.yaml =====
+# Daily staging cap — read by 00-orchestrator and 01-job-discovery.
+# This caps how many applications may reach "awaiting_approval" per day.
+# It does NOT cap sending, because nothing in this system sends without
+# a logged human approval (shared/pipeline-rules.md, Rule 1 and Rule 3).
+
+active_tier: starter
+
+tiers:
+  starter:
+    daily_staging_cap: 15          # range Kenechukwu described: 10-20/day
+    description: "Default tier — enough volume for one person's active search."
+
+  pro:
+    daily_staging_cap: 75
+    description: "Higher volume for a heavier search or a small team."
+
+  max:
+    daily_staging_cap: 200
+    description: "Upper end Kenechukwu described. At this volume, Kenechukwu's own
+      approval throughput becomes the real bottleneck, not the pipeline —
+      see approval_rate and approval_latency in weekly_metrics_snapshots.
+      If this tier is ever offered externally, each customer still
+      personally approves every one of their own applications; the tier
+      controls how much gets prepared for them, not how much gets sent
+      on their behalf."
+
+# To change tiers: edit active_tier above, or
+#   hermes config set jobhunting.tier pro
+# (wire this key into 00-orchestrator's cap check if using hermes config
+# rather than editing this file directly)
+

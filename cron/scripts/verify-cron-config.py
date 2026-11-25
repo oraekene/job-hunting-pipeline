@@ -144,7 +144,7 @@ def check_job(live: dict, desired: DesiredJob, hermes_home: str, skill_dir: str)
 
 def main(argv: List[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--hermes-home", default=None, help="hermes home dir (default: env HERMES_HOME, else %LOCALAPPDATA%/hermes on Windows, else ~/.hermes)")
+    parser.add_argument("--hermes-home", default=None, help="hermes home dir (default: env HERMES_HOME, else %%LOCALAPPDATA%%/hermes on Windows, else ~/.hermes)")
     parser.add_argument("--desired", type=Path, default=Path(__file__).parent / "cron-desired-state.yaml")
     args = parser.parse_args(argv)
 

@@ -1,0 +1,26 @@
+{
+  "run_at": "2026-09-10T07:22:49Z",
+  "sources": {
+    "LinkedIn": "BLOCKED \u2014 sign-in wall (per env config)",
+    "Indeed": "BLOCKED \u2014 sign-in wall (per env config)",
+    "RemoteOK": "BLOCKED \u2014 remoteok.com blocked (per env config)",
+    "Bing-greenhouse": "0 candidates from 10 items",
+    "Bing-lever": "0 candidates from 10 items",
+    "Bing-ashby": "0 candidates from 10 items",
+    "Bing-smartrecruiters": "0 candidates from 10 items",
+    "Bing-icims": "0 candidates from 10 items",
+    "Bing-generic": "0 candidates from 7 items"
+  },
+  "total_candidates": 0,
+  "new_found": 0,
+  "duplicates": 0,
+  "non_matches": 0,
+  "queued": 0,
+  "cap_skipped": 0,
+  "daily_cap": 15,
+  "today_count": 0,
+  "remaining_slots": 15,
+  "candidates": [],
+  "duplicate_jobs": [],
+  "non_match_jobs": []
+}

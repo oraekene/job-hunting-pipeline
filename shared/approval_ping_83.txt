@@ -1,0 +1,9 @@
+Approval needed — App #83 · Lendbuzz · Product Manager (Payments)
+
+Honest match score: 56% — Gate 1 [STRETCH] (50-65 band, stage-with-flag). Gate 2 PASSED ($140k-$160k vs floor). Risk gate: 4 PASS / 0 FAIL.
+Gaps flagged honestly: payments lifecycle (auth/settlement/refunds), ACH/NACHA/card networks, processor integrations, reconciliation/disputes.
+FLAG FOR YOUR CALL: ET-timezone preference stated (you are UTC+1 — mornings overlap East Coast); US payroll eligibility unverified.
+
+Reply APPROVE to submit, EDIT to change anything, or SKIP to drop this one.
+
+MEDIA:C:\Users\rotim\AppData\Local\hermes\skills\job-hunting\shared\build_artifacts\app_83\risk_tactics_change_log.md

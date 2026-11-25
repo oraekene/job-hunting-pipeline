@@ -1,0 +1,11 @@
+Approval needed — App #87 · Turquoise Health · Senior/Staff Product Manager, Contracts
+
+Match score: 62% (raw 59%; capped below minimum due to unmet 5+ yr PM year-gate). Gate 1 [STRETCH]. Gate 2 skipped (title_delta skipped — no current job_zone on profile). Risk gate: 25 PASS / 3 FAIL.
+Gaps flagged honestly (not claimed): Healthcare/Revenue Cycle Management, Contract lifecycle management, negotiation — no healthcare or contracting domain experience; stakeholder management present but not negotiation specifically.
+FLAG FOR YOUR CALL: Turquoise Health does NOT sponsor visas (confirmed per JD). You're based in Asaba, Nigeria — this is a HARD eligibility blocker. Posting live at https://jobs.ashbyhq.com/turquoise-health/7a416ec3-eef0-41da-8afb-09644fb54e1b.
+Posting re-verified live (HTTP 200).
+
+Reply APPROVE 87 to submit (you must confirm override on visa), EDIT to change anything, or SKIP to drop this one.
+
+MEDIA:C:\Users\rotim\AppData\Local\hermes\skills\job-hunting\shared\build_artifacts\app_87\risk_tactics_change_log.md
+MEDIA:C:\Users\rotim\AppData\Local\hermes\skills\job-hunting\shared\build_artifacts\app_87\tailored_resume.docx

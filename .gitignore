@@ -59,3 +59,12 @@ cron/registered-jobs.json
 # Runtime discovery/submit-gate state (regenerable, per-run)
 shared/.active_application/
 shared/.discovery_results.json
+
+# Control plane GUI: inventory dumps and config backups stay machine-local
+.scratch/control-plane/
+control-plane/backups/
+
+# Local archives contain private memory or duplicate the repo; keep them off the public remote
+/job-hunting.zip
+/shared.zip
+/14-social-discovery-outreach.zip
