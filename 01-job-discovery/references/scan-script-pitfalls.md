@@ -85,6 +85,29 @@ After each run, write a JSON blob with at minimum `last_run_at`, `mode`, `source
 Fields used by `11-analytics-and-learning`:
 `new_found`, `duplicates`, `filtered_out`, `queued`, `overflow_count`, `sources_checked_count`.
 
-## 6. Fingerprint null-handling for pre-existing rows
+## 6. Two runner copies exist — only `shared/run_discovery.py` is canonical
+
+**Found during the 2026-11-26 22:08 WAT cron tick.** The repo holds two runners
+with the same filename and different behavior:
+
+- `shared/run_discovery.py` — **canonical**. Honors
+  `discovery_title_filter` from `target-profile.yaml` (accepts every
+  non-empty title when it is `false`), reads HN via the Algolia API, and
+  skips the Bing open-web sweep on its daily cadence.
+- `01-job-discovery/scripts/run_discovery.py` — **stale**. Applies
+  `title_matches_variant()` unconditionally in the Remotive/HN handlers,
+  contradicting `discovery_title_filter: false`, and reads HN via the
+  `hnrss.app` RSS endpoint, which returned HTTP 502 during the tick (the
+  Algolia path in the canonical copy worked fine at the same moment).
+
+The cron prompt is agent-driven, so nothing forces a later session to pick
+the canonical copy — the stale one runs "successfully" while silently
+title-filtering postings the profile says to admit, and reports
+"0 new PM matches" that look like a quiet feed. Until the copies are
+consolidated, prefer `shared/run_discovery.py` and treat any run whose
+summary prints "PM matches" (rather than admissible titles) as the stale
+runner.
+
+## 7. Fingerprint null-handling for pre-existing rows
 
 Older rows in `applications` may have `NULL` in the `posting_fingerprint` column (inserted before the column was added). The dedup check (`if fingerprint in existing_fingerprints`) only adds non-NULL fingerprints to the set, so NULL rows are never matched. This is the **correct** behavior — a NULL fingerprint means "we can't be sure this is a duplicate," so the posting should be re-examined rather than silently skipped. No code change needed, but document it so a developer doesn't add `.fillna()` and accidentally cause false-merge duplicates.
