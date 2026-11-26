@@ -9,7 +9,8 @@ sources:
   - id: linkedin-global
     type: linkedin_search_url
     url: "https://www.linkedin.com/jobs/search/?keywords=REPLACE&f_TPR=r86400&f_WT=1%2C2%2C3&sortBy=DD"
-    # keywords filled from title_variants; f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
+    # Broad location query when discovery_title_filter is false; title_variants when true.
+    # f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
     posted_at:
       method: relative_text_on_page
       notes: "LinkedIn shows a relative string ('2 hours ago') on each card — resolve against fetch time, keep posted_at_raw for audit."
@@ -18,7 +19,7 @@ sources:
   - id: indeed-global
     type: indeed_search_url
     url: "https://www.indeed.com/worldwide/implement?q=REPLACE&sort=date"
-    # REPLACE filled from title_variants joined with OR
+    # REPLACE uses a broad job query when discovery_title_filter is false; title_variants joined with OR when true.
     posted_at:
       method: relative_text_on_page
       notes: "Indeed shows relative timestamps like 'Today', 'Just now', '2 days ago'. Resolve against fetch time."
@@ -55,7 +56,8 @@ sources:
 
   # --- Open-web sweep (runs daily when discovery_mode is open_web or open_web_excluding) ---
   # Auto-generates platform-dork queries per ATS (Greenhouse, Lever, Ashby, Workday,
-  # SmartRecruiters, iCICS) plus a generic query, all from target-profile.yaml's title_variants.
+  # SmartRecruiters, iCICS) plus a generic query. Use broad location queries when
+  # target-profile.yaml's discovery_title_filter is false; title_variants when true.
   # Does NOT replace the declared sources above — runs IN ADDITION to them.
   - id: open-web-sweep
     type: open_web_search

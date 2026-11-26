@@ -242,10 +242,13 @@ instance of it.
 Once a posting enters the queue, stages 2 through 9 score it against that
 posting's own requirements and Kenechukwu's verified evidence. The evidence
 includes the base resume, portfolio, live question bank, STAR story bank, and
-answer facts. `target-profile.yaml`'s `title_variants` controls discovery
-only. It must not lower or raise a score because a role is in the product,
-engineering, research, operations, or another role family. A posting found
-by another source must still receive the same role-neutral scoring process.
+answer facts. `target-profile.yaml`'s `discovery_title_filter` controls title
+acceptance during discovery. Its confirmed value is `false`, so discovery
+accepts every non-empty title. `title_variants` remains advisory input for
+title taxonomy, career planning, and source-query hints; it must not reject a
+posting before scoring. No score may rise or fall because a role is in the
+product, engineering, research, operations, or another role family. A posting
+found by any source must receive the same role-neutral scoring process.
 
 ## Rule 18 — Location excludes only strictly on-site roles
 

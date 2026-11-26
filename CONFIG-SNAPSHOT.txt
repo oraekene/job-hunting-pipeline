@@ -6590,7 +6590,8 @@ sources:
   - id: linkedin-global
     type: linkedin_search_url
     url: "https://www.linkedin.com/jobs/search/?keywords=REPLACE&f_TPR=r86400&f_WT=1%2C2%2C3&sortBy=DD"
-    # keywords filled from title_variants; f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
+    # Broad location query when discovery_title_filter is false; title_variants when true.
+    # f_TPR=r86400 = last 24h; f_WT=1,2,3 = onsite+hybrid+remote
     posted_at:
       method: relative_text_on_page
       notes: "LinkedIn shows a relative string ('2 hours ago') on each card — resolve against fetch time, keep posted_at_raw for audit."
@@ -6599,7 +6600,7 @@ sources:
   - id: indeed-global
     type: indeed_search_url
     url: "https://www.indeed.com/worldwide/implement?q=REPLACE&sort=date"
-    # REPLACE filled from title_variants joined with OR
+    # REPLACE uses a broad job query when discovery_title_filter is false; title_variants joined with OR when true.
     posted_at:
       method: relative_text_on_page
       notes: "Indeed shows relative timestamps like 'Today', 'Just now', '2 days ago'. Resolve against fetch time."
@@ -6636,7 +6637,8 @@ sources:
 
   # --- Open-web sweep (runs daily when discovery_mode is open_web or open_web_excluding) ---
   # Auto-generates platform-dork queries per ATS (Greenhouse, Lever, Ashby, Workday,
-  # SmartRecruiters, iCICS) plus a generic query, all from target-profile.yaml's title_variants.
+  # SmartRecruiters, iCICS) plus a generic query. Use broad location queries when
+  # target-profile.yaml's discovery_title_filter is false; title_variants when true.
   # Does NOT replace the declared sources above — runs IN ADDITION to them.
   - id: open-web-sweep
     type: open_web_search
@@ -6667,10 +6669,8 @@ sources:
 # Owned by 07-context-architect. Written together with USER.md from the
 # same confirmed interview. Do not hand-edit; re-run context-architect to update.
 #
-# Pending reconfirmation since 2026-11-19: last_confirmed_at below still reads
-# 2026-08-06, so the salary floor, sponsorship requirement and title list are
-# three months old. 07-context-architect must confirm them with Kenechukwu
-# before this file changes.
+# Confirmed with Kenechukwu on 2026-11-26: $12,000 USD annual salary floor,
+# the existing sponsorship rule, and discovery of every title.
 
 seniority_band: "mid"
 # Targeting mid-level openings but open to junior and entry-level as well.
@@ -6686,13 +6686,14 @@ locations:
   cities: []
 
 salary_floor:
-  amount: 36000
+  amount: 12000
   currency: "USD"
   period: "year"
-  # $3,000/month minimum; user accepts $1,000–$10,000/month range,
-  # this floor keeps sub-$36k roles from being staged automatically.
+  # $1,000/month minimum, equivalent to $12,000 per year.
 
 visa_sponsorship_required: true
+# Unstated sponsorship stays eligible for human review. Only an explicit
+# statement that sponsorship is unavailable rejects a posting.
 
 industries_exclude: []
 companies_exclude: []
@@ -6704,6 +6705,10 @@ fidelity_mode: "strict"
 
 # open_web: poll declared sources + broader open-web sweep on its own daily cadence.
 discovery_mode: "open_web"
+
+# Discovery admits every non-empty title. Keep title variants as confirmed
+# preferences for title taxonomy, career planning, and source-query hints.
+discovery_title_filter: false
 
 # Title variants — confirmed from resume + adjacent expansion.
 # source: held = you actually held this title.
@@ -6763,7 +6768,7 @@ stepping_stone:
   community_intel: true
   allow_comp_regression: "ask"
 
-last_confirmed_at: "2026-08-06T00:00:00Z"
+last_confirmed_at: "2026-11-26T00:00:00Z"
 
 ===== shared\tier-config.yaml =====
 # Daily staging cap — read by 00-orchestrator and 01-job-discovery.

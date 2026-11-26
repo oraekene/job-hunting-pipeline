@@ -218,8 +218,11 @@ changes is how wide the net is cast, not whether a human confirms what
 it catches.
 
 Confirmed `title_variants` land in `target-profile.yaml` as documented
-above, and `01-job-discovery` reads that same field — which is why it
-needs no copy of the calibration logic of its own.
+above. `01-job-discovery` reads the same field only when
+`discovery_title_filter` is `true`; with the confirmed value `false`, the
+list remains advisory input for title taxonomy, career planning, and source
+queries. Either way, discovery needs no copy of the calibration logic of its
+own.
 
 ### When two producers propose the same title (R5)
 

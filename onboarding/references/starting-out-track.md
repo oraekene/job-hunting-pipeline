@@ -150,9 +150,9 @@ Not the only option, but the default suggestion: for someone with
 nothing to anchor modes (a)-(c) on, running mode (e)
 (`20-interests-profile`-driven discovery) first, landing on a
 confirmed target, *then* letting the regular 01-11 pipeline run against
-that target, is a more honest sequence than pointing a nearly-empty
-`title_variants` list at `01-job-discovery` and hoping something
-reasonable turns up.
+that target, is a more honest sequence than asking the pipeline to choose
+from a nearly-empty `title_variants` list and hoping something reasonable
+turns up.
 
 ## What "the first milestone" means for this track — the actual SIMPLE-tier redefinition
 

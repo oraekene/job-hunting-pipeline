@@ -444,16 +444,17 @@ submitted.
 ### Title taxonomy vector index — recommended
 
 Powers `07-context-architect`'s Phase 1.5 adjacent-title expansion, which
-is what keeps `target-profile.yaml`'s `title_variants` wider than the
-titles Kenechukwu already thought of.
+keeps `target-profile.yaml`'s `title_variants` as useful confirmed preferences
+for title taxonomy and career planning. Discovery still accepts every title
+under Rule 17.
 
 ```bash
 pip install fastembed sqlite-vec --break-system-packages
 ```
 
 Without it, `title_taxonomy_builder.py`'s embed stage cannot run. Phase
-1.5 falls back to the titles already recorded — narrower discovery, not a
-broken pipeline.
+1.5 falls back to the titles already recorded. This narrows title planning,
+not discovery coverage, and does not break the pipeline.
 
 ### qmd retrieval layer — optional
 

@@ -142,12 +142,14 @@ bullets together, in one pass:
    variant?" Each suggestion carries `source: taxonomy_suggested`, a
    `confidence` score, and a one-line `rationale` citing the specific
    evidence — never just the title on its own. Same rule as everything
-   else in this phase: suggest, never write until Kenechukwu confirms. This
-   only widens what `01-job-discovery` searches *for*; it changes nothing
-   about `09-risk-tactics-gate`'s evidence requirement at application
-   time — a taxonomy-suggested title still has to pass the CV-title-
-   matching check on its own merits before it's ever displayed on a
-   resume for a specific posting. Full method in
+   else in this phase: suggest, never write until Kenechukwu confirms. The
+   confirmed title list remains advisory input for title taxonomy, career
+   planning, and source-query hints; with `discovery_title_filter: false`,
+   it does not narrow the titles `01-job-discovery` can find. It changes
+   nothing about `09-risk-tactics-gate`'s evidence requirement at
+   application time — a taxonomy-suggested title still has to pass the
+   CV-title-matching check on its own merits before it's ever displayed on
+   a resume for a specific posting. Full method in
    `references/title-taxonomy.md`.
 2. **Manual confirm/override**: ask Kenechukwu to confirm or correct each
    field — this is the one place in the pipeline where a short, direct

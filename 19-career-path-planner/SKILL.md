@@ -116,9 +116,8 @@ this mode is the default suggested starting point**, not just an
 available option — see `onboarding/references/starting-out-track.md`.
 Running this mode to a confirmed target first, then letting `01-job-
 discovery` through `10-approval-and-submit` run against that target, is
-a more honest sequence for this profile stage than pointing a
-near-empty `title_variants` list at discovery and hoping something
-reasonable turns up.
+a more honest sequence for this profile stage than asking the pipeline to
+choose a target from a near-empty `title_variants` list.
 
 ## Step 1.5 — Interest-fit, applied across every mode
 
@@ -478,13 +477,15 @@ with the plan.
   confirm-before-write step, same audit trail, just a different origin
   worth being honest about: this one came from a chosen aspiration, not
   from something Kenechukwu already did or the taxonomy noticing a skills
-  match). Reasonable even with real gaps still open — plenty of people
+  match). With `discovery_title_filter: false`, this records the title
+  preference but does not narrow discovery or change role-neutral scoring.
+  Reasonable even with real gaps still open — plenty of people
   land a stretch role while still closing the last item or two.
 - **"Not yet — keep this as a plan I'm working toward"** — the plan
   stays in `career_path_plans/`, tracked and re-evaluated as usual, but
-  nothing changes about what `01-job-discovery` searches for until
-  Kenechukwu says otherwise, or until the gap analysis re-evaluates clean
-  enough that this skill proactively asks again.
+  no confirmed title preference is added until Kenechukwu says otherwise,
+  or until the gap analysis re-evaluates clean enough that this skill
+  proactively asks again.
 
 Either way, this is a question asked once per plan, at creation and
 again at any major re-evaluation milestone — never inferred, never

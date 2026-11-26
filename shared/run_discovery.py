@@ -17,6 +17,9 @@ Blocked sources (noted, not retried):
   - RemoteOK     — anti-bot / redirect
 
 Discovery mode: open_web (poll_only sources + open-web sweep on daily cadence)
+
+Run with `--self-check` to test the confirmed title, salary, and location
+policy locally. The check exits before any network request or database write.
 """
 import json
 import os
@@ -45,35 +48,94 @@ HEADERS = {
 with open(TARGET_PATH) as f:
     target = yaml.safe_load(f)
 
-title_variants = [tv["title"] for tv in target.get("title_variants", [])]
-salary_floor = target.get("salary_floor", {"amount": 36000, "currency": "USD", "period": "year"})
+title_variants = [
+    tv["title"] if isinstance(tv, dict) else str(tv)
+    for tv in target.get("title_variants", [])
+]
+salary_floor = target.get("salary_floor", {"amount": 12000, "currency": "USD", "period": "year"})
 companies_exclude = target.get("companies_exclude", [])
 seniority_band = target.get("seniority_band", "mid")
 discovery_mode = target.get("discovery_mode", "poll_only")
 visa_required = target.get("visa_sponsorship_required", True)
+discovery_title_filter = target.get("discovery_title_filter", True)
+locations = target.get("locations", {"remote_ok": True, "hybrid_ok": True, "onsite_ok": False})
+onsite_ok = bool(locations.get("onsite_ok", False))
 
 now = datetime.datetime.now(datetime.timezone.utc)
 recent_cutoff = now - datetime.timedelta(hours=24)
 week_cutoff = now - datetime.timedelta(days=7)
 
 # ─── Title matching ───────────────────────────────────────────────
-PM_KEYWORDS = [
-    "product manager", "ai product manager", "technical product manager",
-    "growth product manager", "associate product manager", "junior product manager",
-    "product owner", "ai engineer", "automation engineer",
-    "workflow engineer", "ai/ml product manager", "machine learning product manager",
-    "head of product", "lead product manager", "staff product manager",
-    "principal product manager",  # "product manager" is substring of all PM variants
-]
-
 def title_matches(title):
-    if not title:
+    """Accept every non-empty title when the discovery title filter is off."""
+    if not title or not str(title).strip():
         return False
-    tl = title.lower().strip()
-    for kw in PM_KEYWORDS:
-        if kw in tl:
-            return True
-    return False
+    if not discovery_title_filter:
+        return True
+    tl = str(title).lower().strip()
+    return any(v.lower().strip() in tl for v in title_variants)
+
+
+def classify_location(location):
+    """Return remote, hybrid, onsite, or unknown for a posting location."""
+    text = str(location or "").strip().lower()
+    if not text:
+        return "unknown"
+    if "hybrid" in text:
+        return "hybrid"
+    if any(marker in text for marker in ("remote", "worldwide", "global", "anywhere")):
+        return "remote"
+    return "onsite"
+
+
+def passes_location(location):
+    """Reject only a known strictly on-site role when on-site is disabled."""
+    return onsite_ok or classify_location(location) != "onsite"
+
+
+def parse_hn_role(parts):
+    """Read the company and role from a pipe-delimited HN hiring header."""
+    if len(parts) < 2:
+        return None
+    company = parts[0].strip()
+    if not company or len(company) > 100 or "http" in company.lower():
+        return None
+    metadata = {
+        "full time", "part time", "full-time", "part-time", "contract",
+        "freelance", "temporary", "remote", "hybrid", "on-site", "onsite",
+        "worldwide", "location", "salary", "compensation", "equity",
+        "apply", "hiring", "we are hiring", "we're hiring", "open roles",
+    }
+    for field in parts[1:6]:
+        role = field.strip()
+        if not role or len(role) > 160:
+            continue
+        normalized = re.sub(r"[^a-z0-9]+", " ", role.lower()).strip()
+        if not normalized or normalized in metadata:
+            continue
+        if normalized.startswith(("remote ", "hybrid ", "on-site ", "onsite ")):
+            continue
+        if normalized.endswith((" contract", " full-time", " part-time")):
+            continue
+        if "http" in role.lower() or "$" in role or "€" in role or "£" in role:
+            continue
+        if any(marker in normalized for marker in (
+            "citizens", "residents only", "countries", "timezone", "time zone",
+            "time overlap", "salary", "compensation",
+        )):
+            continue
+        return company, role
+    return None
+
+
+def parse_hn_location(parts):
+    """Read a location field from a pipe-delimited HN hiring header."""
+    for field in parts[1:6]:
+        value = field.strip()
+        normalized = re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+        if normalized.startswith(("remote", "hybrid", "on-site", "onsite")):
+            return value
+    return "unknown"
 
 
 # ─── Fingerprint normalization ────────────────────────────────────
@@ -106,28 +168,69 @@ def compute_fingerprint(company, role_title, location):
 
 # ─── Salary filter ────────────────────────────────────────────────
 def passes_salary(salary_text, floor):
-    """Return True if salary is acceptable or not disclosed (can't reject)."""
+    """Return True when salary is undisclosed, non-USD, or meets the floor."""
     if not salary_text:
         return True
     text = str(salary_text).lower()
+    if any(marker in text for marker in ("€", "£", "₦", "eur", "gbp", "ngn")) and not (
+        "$" in text or "usd" in text
+    ):
+        return True
+    amount_hint = (
+        "$" in text
+        or "usd" in text
+        or re.search(r"\d\s*k\b", text)
+        or re.search(r"\d[\d,]*\s*(?:per|/)\s*(?:year|month|annum)", text)
+    )
+    if not amount_hint:
+        return True
+
     amounts = []
-    for m in re.finditer(r'(\d[\d,]*\.?\d*)', text):
+    for match in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\s*([km])?", text):
         try:
-            v = float(m.group(1).replace(",", ""))
-            if 1000 < v < 10000000:
-                amounts.append(v)
-        except:
+            value = float(match.group(1).replace(",", ""))
+            suffix = match.group(2)
+            if suffix == "k":
+                value *= 1000
+            elif suffix == "m":
+                value *= 1000000
+            if value > 0:
+                amounts.append(value)
+        except ValueError:
             pass
-    if amounts:
-        mx = max(amounts)
-        fa = floor.get("amount", 0)
-        if mx >= fa:
-            return True
-        if "month" in text and mx * 12 >= fa:
-            return True
-        if mx < fa * 0.3:
-            return False
-    return True
+    if not amounts:
+        return True
+
+    monthly = bool(re.search(r"\b(?:per|/)\s*month\b|\bmonthly\b", text))
+    yearly = bool(re.search(r"\b(?:per|/)\s*year\b|\bannual(?:ly)?\b|\byearly\b", text))
+    floor_period = floor.get("period", "year")
+    floor_amount = float(floor.get("amount", 0))
+    if floor_period == "month":
+        normalized = [value if monthly or yearly else value / 12 for value in amounts]
+    else:
+        normalized = [value * 12 if monthly and not yearly else value for value in amounts]
+    return max(normalized) >= floor_amount
+
+
+if "--self-check" in os.sys.argv:
+    assert discovery_title_filter is False
+    assert title_matches("Civil Engineer") is True
+    assert title_matches("") is False
+    assert passes_salary("$12,000 per year", salary_floor) is True
+    assert passes_salary("$1,000 per month", salary_floor) is True
+    assert passes_salary("$11,999 per year", salary_floor) is False
+    assert passes_salary("$999 per month", salary_floor) is False
+    assert passes_salary("$8k-$11k", salary_floor) is False
+    assert passes_salary("$12k-$15k", salary_floor) is True
+    assert parse_hn_role(["Acme", "Civil Engineer", "Remote (US)"]) == (
+        "Acme", "Civil Engineer"
+    )
+    assert parse_hn_location(["Acme", "Civil Engineer", "Remote (US)"]) == "Remote (US)"
+    assert passes_location("Remote") is True
+    assert passes_location("London, UK") is False
+    assert passes_location("") is True
+    print("discovery policy self-check passed; no network or database access")
+    raise SystemExit(0)
 
 
 # ─── Posted date parsing ──────────────────────────────────────────
@@ -212,7 +315,8 @@ daily_cap = 15
 remaining = daily_cap - today_queued
 print(f"Daily cap: {daily_cap}, remaining: {remaining}")
 print(f"Discovery mode: {discovery_mode}")
-print(f"Title variants: {title_variants}")
+print(f"Discovery title filter: {discovery_title_filter}")
+print(f"Title variants (advisory): {title_variants}")
 
 # ─── Results collection ───────────────────────────────────────────
 candidates = []
@@ -270,12 +374,12 @@ try:
                                 loc_data = data.get("jobLocation", {})
                                 if isinstance(loc_data, list) and loc_data:
                                     loc_data = loc_data[0]
-                                location = "remote"
+                                location = "unknown"
                                 if isinstance(loc_data, dict):
                                     addr = loc_data.get("address", {})
                                     if isinstance(addr, dict):
                                         parts = [addr.get("addressLocality", ""), addr.get("addressRegion", ""), addr.get("addressCountry", "")]
-                                        location = ", ".join(p for p in parts if p) or "remote"
+                                        location = ", ".join(p for p in parts if p) or "unknown"
                                 posted_raw = data.get("datePosted", "")
                                 salary_obj = data.get("baseSalary", {})
                                 salary_text = ""
@@ -295,6 +399,8 @@ try:
                                         skipped.append(f"DUPLICATE URL: {jurl}")
                                     elif not passes_salary(salary_text, salary_floor):
                                         skipped.append(f"SALARY: {company} | {title} | {salary_text}")
+                                    elif not passes_location(location):
+                                        skipped.append(f"LOCATION ONSITE: {company} | {title} | {location}")
                                     else:
                                         posted_at, posted_raw_str = extract_posted(posted_raw)
                                         priority = "high" if (posted_at and posted_at > recent_cutoff) or not posted_at else "normal"
@@ -303,11 +409,11 @@ try:
                                         else:
                                             candidates.append({
                                                 "posting_url": jurl, "company": company or "Unknown",
-                                                "role_title": title, "location": location or "remote",
+                                                "role_title": title, "location": location or "unknown",
                                                 "posted_at": posted_at.strftime("%Y-%m-%dT%H:%M:%SZ") if posted_at else None,
                                                 "posted_at_raw": posted_raw_str or "",
                                                 "salary_disclosed": bool(salary_text), "salary_range": salary_text or None,
-                                                "source_board": "Wellfound", "remote_type": "remote",
+                                                "source_board": "Wellfound", "remote_type": classify_location(location),
                                                 "discovered_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                                 "priority": priority, "posting_fingerprint": fp,
                                             })
@@ -332,15 +438,17 @@ print("\n" + "=" * 60)
 print("5. Remotive API")
 print("=" * 60)
 try:
-    search_terms = ["product-manager", "ai-product-manager", "ai-engineer",
-                    "automation-engineer", "workflow-engineer", "product-owner",
-                    "technical-product-manager", "growth-product-manager",
-                    "junior-product-manager", "associate-product-manager",
-                    "staff-product-manager", "principal-product-manager"]
+    if discovery_title_filter:
+        search_terms = [
+            re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+            for title in title_variants
+        ]
+    else:
+        search_terms = [None]
     seen_urls = set()
     for term in search_terms:
-        encoded = urllib.parse.quote(term)
-        url = f"https://remotive.com/api/remote-jobs?limit=100&search={encoded}"
+        query = f"&search={urllib.parse.quote(term)}" if term else ""
+        url = f"https://remotive.com/api/remote-jobs?limit=100{query}"
         try:
             st, body = fetch_url(url, timeout=10)
             if st == 200:
@@ -432,36 +540,20 @@ try:
                         if len(line) < 20:
                             continue
                         ll = line.lower()
-                        if not any(kw in ll for kw in PM_KEYWORDS):
-                            continue
                         # Skip if it's a header/navigation line
                         if any(skip in ll for skip in ["who's hiring", "who is hiring", "monthly", "thread", "discussion", "guidelines"]):
                             continue
                         # Try to parse HN hiring format: Company | Role | Location | ...
                         parts = [p.strip() for p in line.split("|")]
-                        if len(parts) < 2:
+                        parsed = parse_hn_role(parts)
+                        if not parsed:
                             continue
-                        company = ""
-                        role = ""
-                        job_url = ""
-                        for part in parts[:6]:
-                            part_lower = part.lower()
-                            if title_matches(part):
-                                if not role:
-                                    role = part
-                            elif len(part) > 2 and len(part) < 60 and not any(
-                                kw in part_lower for kw in ["remote", "hiring", "contract", "full-time", "part-time",
-                                    "visa", "salary", "compensation", "$", "http", "us", "canada",
-                                    "worldwide", "onsite", "hybrid", "equity", "stock", "pto",
-                                    "benefits", "w-2", "1099", "today", "yesterday",
-                                    "day ago", "week ago", "month", "year", "usd", "eur", "gbp", "ngn"]
-                            ) and not re.search(r"[\d\$]", part_lower) and re.search(r"[a-z]", part_lower):
-                                if not company:
-                                    company = part
+                        company, role = parsed
+                        location = parse_hn_location(parts)
                         url_match = re.search(r"((?:https?://|www\.)[^\s|]+)", line)
                         job_url = url_match.group(1) if url_match else hn_url
-                        if role and title_matches(role) and company:
-                            fp = compute_fingerprint(company, role, "remote")
+                        if title_matches(role) and passes_location(location):
+                            fp = compute_fingerprint(company, role, location)
                             if fp in existing_fingerprints:
                                 skipped.append(f"DUPLICATE FP (HN): {fp}")
                                 continue
@@ -470,10 +562,10 @@ try:
                                 continue
                             candidates.append({
                                 "posting_url": job_url, "company": company,
-                                "role_title": role, "location": "remote",
+                                "role_title": role, "location": location,
                                 "posted_at": None, "posted_at_raw": "",
                                 "salary_disclosed": False, "salary_range": None,
-                                "source_board": "Hacker News (Who is Hiring)", "remote_type": "remote",
+                                "source_board": "Hacker News (Who is Hiring)", "remote_type": classify_location(location),
                                 "discovered_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "priority": "high", "posting_fingerprint": fp,
                             })
@@ -512,16 +604,12 @@ else:
     print("=" * 60)
 
 ATS_QUERIES = [
-    'site:boards.greenhouse.io "product manager" remote',
-    'site:jobs.lever.co "product manager" remote',
-    'site:jobs.ashbyhq.com "product manager" remote',
-    'site:careers.workday.com "product manager" remote',
-    'site:jobs.smartrecruit.co "product manager" remote',
-    '"product manager" "AI" remote remote OK 2026 hiring',
-    '"AI product manager" remote remote OK 2026 hiring',
-    '"AI engineer" remote remote OK 2026 hiring',
-    '"automation engineer" remote remote OK 2026 hiring',
-    '"technical product manager" remote remote OK 2026 hiring',
+    'site:boards.greenhouse.io remote hybrid jobs',
+    'site:jobs.lever.co remote hybrid jobs',
+    'site:jobs.ashbyhq.com remote hybrid jobs',
+    'site:careers.workday.com remote hybrid jobs',
+    'site:jobs.smartrecruiters.com remote hybrid jobs',
+    '"remote hybrid jobs" 2026 hiring',
 ]
 
 bing_sources_checked = []
@@ -575,12 +663,12 @@ for query in ATS_QUERIES:
                             loc_data = data.get("jobLocation", {})
                             if isinstance(loc_data, list) and loc_data:
                                 loc_data = loc_data[0]
-                            location = "remote"
+                            location = "unknown"
                             if isinstance(loc_data, dict):
                                 addr = loc_data.get("address", {})
                                 if isinstance(addr, dict):
                                     parts_l = [addr.get("addressLocality", ""), addr.get("addressRegion", ""), addr.get("addressCountry", "")]
-                                    location = ", ".join(p for p in parts_l if p) or "remote"
+                                    location = ", ".join(p for p in parts_l if p) or "unknown"
                             posted_raw = data.get("datePosted", "")
                             salary_obj = data.get("baseSalary", {})
                             salary_text = ""
@@ -600,6 +688,8 @@ for query in ATS_QUERIES:
                                     skipped.append(f"DUPLICATE URL (Bing): {job_url[:80]}")
                                 elif not passes_salary(salary_text, salary_floor):
                                     skipped.append(f"SALARY (Bing): {company} | {title} | {salary_text}")
+                                elif not passes_location(location):
+                                    skipped.append(f"LOCATION ONSITE (Bing): {company} | {title} | {location}")
                                 elif company and any(c.lower() in company.lower() for c in companies_exclude):
                                     skipped.append(f"COMPANY EXCLUDED (Bing): {company}")
                                 else:
@@ -610,11 +700,11 @@ for query in ATS_QUERIES:
                                     else:
                                         candidates.append({
                                             "posting_url": job_url, "company": company or "Unknown",
-                                            "role_title": title, "location": location or "remote",
+                                            "role_title": title, "location": location or "unknown",
                                             "posted_at": posted_at.strftime("%Y-%m-%dT%H:%M:%SZ") if posted_at else None,
                                             "posted_at_raw": posted_raw_str or "",
                                             "salary_disclosed": bool(salary_text), "salary_range": salary_text or None,
-                                            "source_board": "Bing-OpenWeb", "remote_type": "remote" if "remote" in (location or "").lower() else "onsite",
+                                            "source_board": "Bing-OpenWeb", "remote_type": classify_location(location),
                                             "discovered_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                             "priority": priority, "posting_fingerprint": fp,
                                             "ats_platform": title_text,

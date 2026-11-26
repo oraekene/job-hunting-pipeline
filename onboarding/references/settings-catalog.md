@@ -43,10 +43,13 @@ optional, or only matters once a specific addendum feature gets used.
   this exact default behavior.
 - `discovery_mode` — **SIMPLE to have a value**, defaults to 
   `poll_only`.
-- `title_variants` — **SIMPLE**, at least one `source: held` or
-  `source: applied` entry needed before `01-job-discovery` has anything 
-  to search for. The Phase 1.5 `taxonomy_suggested` expansion is 
-  **ADVANCED** — genuinely useful, not blocking. 
+- `discovery_title_filter` — **SIMPLE**, defaults to `false` so discovery
+  accepts every non-empty title. Set it to `true` only when Kenechukwu
+  confirms a title gate.
+- `title_variants` — **ADVANCED** when `discovery_title_filter` is `false`.
+  The entries remain confirmed preferences for title taxonomy, career
+  planning, and source-query hints. The Phase 1.5 `taxonomy_suggested`
+  expansion is useful, not blocking.
 
 ## `~/.hermes/memories/USER.md` / `MEMORY.md` (owned by `07-context-architect`)
 

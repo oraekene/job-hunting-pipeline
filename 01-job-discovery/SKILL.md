@@ -21,9 +21,9 @@ metadata:
 
 ## When this skill applies
 
-Use this skill to scan configured job boards/company career pages/RSS or email alerts for new postings matching Kenechukwu's target roles, and to queue them into the pipeline. Triggers: 'check for new jobs', 'scan for postings', 'what's new today', or the scheduled cron job that runs this automatically. This skill only discovers and queues - it never parses in depth, tailors, or applies. Do NOT use this skill to process a specific job posting URL Kenechukwu already has in hand; use 02-jd-parser directly for that.
+Use this skill to scan configured job boards/company career pages/RSS or email alerts for new postings, and to queue them into the pipeline. Triggers: 'check for new jobs', 'scan for postings', 'what's new today', or the scheduled cron job that runs this automatically. This skill only discovers and queues - it never parses in depth, tailors, or applies. Do NOT use this skill to process a specific job posting URL Kenechukwu already has in hand; use 02-jd-parser directly for that.
 
-Read `references/scan-script-pitfalls.md` before changing or running a discovery scan script.
+Read `references/scan-script-pitfalls.md` before changing or running a discovery scan script. The canonical executable scanner is `shared/run_discovery.py`; run `python shared/run_discovery.py --self-check` for a local policy check that performs no network request or database write. Older dated scan scripts are historical artifacts unless another current document names them.
 
 The one stage of this pipeline that's genuinely safe to run unattended,
 because its only output is "here's a posting that might be worth applying
@@ -134,23 +134,15 @@ to" — nothing leaves the system and no claim about Kenechukwu is made.
    installing as the underlying mechanism for those two source types
    rather than re-deriving the same watermark logic by hand; it's a
    near-exact match for what this step needs from them.
-4. Cheap-filter against `shared/target-profile.yaml` — `title_variants`
-   (this skill never reads `shared/dynamic-target-calibration.yaml`
-   directly and does not need to: `07-context-architect`'s Phase 1.5 is
-   the single re-run point that keeps `title_variants` in sync with
-   calibration state — wider during an auto-relax period, unchanged
-   otherwise — so the effect is inherited the next time this step reads
-   a field it was already reading. One re-run point rather than three
-   places that must agree is the deliberate choice here)
-   (an array of objects; match against each entry's `.title` field only —
-   `source`/`confidence`/`rationale` are provenance for Kenechukwu's audit
-   trail, not filter inputs), seniority_band, locations (remote/hybrid/
-   onsite + country/city list), salary_floor, visa_sponsorship_required,
-   industries/companies to exclude. This is a structured file, not the
-   prose `USER.md` — the filter needs an explicit list of acceptable
-   title strings and a numeric salary floor to compare against, not a
-   markdown sentence. Reject obvious non-matches here — don't waste a
-   full pipeline run on them.
+4. Cheap-filter against `shared/target-profile.yaml` — `discovery_title_filter`,
+   locations (remote/hybrid/onsite + country/city list), `salary_floor`,
+   `visa_sponsorship_required`, and industries/companies to exclude. The
+   confirmed value of `discovery_title_filter` is `false`: discovery accepts
+   every non-empty title. `title_variants` remains confirmed input for title
+   taxonomy, career planning, and source-query hints, but it must not reject a
+   posting before scoring. If the setting is later changed to `true`, match
+   against each entry's `.title` field only; `source`, `confidence`, and
+   `rationale` are provenance, not filter inputs.
    Apply the location policy literally: remote and hybrid postings pass this
    filter, a strictly on-site posting fails when `onsite_ok` is false, and an
    unknown location stays queued for live verification. Do not turn a
@@ -203,10 +195,12 @@ better:
   one query per known ATS platform (Greenhouse, Lever, Ashby, Workday,
   SmartRecruiters, iCIMS — the same platform list
   `07-context-architect/references/question-bank-pipeline.md` already vetted for the
-  question-bank crawl) plus one generic open query, all constructed from
-  `target-profile.yaml`'s `title_variants`/locations at run time —
-  nothing to hand-write per platform. Visit result pages and extract
-  postings the same way `scrape_and_filter` sources already do.
+  question-bank crawl) plus one generic open query. When
+  `discovery_title_filter` is `false`, use broad location-based queries and
+  accept every non-empty title found. When it is `true`, construct the
+  queries from `target-profile.yaml`'s `title_variants`. Nothing should be
+  hand-written per platform. Visit result pages and extract postings the same
+  way `scrape_and_filter` sources already do.
   Several ATS-hosted career pages and job boards run behind Cloudflare
   or basic anti-bot checks; if the optional `research/scrapling` skill
   (stealth browsing, Cloudflare bypass) is installed, use it for this
