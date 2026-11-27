@@ -48,22 +48,33 @@ from pathlib import Path
 
 
 def resolve_skill_root() -> Path:
-    """Locate the live job-hunting skill tree. HERMES_HOME is authoritative
-    when set; script-relative covers source-tree runs. ~/.hermes is a
-    LAST-RESORT fallback only — on Windows installs it can be a stale ghost
-    tree that shadows the real skill tree (a 0-byte applications.db there
-    once stalled the whole pipeline). A candidate is accepted only if it
-    actually contains a shared/ dir."""
+    """Locate the live job-hunting skill tree.
+
+    SCRIPT-RELATIVE IS FIRST so the package works from any host and any
+    agent: the copy next to this hook is the copy being run. Environment
+    overrides (JOB_HUNTING_HOME, then the Hermes-specific HERMES_HOME) come
+    next for installs that run the hook from a fixed location. ~/.hermes is
+    a LAST-RESORT fallback only — on Windows installs it can be a stale
+    ghost tree that shadows the real skill tree (a 0-byte applications.db
+    there once stalled the whole pipeline). A candidate is accepted only if
+    it actually contains a shared/ dir."""
     candidates = []
-    for var, rel in (("HERMES_HOME", ""), ("LOCALAPPDATA", "hermes")):
-        base = os.environ.get(var, "").strip()
-        if base:
-            candidates.append(Path(base, rel, "skills", "job-hunting"))
     here = Path(__file__).resolve().parent
-    for p in here.parents:
+    # `here` itself counts: the hook may sit at the skill root (a fixture
+    # tree, or a flat install) as well as in security/hooks/. Walking only
+    # `here.parents` silently skipped the flat case and resolved to a
+    # grandparent like C:\\Users\\<name>, which broke the fixture test and
+    # would break any install that keeps the hook at the package root.
+    for p in [here, *here.parents]:
         if (p / "shared").is_dir():
             candidates.append(p)
             break
+    for var, rel in (("JOB_HUNTING_HOME", ""),
+                     ("HERMES_HOME", ""),
+                     ("LOCALAPPDATA", "hermes")):
+        base = os.environ.get(var, "").strip()
+        if base:
+            candidates.append(Path(base, rel, "skills", "job-hunting"))
     candidates.append(Path.home() / ".hermes" / "skills" / "job-hunting")
     for c in candidates:
         if (c / "shared").is_dir():
@@ -223,5 +234,51 @@ def main() -> None:
     _allow()
 
 
+def check_submit(app_id: int) -> int:
+    """Host-independent submit check: 'is this application approved?'.
+
+    This is the portable half of Rule 1. Any agent or IDE calls it as a
+    subprocess before it presses submit:
+
+        python security/hooks/verify-submit-approval.py --check 233
+
+    Exit 0 means an explicit human approval is on record; exit 1 means
+    blocked, with the reason on stdout. It fails closed exactly like the
+    hook path: no DB, no row, or any non-approval decision blocks.
+    """
+    if not DB_PATH.exists():
+        print(f"BLOCKED: applications.db not found at {DB_PATH}")
+        return 1
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        row = conn.execute(
+            "SELECT approval_decision, status, sent_at FROM applications WHERE id = ?",
+            (app_id,),
+        ).fetchone()
+        conn.close()
+    except Exception as exc:
+        print(f"BLOCKED: DB read failed ({exc})")
+        return 1
+    if row is None:
+        print(f"BLOCKED: no application row for id={app_id}")
+        return 1
+    decision = ((row[0] if row else None) or "").strip().lower()
+    if decision not in ("approve", "approved"):
+        print(
+            f"BLOCKED: application id={app_id} has "
+            f"approval_decision={decision or '(unset)'!r}, not an explicit "
+            "human approval ('approve'/'approved') — submit blocked."
+        )
+        return 1
+    if row[2]:
+        print(f"BLOCKED: application id={app_id} was already sent at {row[2]} — submit blocked.")
+        return 1
+    print(f"ALLOWED: application id={app_id} has an explicit human approval "
+          f"(status={row[1]!r}); Rule 1 satisfied.")
+    return 0
+
+
 if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--check":
+        sys.exit(check_submit(int(sys.argv[2])))
     main()
