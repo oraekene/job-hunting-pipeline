@@ -1,0 +1,74 @@
+# shared/candidate.yaml — the candidate's canonical career record.
+#
+# This file is the single source of truth for every resume the pipeline
+# generates. Stage 5 (generate_resume.py) reads it instead of embedding a
+# career record in code, so a different candidate needs no code change.
+#
+# INSTALL MODEL (pipeline-rules.md Rule 0):
+#   shared/candidate.yaml.example  (this file) IS committed — structure only.
+#   shared/candidate.yaml          (the real one)  is NOT committed, by
+#                                  .gitignore, because it carries personal
+#                                  contact data. Copy this file, fill it in,
+#                                  and keep the real one local.
+#
+# FIDELITY RULE (target-profile.yaml fidelity_mode: strict):
+#   Every number below must trace to the STAR bank or a public project.
+#   If a figure was retracted, it must not appear here. The 2026-11-17
+#   retraction removed: Savecoins 150 users / NGN 2.3M / 40% cycle cut;
+#   crawler 50,000 images / 200+ pages / 2 hours / 95%; LinkedIn agent 80%
+#   engagement / 180% follower growth; PrepClass 25% churn / 30% teacher
+#   scores. Do not restore them.
+#
+# FIELDS THE GENERATOR READS (nothing else is consumed):
+#   identity.name, identity.headline_default, identity.contacts.*
+#   summary                     one paragraph, injected verbatim
+#   experience[]                title, company, industry, dates, location,
+#                               bullets[]
+#   projects[]                  name, blurb, evidence
+#   education[]                 line
+#   skills[]                    reordered against the JD by the generator
+
+identity:
+  name: "Candidate Full Name"
+  headline_default: "Product Manager"     # replaced per application by --title-displayed
+  contacts:
+    city: "City, Country"
+    email: "name@example.com"
+    phone: "+000 000 000 0000"
+    github: "https://github.com/username"
+    website: "https://example.com"
+    linkedin: "Not currently on LinkedIn"   # or a full profile URL
+
+summary: >-
+  One paragraph. Role, domain, what you own end to end, and the stack you
+  ship in. No numbers that are not in the STAR bank.
+
+experience:
+  - title: "Most Recent Title"
+    company: "Most Recent Employer"
+    industry: "Industry"
+    dates: "01/2023 – 10/2023"
+    location: "City, Country"
+    bullets:
+      - "Owned X end to end: what you decided, who you coordinated, what shipped."
+      - "Only figures that trace to the STAR bank."
+
+  - title: "Earlier Title"
+    company: "Earlier Employer"
+    industry: "Industry"
+    dates: "08/2016 – 08/2021"
+    location: "City, Country"
+    bullets:
+      - "Second role, same rules."
+
+projects:
+  - name: "Project Name"
+    blurb: "One line: what it is, the stack, and the scale."
+    evidence: "How it can be checked: repo, live URL, commit count, issue count."
+
+education:
+  - "Degree or diploma, institution (year) — grade or distinction if real"
+
+skills:
+  - "Skill one"
+  - "Skill two"

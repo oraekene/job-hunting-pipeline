@@ -87,6 +87,9 @@ shared/question_bank_shortlist.yaml
 shared/question_bank_unique.yaml
 shared/question_bank_unique_review.md
 shared/seed_all.yaml
+# Candidate career record — real one is personal and local; the committed
+# copy is candidate.yaml.example (structure only)
+shared/candidate.yaml
 shared/seed_from_applications.yaml
 shared/seed_github.yaml
 shared/seed_names.yaml
