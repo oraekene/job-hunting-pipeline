@@ -9,10 +9,10 @@
   origin_example: ""
   status: "active"
   performance:
-    posts_returned: 10
-    classified_relevant: 7
+    posts_returned: 15
+    classified_relevant: 10
     led_to_outcome: 0
-    last_evaluated_at: "2026-11-25T10:00:00Z"
+    last_evaluated_at: "2026-11-25T14:30:00Z"
   created_at: "2026-08-17T16:30:00Z"
 
 - id: "reddit-forhire-techjobs-hiring"
@@ -22,10 +22,10 @@
   origin_example: ""
   status: "active"
   performance:
-    posts_returned: 10
-    classified_relevant: 3
+    posts_returned: 12
+    classified_relevant: 7
     led_to_outcome: 0
-    last_evaluated_at: "2026-11-25T10:00:00Z"
+    last_evaluated_at: "2026-11-25T14:30:00Z"
   created_at: "2026-08-17T16:30:00Z"
 
 - id: "n8n-community-hiring"
@@ -35,10 +35,10 @@
   origin_example: ""
   status: "active"
   performance:
-    posts_returned: 10
-    classified_relevant: 4
+    posts_returned: 12
+    classified_relevant: 8
     led_to_outcome: 0
-    last_evaluated_at: "2026-11-25T10:00:00Z"
+    last_evaluated_at: "2026-11-25T14:30:00Z"
   created_at: "2026-08-17T16:30:00Z"
 
 - id: "x-twitter-hiring-pm-ai"
@@ -48,10 +48,10 @@
   origin_example: ""
   status: "active"
   performance:
-    posts_returned: 10
-    classified_relevant: 4
+    posts_returned: 8
+    classified_relevant: 6
     led_to_outcome: 0
-    last_evaluated_at: "2026-11-25T10:00:00Z"
+    last_evaluated_at: "2026-11-25T14:30:00Z"
   created_at: "2026-08-17T16:30:00Z"
 
 - id: "reddit-aiproductmanagers-hiring"
