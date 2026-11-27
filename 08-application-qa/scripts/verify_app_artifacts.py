@@ -2,7 +2,7 @@
 """Verify a job-hunting offline artifact package (shared/build_artifacts/app_N/).
 
 Usage:
-  python verify_app_artifacts.py <app_dir> [--forbidden "pat1|pat2|..."] [--stale "63|47"] [--skip-docx]
+  python verify_app_artifacts.py <app_dir> [--forbidden "REGEX"] [--stale "63|47"] [--skip-docx]
 
 Checks (each prints PASS/FAIL; exit 0 only if all pass):
   1. keyword_analysis.json — schema keys, keyword count 10-15, per-keyword fields,
@@ -14,7 +14,7 @@ Checks (each prints PASS/FAIL; exit 0 only if all pass):
      penalized numbers (accepts "N%" single-number form when no penalty applies).
   3. generate_resume.py — runs clean (exit 0) and tailored_resume.docx exists,
      non-empty, and reads back via python-docx (skipped with --skip-docx).
-  4. Forbidden-claim grep on the docx text — --forbidden patterns, word-boundary
+  4. Forbidden-claim grep on the docx text (--forbidden is ONE regex) — --forbidden patterns, word-boundary
      regexes, re.I; expect ZERO hits. Derive patterns from found_in_resume:false
      gaps in keyword_analysis.json (e.g. r"\\b10\\s*\\+\\s*years?\\b|\\bsenior\\b|\\bexecutive\\b").
   5. Stale-reference grep — --stale numbers (pipe-separated) must not appear in
@@ -115,10 +115,20 @@ def main():
             text = ""
 
         # ---- 4. forbidden-claim grep (word-boundary regexes, re.I) ----
+        # The whole --forbidden value is ONE regex, not a pipe-separated list:
+        # splitting on "|" silently broke any pattern that used alternation
+        # (r"95% (time|dataset-prep)" became the fragment "95% (time", which
+        # raises re.PatternError and aborts the run before the grep happens).
+        # A false pass here is the worst outcome this script can produce, so
+        # compile once and report a compile failure as a FAIL, never a pass.
         if args.forbidden:
-            patterns = [p for p in args.forbidden.split("|") if p.strip()]
-            hits = [(p, m.group(0)) for p in patterns for m in re.finditer(p, text, re.I)]
-            check(len(hits) == 0, f"forbidden-claim grep 0 hits (got {len(hits)}: {hits[:3]})")
+            try:
+                rx = re.compile(args.forbidden, re.I)
+            except re.error as exc:
+                check(False, f"forbidden pattern is not a valid regex ({exc})")
+            else:
+                hits = [m.group(0) for m in rx.finditer(text)]
+                check(not hits, f"forbidden-claim grep 0 hits (got {len(hits)}: {hits[:3]})")
 
     # ---- 5. stale-reference grep across the app dir ----
     if args.stale:
