@@ -50,6 +50,11 @@ schema_query.sql
 # Stray root-level debug folders
 .outbox/
 
+# Windows reserved device name: an earlier shell redirect created it and
+# the OS resolves "NUL" to the null device, so it cannot be removed
+# normally. Untracked, but ignore it so "git add -A" never picks it up.
+/NUL
+
 # Stray generated resume at repo root (regenerable, personal)
 tailored_resume.docx
 
